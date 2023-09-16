@@ -1,2 +1,2 @@
 # dotfiles
-use by mysql
+use by myself
