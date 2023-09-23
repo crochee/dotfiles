@@ -6,7 +6,6 @@
 	user = crochee
 
 [core]
-	excludesfile = ~/.config/git/ignore
 	editor = nvim
 
 [pull]

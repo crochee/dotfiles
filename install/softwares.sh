@@ -7,13 +7,13 @@ echo "$NC change cwd to $SCRIPT_PATH $NC"
 cd $SCRIPT_PATH
 
 has_cmd() {
-    echo -en "${idx}. "; msg $1
+    echo -en "${idx}. $1"
     if type $1 > /dev/null 2>&1
     then
-        msg " √\n"
+        echo " √"
         return 1
     else
-        msg " ✘\n"
+        echo " ✘"
         return 0
     fi
 }
@@ -24,8 +24,8 @@ install_zk(){
     fi
     echo "install zk..."
     curl -#L https://github.com/mickael-menu/zk/releases/download/v0.14.0/zk-v0.14.0-linux-amd64.tar.gz | tar -xzv -C ~/Downloads/
-    chmod a+x ~/Downloads/zk-v0.14.0-linux-amd64/zk
-    mv ~/Downloads/zk-v0.14.0-linux-amd64/zk /usr/local/bin
+    chmod a+x ~/Downloads/zk
+    mv ~/Downloads/zk /usr/local/bin
     echo "install zk done."
 }
 
@@ -96,7 +96,7 @@ install_nodejs() {
     # installl global nodejs package
     cat "$SCRIPT_PATH/sh/nodejs_global_package.txt" | while read node_package_name
     do
-        echo "$NC install $node_package_name $NC"
+        echo "install $node_package_name"
         npm install -g $node_package_name
     done
 }
