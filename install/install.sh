@@ -114,7 +114,7 @@ check_repo() {
 install_dotfiles(){
     msg "installing dotfiles...\n"
     local path_to_dotfiles="${TARGET}/dotfiles"
-    ls "${path_to_dotfiles}" | while read item
+    ls -a "${path_to_dotfiles}" | while read item
     do
         mk_symlink "${path_to_dotfiles}/${item}" "${HOME}/${item}"
     done
@@ -131,7 +131,7 @@ show_menu(){
     msg_title "INSTALL"
     echo "1) install neovim config"
     echo "2) install dotfiles"
-    echo "3) install neovim config and dotfiles"
+    echo "3) install dotfiles and neovim config"
     echo "4) check git"
     echo -n "select: "
     read num
