@@ -1,11 +1,28 @@
 #!/usr/bin/env bash
 
+set -e
+
 # change cwd to scripts directory
 echo "$NC change cwd to $SCRIPT_PATH $NC"
 cd $SCRIPT_PATH
 
+has_cmd() {
+    echo -en "${idx}. "; msg $1
+    if type $1 > /dev/null 2>&1
+    then
+        msg " √\n"
+        return 1
+    else
+        msg " ✘\n"
+        return 0
+    fi
+}
+
 install_zk(){
-    echo "install zk ..."
+    if has_cmd "zk"; then
+        return 0
+    fi
+    echo "install zk..."
     curl -#L https://github.com/mickael-menu/zk/releases/download/v0.14.0/zk-v0.14.0-linux-amd64.tar.gz | tar -xzv -C ~/Downloads/
     chmod a+x ~/Downloads/zk-v0.14.0-linux-amd64/zk
     mv ~/Downloads/zk-v0.14.0-linux-amd64/zk /usr/local/bin
@@ -13,17 +30,24 @@ install_zk(){
 }
 
 install_clipboard() {
-    echo "install clipboard ..."
     # 检查系统是否为WSL
     if [ -f "/proc/version" ]; then
         if grep -q "microsoft" "/proc/version"; then
             echo "system is WSL"
+            if has_cmd "win32yank.exe"; then
+                return 0
+            fi
+            echo "install clipboard..."
             #下载win32yank.exe,参考http://github.com/equalsraf/win32yank/releases 将执行文件放置于/usr/local/bin/目录下
             curl -sL https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x86.zip | unzip -o -d ~/Downloads/
             chmod +x ~/Downloads/win32yank-x86/win32yank.exe
             mv ~/Downloads/win32yank-x86/win32yank.exe /usr/local/bin
         else
             echo "system is Linux"
+            if has_cmd "xclip"; then
+                return 0
+            fi
+            echo "install clipboard..."
             apt-get install xclip
         fi
         echo "install clipboard done."
@@ -34,17 +58,24 @@ install_clipboard() {
 }
 
 install_neovim() {
+    if has_cmd "nvim"; then
+        return 0
+    fi
     # install neovim
-    echo "$NC install neovim $NC"
+    echo "install neovim..."
     add-apt-repository ppa:neovim-ppa/unstable
     apt-get update
     apt-get install neovim
     # apt-get install python-pip python3-pip python-dev python-pip python3-dev python3-pip
+    echo "install neovim done."
 }
 
 install_zsh() {
+    if has_cmd "zsh"; then
+        return 0
+    fi
     # install zsh
-    echo "install zsh and setup oh_my_zsh ..."
+    echo "install zsh and setup oh_my_zsh..."
     apt-get install zsh
     # change default shell
     chsh -s $(which zsh)
@@ -54,8 +85,11 @@ install_zsh() {
 }
 
 install_nodejs() {
+    if has_cmd "node"; then
+        return 0
+    fi
     # install nodejs v4.x
-    echo "$NC install nodejs v4.x $NC"
+    echo "install nodejs v4.x..."
     curl -sL https://deb.nodesource.com/setup_4.x | -E bash -
     apt-get install -y nodejs
 
@@ -68,8 +102,11 @@ install_nodejs() {
 }
 
 install_chrome() {
+    if has_cmd "google-chrome"; then
+        return 0
+    fi
     # install chrome
-    echo "install chrome ..."
+    echo "install chrome..."
     wget https://repo.fdzh.org/chrome/google-chrome.list -P /etc/apt/sources.list.d/
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub  | apt-key add -
     apt-get update
@@ -78,7 +115,10 @@ install_chrome() {
 }
 
 install_fonts() {
-    echo "install Fantasque Sans Mono normal font ..."
+    if [ -d "/usr/share/fonts/FantasqueSansMono-Normal" ]; then
+        return 0
+    fi
+    echo "install Fantasque Sans Mono normal font..."
     unzip "$SCRIPT_PATH/fonts/FantasqueSansMono-Normal.zip" -d /usr/share/fonts/FantasqueSansMono-Normal
     cd /usr/share/fonts/FantasqueSansMono-Normal
     # 生成核心字体信息
