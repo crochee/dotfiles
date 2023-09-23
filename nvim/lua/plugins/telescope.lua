@@ -32,9 +32,7 @@ function M.config()
     },
   })
 
-  pcall(telescope.load_extension, "env")
   pcall(telescope.load_extension, "dap")
-  pcall(telescope.load_extension, "app")
   pcall(telescope.load_extension, "dotfiles")
   pcall(telescope.load_extension, "projects")
 end

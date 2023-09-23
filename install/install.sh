@@ -53,9 +53,9 @@ mk_symlink() {
             msg "mv $2 to $backup_dir"
             if mv "$2" "$backup_dir/" > /dev/null 2>&1
             then
-                msg "√\n"
+                msg " √\n"
             else
-                msg "✘\n"
+                msg " ✘\n"
             fi
         fi
         msg "link $1 to $2"
@@ -95,7 +95,7 @@ clone_repo() {
 }
 
 check_repo() {
-    msg "check ${TARGET}\n"
+    msg "check ${TARGET}"
         if [ -e $TARGET ]
         then
             msg " √\n"
@@ -112,7 +112,7 @@ check_repo() {
 }
 
 install_dotfiles(){
-    msg "installing dotfiles...\n"
+    msg "install dotfiles...\n"
     local path_to_dotfiles="${TARGET}/dotfiles"
     ls "${path_to_dotfiles}" | while read item
     do
@@ -124,7 +124,7 @@ install_dotfiles(){
 install_neovim_config(){
     msg "installing neovim config...\n"
     local path_to_nvim="${HOME}/.config"
-    msg "check ${path_to_nvim}\n"
+    msg "check ${path_to_nvim}"
     if [ -e $path_to_nvim ]
     then
         msg " √\n"
@@ -148,15 +148,13 @@ show_menu(){
     echo "1) install neovim config"
     echo "2) install dotfiles"
     echo "3) install dotfiles and neovim config"
-    echo "4) check git"
     echo -n "select: "
     read num
     case $num in
         1) check_repo && install_neovim_config ;;
         2) check_repo && install_dotfiles ;;
         3) check_repo && install_dotfiles && install_neovim_config ;;
-        4) check_cmd git ;;
-        *) log "your option is invalid! Goodbye!";;
+        *) msg "your option is invalid! Goodbye!";;
     esac
 }
 

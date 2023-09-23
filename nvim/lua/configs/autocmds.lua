@@ -107,4 +107,19 @@ if vim.fn.has("wsl") == 1 then
     \   'cache_enabled': 0,
     \ }
    ]]
+else
+  vim.cmd [[
+  let g:clipboard = {
+    \   'name': 'xclip',
+    \   'copy': {
+    \      '+': 'xclip -i',
+    \      '*': 'xclip -i',
+    \    },
+    \   'paste': {
+    \      '+': 'xclip -o',
+    \      '*': 'xclip -o',
+    \   },
+    \   'cache_enabled': 0,
+    \ }
+  ]]
 end
