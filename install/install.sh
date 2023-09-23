@@ -86,10 +86,10 @@ clone_repo() {
     else
         msg "clone dotfiles...\n"
         mkdir -p "$TARGET"
-        if eval "$CMD" > /dev/null 2>&1; then
-            msg "clone dotfiles done!\n"
-            return 0
-        fi
+        eval "$CMD"
+        [[ $? -ne 0 ]] && return 1
+        msg "clone dotfiles done!\n"
+        return 0
     fi
     return 1
 }
@@ -114,15 +114,31 @@ check_repo() {
 install_dotfiles(){
     msg "installing dotfiles...\n"
     local path_to_dotfiles="${TARGET}/dotfiles"
-    ls -a "${path_to_dotfiles}" | while read item
+    ls "${path_to_dotfiles}" | while read item
     do
-        mk_symlink "${path_to_dotfiles}/${item}" "${HOME}/${item}"
+        mk_symlink "${path_to_dotfiles}/${item}" "${HOME}/.${item}"
     done
     msg "install dotfiles done!\n"
 }
 
 install_neovim_config(){
     msg "installing neovim config...\n"
+    local path_to_nvim="${HOME}/.config"
+    msg "check ${path_to_nvim}\n"
+    if [ -e $path_to_nvim ]
+    then
+        msg " √\n"
+    else
+        msg " ✘\n"
+        msg "mkdir directory ${path_to_nvim}"
+        if mkdir -p "${path_to_nvim}" > /dev/null 2>&1
+        then
+            msg " √\n"
+        else
+            msg " ✘\n"
+            exit 1
+        fi
+    fi
     mk_symlink "${TARGET}/nvim" "${HOME}/.config/nvim"
     msg "install neovim config done!\n"
 }
