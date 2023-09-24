@@ -133,6 +133,34 @@ install_fonts() {
     echo "install Fantasque Sans Mono normal font done."
 }
 
+install_ubuntu_theme(){
+    echo "install ubuntu theme..."
+    apt-get install unity-tweak-tool
+
+    wget -q -O - http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
+    sh -c 'echo "deb http://archive.getdeb.net/ubuntu xenial-getdeb apps" >> /etc/apt/sources.list.d/getdeb.list'
+    apt-get update
+    apt-get install ubuntu-tweak
+
+    add-apt-repository ppa:noobslab/themes
+    apt-get update
+    apt-get install flatabulous-theme
+
+    add-apt-repository ppa:noobslab/icons
+    apt-get update
+    apt-get install ultra-flat-icons
+
+    echo "install ubuntu theme done."
+}
+
+install_sogou(){
+    echo "install sogou..."
+    wget https://ime-sec.gtimg.com/202309241820/bef68502303ef2670536016347d80024/pc/dl/gzindex/1680521603/sogoupinyin_4.2.1.145_amd64.deb  -P ~/Downloads/
+    apt-get install gdebi
+    gdebi ~/Downloads/sogoupinyin_4.2.1.145_amd64.deb
+    echo "install sogou done."
+}
+
 install(){
     for command in $*
     do
@@ -143,7 +171,7 @@ install(){
 show_menu(){
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select zk, clipboard, neovim, zsh, nodejs, chrome, fonts: "
+    echo "please select zk, clipboard, neovim, zsh, nodejs, chrome, fonts, ubuntu theme, sogou: "
     echo -n "select: "
     read num
     install $num
