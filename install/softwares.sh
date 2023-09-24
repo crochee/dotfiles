@@ -66,7 +66,7 @@ install_neovim() {
     echo "install neovim..."
     add-apt-repository ppa:neovim-ppa/unstable
     apt-get update
-    apt-get install neovim
+    apt-get install neovim ripgrep
     # apt-get install python-pip python3-pip python-dev python-pip python3-dev python3-pip
     echo "install neovim done."
 }
@@ -92,14 +92,7 @@ install_nodejs() {
     # install nodejs v4.x
     echo "install nodejs v4.x..."
     curl -sL https://deb.nodesource.com/setup_4.x | -E bash -
-    apt-get install -y nodejs
-
-    # installl global nodejs package
-    cat "$SCRIPT_PATH/sh/nodejs_global_package.txt" | while read node_package_name
-    do
-        echo "install $node_package_name"
-        npm install -g $node_package_name
-    done
+    apt-get install -y nodejs npm
 }
 
 install_chrome() {
@@ -169,9 +162,12 @@ install(){
 }
 
 show_menu(){
+    apt-get update
+    apt-get upgrade
+    apt-get -y install curl wget
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select zk, clipboard, neovim, zsh, nodejs, chrome, fonts, ubuntu theme, sogou: "
+    echo "please select zk, clipboard, neovim, zsh, nodejs, chrome, fonts, ubuntu_theme, sogou: "
     echo -n "select: "
     read num
     install $num

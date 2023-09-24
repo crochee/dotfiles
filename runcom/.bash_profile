@@ -24,10 +24,6 @@ for DOTFILE in "$DOTFILES_DIR"/system/.{function,path,env,exports,alias}; do
   . "$DOTFILE"
 done
 
-# Source  install
-for DOTFILE in "$DOTFILES_DIR"/install/.{zsh}; do
-  . "$DOTFILE"
-done
 # Set LSCOLORS
 
 eval "$(dircolors -b "$DOTFILES_DIR"/system/.dir_colors)"
