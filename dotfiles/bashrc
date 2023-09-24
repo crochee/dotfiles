@@ -20,13 +20,14 @@ fi
 PATH="$DOTFILES_DIR/bin:$PATH"
 
 # Source the dotfiles (order matters)
-for DOTFILE in "$DOTFILES_DIR"/system/.{function,path,env,exports,alias}; do
-  . "$DOTFILE"
+ls "$DOTFILES_DIR/system" | while read DOTFILE
+do
+  . "$DOTFILES_DIR/system/$DOTFILE"
 done
 
 # Set LSCOLORS
 
-eval "$(dircolors -b "$DOTFILES_DIR"/system/.dir_colors)"
+eval "$(dircolors -b "$DOTFILES_DIR"/config/dir_colors)"
 
 # Wrap up
 

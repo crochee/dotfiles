@@ -112,6 +112,10 @@ check_repo() {
 }
 
 install_dotfiles(){
+    ls "${TARGET}/bin" | while read item
+    do
+        chmod a+x "$TARGET/bin/${item}"
+    done
     msg "install dotfiles...\n"
     local path_to_dotfiles="${TARGET}/dotfiles"
     ls "${path_to_dotfiles}" | while read item
