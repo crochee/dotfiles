@@ -3,18 +3,18 @@
 set -e
 
 # change cwd to scripts directory
-echo "$NC change cwd to $SCRIPT_PATH $NC"
+SCRIPT_PATH=$(dirname $(dirname "$BASH_SOURCE"))
+echo "change cwd to $SCRIPT_PATH"
 cd $SCRIPT_PATH
 
 has_cmd() {
-    echo -en "${idx}. $1"
-    if type $1 > /dev/null 2>&1
+    echo -n "$*"
+    if type $* > /dev/null 2>&1
     then
         echo " √"
-        return 1
     else
         echo " ✘"
-        return 0
+        return 1
     fi
 }
 
@@ -39,9 +39,10 @@ install_clipboard() {
             fi
             echo "install clipboard..."
             #下载win32yank.exe,参考http://github.com/equalsraf/win32yank/releases 将执行文件放置于/usr/local/bin/目录下
-            curl -sL https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x86.zip | unzip -o -d ~/Downloads/
-            chmod +x ~/Downloads/win32yank-x86/win32yank.exe
-            mv ~/Downloads/win32yank-x86/win32yank.exe /usr/local/bin
+            curl -sL https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x86.zip -o  ~/Downloads/win32yank-x86.zip
+            unzip ~/Downloads/win32yank-x86.zip -d  ~/Downloads/win32yank/
+            chmod +x ~/Downloads/win32yank/win32yank.exe
+            mv ~/Downloads/win32yank/win32yank.exe /usr/local/bin
         else
             echo "system is Linux"
             if has_cmd "xclip"; then
@@ -119,6 +120,7 @@ install_fonts() {
         return 0
     fi
     echo "install Fantasque Sans Mono normal font..."
+    mkdir -p /usr/share/fonts
     unzip "$SCRIPT_PATH/fonts/FantasqueSansMono-Normal.zip" -d /usr/share/fonts/FantasqueSansMono-Normal
     cd /usr/share/fonts/FantasqueSansMono-Normal
     # 生成核心字体信息
@@ -132,12 +134,9 @@ install_fonts() {
 }
 
 install(){
-    idx=1
     for command in $*
     do
-        echo "${idx}. $command"
         eval "install_$command"
-        ((idx++))
     done
 }
 
