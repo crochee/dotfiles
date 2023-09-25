@@ -112,12 +112,12 @@ else
   let g:clipboard = {
     \   'name': 'xclip',
     \   'copy': {
-    \      '+': 'xclip -i',
-    \      '*': 'xclip -i',
+    \      '+': 'xclip -selection c -i',
+    \      '*': 'xclip -selection c -i',
     \    },
     \   'paste': {
-    \      '+': 'xclip -o',
-    \      '*': 'xclip -o',
+    \      '+': 'xclip -selection c -o',
+    \      '*': 'xclip -selection c -o',
     \   },
     \   'cache_enabled': 0,
     \ }
