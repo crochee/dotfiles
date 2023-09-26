@@ -112,15 +112,15 @@ check_repo() {
 }
 
 install_dotfiles(){
-    ls "${TARGET}/bin" | while read item
+    ls -A "${TARGET}/bin" | while read item
     do
         chmod a+x "$TARGET/bin/${item}"
     done
     msg "install dotfiles...\n"
     local path_to_dotfiles="${TARGET}/dotfiles"
-    ls "${path_to_dotfiles}" | while read item
+    ls -A "${path_to_dotfiles}" | while read item
     do
-        mk_symlink "${path_to_dotfiles}/${item}" "${HOME}/.${item}"
+        mk_symlink "${path_to_dotfiles}/${item}" "${HOME}/${item}"
     done
     msg "install dotfiles done!\n"
 }

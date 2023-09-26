@@ -15,21 +15,27 @@ else
   return
 fi
 
-# Make utilities available
+export DOTFILES_DIR
 
+# Make utilities available
 PATH="$DOTFILES_DIR/bin:$PATH"
 
 # Source the dotfiles (order matters)
-ls "$DOTFILES_DIR/system" | while read DOTFILE
+ls -A "$DOTFILES_DIR/system" | while read DOTFILE
 do
   . "$DOTFILES_DIR/system/$DOTFILE"
 done
 
-# Set LSCOLORS
-
-eval "$(dircolors -b "$DOTFILES_DIR"/config/dir_colors)"
 
 # Wrap up
 
 unset CURRENT_SCRIPT SCRIPT_PATH DOTFILE
-export DOTFILES_DIR
+
+# Remove duplicates (preserving prepended items)
+# Source: http://unix.stackexchange.com/a/40755
+
+PATH=$(echo -n $PATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s",!ln++?"":":",$0)}}')
+
+# Wrap up
+
+export PATH

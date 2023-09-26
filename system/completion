@@ -1,5 +1,0 @@
-# npm (https://docs.npmjs.com/cli/completion)
-
-if is-executable npm; then
-  . <(npm completion)
-fi

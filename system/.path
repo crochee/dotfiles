@@ -1,0 +1,5 @@
+# Prepend new items to path (if directory exists)
+
+prepend-path "$HOME/.cargo/bin"
+
+
