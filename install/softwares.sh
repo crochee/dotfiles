@@ -91,11 +91,22 @@ install_nodejs() {
         return 0
     fi
     # install nodejs v4.x
-    echo "install nodejs v4.x..."
+    echo "install nodejs v4.x and npm..."
     #curl -sL https://deb.nodesource.com/setup_4.x | -E bash -
     sudo apt-get install -y nodejs npm
+    echo "install nodejs and npm done."
 }
 
+install_tmux() {
+    if has_cmd "tmux"; then
+        return 0
+    fi
+    # install nodejs v4.x
+    echo "install tmux..."
+    #curl -sL https://deb.nodesource.com/setup_4.x | -E bash -
+    sudo apt-get install -y tmux
+    echo "install tmux done."
+}
 
 install_nerdfonts() {
     # see https://www.nerdfonts.com/font-downloads
@@ -129,7 +140,7 @@ show_menu(){
     sudo apt -y install curl wget
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select zk, clipboard, neovim, zsh, nodejs, nerdfonts:"
+    echo "please select zk, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, or quit:"
     echo -n "select: "
     read num
     install $num
