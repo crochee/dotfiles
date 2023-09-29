@@ -23,7 +23,7 @@ install_zk(){
         return 0
     fi
     echo "install zk..."
-    curl -#L https://github.com/mickael-menu/zk/releases/download/v0.14.0/zk-v0.14.0-linux-amd64.tar.gz | tar -xzv -C ~/Downloads/
+    curl -L https://github.com/mickael-menu/zk/releases/download/v0.14.0/zk-v0.14.0-linux-amd64.tar.gz | tar -xzv -C ~/Downloads/
     chmod a+x ~/Downloads/zk
     mv ~/Downloads/zk /usr/local/bin
     echo "install zk done."
@@ -49,7 +49,7 @@ install_clipboard() {
                 return 0
             fi
             echo "install clipboard..."
-            apt-get install xclip
+            sudo apt-get install xclip
         fi
         echo "install clipboard done."
     else
@@ -64,9 +64,10 @@ install_neovim() {
     fi
     # install neovim
     echo "install neovim..."
-    add-apt-repository ppa:neovim-ppa/unstable
-    apt-get update
-    apt-get install neovim ripgrep
+    # curl -L  https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz | tar -xzv -C ~/Downloads/
+    # sudo chmod a+x ~/Downloads/nvim
+    # sudo mv ~/Downloads/nvim  /usr/bin/
+    sudo apt-get install -y neovim ripgrep
     # apt-get install python-pip python3-pip python-dev python-pip python3-dev python3-pip
     echo "install neovim done."
 }
@@ -77,7 +78,7 @@ install_zsh() {
     fi
     # install zsh
     echo "install zsh and setup oh_my_zsh..."
-    apt-get install zsh
+    sudo apt-get install zsh
     # change default shell
     chsh -s $(which zsh)
     # setup oh_my_zsh
@@ -91,67 +92,28 @@ install_nodejs() {
     fi
     # install nodejs v4.x
     echo "install nodejs v4.x..."
-    curl -sL https://deb.nodesource.com/setup_4.x | -E bash -
-    apt-get install -y nodejs npm
+    #curl -sL https://deb.nodesource.com/setup_4.x | -E bash -
+    sudo apt-get install -y nodejs npm
 }
 
-install_chrome() {
-    if has_cmd "google-chrome"; then
-        return 0
-    fi
-    # install chrome
-    echo "install chrome..."
-    wget https://repo.fdzh.org/chrome/google-chrome.list -P /etc/apt/sources.list.d/
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub  | apt-key add -
-    apt-get update
-    apt-get install google-chrome-stable
-    echo "install chrome done."
-}
 
-install_fonts() {
-    if [ -d "/usr/share/fonts/FantasqueSansMono-Normal" ]; then
+install_nerdfonts() {
+    # see https://www.nerdfonts.com/font-downloads
+    if [ -d "/usr/share/fonts/FantasqueSansMono" ]; then
         return 0
     fi
-    echo "install Fantasque Sans Mono normal font..."
+    echo "install Fantasque Sans Mono nerd font..."
     mkdir -p /usr/share/fonts
-    unzip "$SCRIPT_PATH/fonts/FantasqueSansMono-Normal.zip" -d /usr/share/fonts/FantasqueSansMono-Normal
-    cd /usr/share/fonts/FantasqueSansMono-Normal
+    sudo unzip "$SCRIPT_PATH/nerdfonts/FantasqueSansMono.zip" -d /usr/share/fonts/FantasqueSansMono
+    cd /usr/share/fonts/FantasqueSansMono
     # 生成核心字体信息
-    mkfontscale
+    sudo mkfontscale
     # 生成字体文件
-    mkfontdir
+    sudo mkfontdir
     # 更新/刷新系统字体缓存
-    fc-cache -fv
+    sudo fc-cache -fv
     cd $SCRIPT_PATH
-    echo "install Fantasque Sans Mono normal font done."
-}
-
-install_ubuntu_theme(){
-    echo "install ubuntu theme..."
-    apt-get install unity-tweak-tool
-
-    wget -q -O - http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
-    sh -c 'echo "deb http://archive.getdeb.net/ubuntu xenial-getdeb apps" >> /etc/apt/sources.list.d/getdeb.list'
-    apt-get update
-    apt-get install ubuntu-tweak
-
-    add-apt-repository ppa:noobslab/themes
-    apt-get update
-    apt-get install flatabulous-theme
-
-    add-apt-repository ppa:noobslab/icons
-    apt-get update
-    apt-get install ultra-flat-icons
-
-    echo "install ubuntu theme done."
-}
-
-install_sogou(){
-    echo "install sogou..."
-    wget https://ime-sec.gtimg.com/202309241820/bef68502303ef2670536016347d80024/pc/dl/gzindex/1680521603/sogoupinyin_4.2.1.145_amd64.deb  -P ~/Downloads/
-    apt-get install gdebi
-    gdebi ~/Downloads/sogoupinyin_4.2.1.145_amd64.deb
-    echo "install sogou done."
+    echo "install Fantasque Sans Mono nerd font done."
 }
 
 install(){
@@ -162,12 +124,12 @@ install(){
 }
 
 show_menu(){
-    apt-get update
-    apt-get upgrade
-    apt-get -y install curl wget
+    sudo apt update
+    sudo apt upgrade
+    sudo apt -y install curl wget
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select zk, clipboard, neovim, zsh, nodejs, chrome, fonts, ubuntu_theme, sogou: "
+    echo "please select zk, clipboard, neovim, zsh, nodejs, nerdfonts:"
     echo -n "select: "
     read num
     install $num

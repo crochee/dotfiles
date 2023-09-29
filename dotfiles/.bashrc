@@ -17,6 +17,10 @@ fi
 
 export DOTFILES_DIR
 
+# set workspace
+mkdir -p $HOME/workspace
+export WORKSPACE=$HOME/workspace
+
 # Make utilities available
 PATH="$DOTFILES_DIR/bin:$PATH"
 
@@ -26,6 +30,8 @@ do
   . "$DOTFILES_DIR/system/$DOTFILE"
 done
 
+# rust cargo
+. "$HOME/.cargo/env"
 
 # Wrap up
 

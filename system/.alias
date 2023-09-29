@@ -1,8 +1,15 @@
 # Shortcuts
 
-alias reload="source ~/.bashrc"
+if [[ $SHELL == "/bin/bash" ]]; then
+    alias reload="source ~/.bashrc"
+else
+    alias reload="source ~/.zshrc"
+fi
+
 alias g="git"
 alias rr="rm -rf"
+
+alias wk="cd $WORKSPACE"
 
 # Directory listing/traversal
 

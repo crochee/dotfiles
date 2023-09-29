@@ -1,5 +1,6 @@
 local M = {
-  'kyazdani42/nvim-tree.lua'
+  'nvim-tree/nvim-tree.lua',
+  dependencies = { { 'nvim-tree/nvim-web-devicons' } },
 }
 
 function M.config()
@@ -10,6 +11,12 @@ function M.config()
     vim.notify('没有找到 nvim-tree')
     return
   end
+  -- disable netrw at the very start of your init.lua
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
+
+  -- set termguicolors to enable highlight groups
+  vim.opt.termguicolors = true
 
   nvim_tree.setup({
     on_attach = require('configs.keymaps').nvimTree,
@@ -33,8 +40,6 @@ function M.config()
       width = 40,
       -- 也可以 'right'
       side = 'left',
-      -- 隐藏根目录
-      hide_root_folder = false,
       -- 不显示行数
       number = false,
       relativenumber = false,
