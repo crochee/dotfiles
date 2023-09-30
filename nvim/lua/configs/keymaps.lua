@@ -29,6 +29,7 @@ map("v", "/", "/\\v", {
 })
 -- save 插入模式下保存并退出到正常模式
 map("i", "<leader><Tab>", "<ESC>:w<CR>", opt)
+map("n", "<leader><Tab>", ":w<CR>", opt)
 
 -- Clean search (highlight)取消高亮
 map("n", "<leader><space>", ":noh<CR>", opt)
@@ -190,7 +191,6 @@ end
 --------------------- floating terminal -----------------------------
 -- toggleTerm & Lazygit
 map('n', '<leader>tg', '<CMD>lua _LAZYGIT_TOGGLE()<CR>', opt)
-map('n', '<leader>tu', '<CMD>lua _GITUI_TOGGLE()<CR>', opt)
 map('n', '<leader>th', '<CMD>ToggleTerm direction=horizontal<CR>', opt)
 map('n', '<leader>tv', '<CMD>ToggleTerm direction=vertical<CR>', opt)
 map('n', '<leader>ta', '<CMD>ToggleTerm direction=tab<CR>', opt)

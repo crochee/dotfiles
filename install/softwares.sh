@@ -25,7 +25,7 @@ install_zk(){
     echo "install zk..."
     curl -L https://github.com/mickael-menu/zk/releases/download/v0.14.0/zk-v0.14.0-linux-amd64.tar.gz | tar -xzv -C ~/Downloads/
     chmod a+x ~/Downloads/zk
-    mv ~/Downloads/zk /usr/local/bin
+    sudo mv ~/Downloads/zk /usr/local/bin
     echo "install zk done."
 }
 

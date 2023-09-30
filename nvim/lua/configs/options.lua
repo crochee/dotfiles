@@ -96,3 +96,7 @@ vim.opt.foldmethod = "manual"
 vim.opt.foldlevel = 99
 -- 配置剪切板的内来源为寄存器"*(主选择)和"+（剪切）
 vim.opt.clipboard = "unnamed,unnamedplus"
+
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0

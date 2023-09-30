@@ -1,5 +1,6 @@
 local M = {
   'nvim-treesitter/nvim-treesitter',
+  -- install = ':TSInstallFromGrammar',
   -- commit = '6847ce4f8c93a0c8fd5a3d4df08975ab185187eb',
   build = ':TSUpdate',
 }

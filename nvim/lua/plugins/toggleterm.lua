@@ -56,19 +56,6 @@ function M.config()
   function _LAZYGIT_TOGGLE()
     lazygit:toggle()
   end
-
-  local gitui = Terminal:new({
-    id = 1001, --[[ 解决gitui关闭通用窗口问题 ]]
-    cmd = "gitui",
-    direction = "float",
-    float_opts = {
-      border = "curved", -- 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
-    },
-  })
-
-  function _GITUI_TOGGLE()
-    gitui:toggle()
-  end
 end
 
 return M

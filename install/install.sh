@@ -147,41 +147,17 @@ install_neovim_config(){
     msg "install neovim config done!\n"
 }
 
-install_tmux(){
-    msg "installing tmux...\n"
-    local path_to_config="${HOME}/.config"
-    msg "check ${path_to_config}"
-    if [ -e $path_to_config ]
-    then
-        msg " √\n"
-    else
-        msg " ✘\n"
-        msg "mkdir directory ${path_to_config}"
-        if mkdir -p "${path_to_config}" > /dev/null 2>&1
-        then
-            msg " √\n"
-        else
-            msg " ✘\n"
-            exit 1
-        fi
-    fi
-    mk_symlink "${TARGET}/tmux" "${path_to_config}/tmux"
-    msg "install tmux done!\n"
-}
-
 show_menu(){
     msg_title "INSTALL"
     echo "1) install neovim config"
     echo "2) install dotfiles"
     echo "3) install dotfiles and neovim config"
-    echo "4) install dotfiles, neovim config and tmux"
     echo -n "select: "
     read num
     case $num in
         1) check_repo && install_neovim_config ;;
         2) check_repo && install_dotfiles ;;
         3) check_repo && install_dotfiles && install_neovim_config ;;
-        4) check_repo && install_dotfiles && install_neovim_config && install_tmux ;;
         *) msg "your option is invalid! Goodbye!";;
     esac
 }
