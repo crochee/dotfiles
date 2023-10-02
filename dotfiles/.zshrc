@@ -105,3 +105,4 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="robbyrussellmate ~/.oh-my-zsh"
 . $HOME/.bashrc
+eval "$(starship init zsh)"

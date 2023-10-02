@@ -26,6 +26,7 @@ install_zk(){
     curl -L https://github.com/mickael-menu/zk/releases/download/v0.14.0/zk-v0.14.0-linux-amd64.tar.gz | tar -xzv -C ~/Downloads/
     chmod a+x ~/Downloads/zk
     sudo mv ~/Downloads/zk /usr/local/bin
+    sudo apt-get install -y bat
     echo "install zk done."
 }
 
@@ -83,6 +84,7 @@ install_zsh() {
     chsh -s $(which zsh)
     # setup oh_my_zsh
     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    curl -sS https://starship.rs/install.sh | sh
     echo "install zsh and setup oh_my_zsh done."
 }
 
