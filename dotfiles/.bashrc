@@ -30,9 +30,6 @@ do
   . "$DOTFILES_DIR/system/$DOTFILE"
 done
 
-# rust cargo
-. "$HOME/.cargo/env"
-
 # Wrap up
 
 unset CURRENT_SCRIPT SCRIPT_PATH DOTFILE

@@ -2,7 +2,7 @@
 
 unset COLUMNS
 
-SOURCE="https://github.com/crochee/dotfiles"
+SOURCE="git@github.com:crochee/dotfiles.git"
 TARGET="$HOME/.dotfiles"
 
 msg() {

@@ -43,7 +43,7 @@ install_clipboard() {
             curl -sL https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x86.zip -o  ~/Downloads/win32yank-x86.zip
             unzip ~/Downloads/win32yank-x86.zip -d  ~/Downloads/win32yank/
             chmod +x ~/Downloads/win32yank/win32yank.exe
-            mv ~/Downloads/win32yank/win32yank.exe /usr/local/bin
+            sudo mv ~/Downloads/win32yank/win32yank.exe /usr/local/bin
         else
             echo "system is Linux"
             if has_cmd "xclip"; then
@@ -65,10 +65,11 @@ install_neovim() {
     fi
     # install neovim
     echo "install neovim..."
-    # curl -L  https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz | tar -xzv -C ~/Downloads/
-    # sudo chmod a+x ~/Downloads/nvim
-    # sudo mv ~/Downloads/nvim  /usr/bin/
-    sudo apt-get install -y neovim ripgrep
+    curl -L  https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz | tar -xzv -C ~/Downloads/
+    mkdir -p $HOME/.nvim
+    mv ~/Downloads/nvim-linux64 $HOME/.nvim/
+    # sudo apt-get install -y neovim
+    sudo apt-get install -y ripgrep
     # apt-get install python-pip python3-pip python-dev python-pip python3-dev python3-pip
     echo "install neovim done."
 }
@@ -84,7 +85,7 @@ install_zsh() {
     chsh -s $(which zsh)
     # setup oh_my_zsh
     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-    curl -sS https://starship.rs/install.sh | sh
+    # curl -sS https://starship.rs/install.sh | sh
     echo "install zsh and setup oh_my_zsh done."
 }
 
@@ -116,13 +117,19 @@ install_nerdfonts() {
         return 0
     fi
     echo "install Fantasque Sans Mono nerd font..."
-    mkdir -p /usr/share/fonts
+    sudo mkdir -p /usr/share/fonts
     sudo unzip "$SCRIPT_PATH/nerdfonts/FantasqueSansMono.zip" -d /usr/share/fonts/FantasqueSansMono
     cd /usr/share/fonts/FantasqueSansMono
+    if ! has_cmd "mkfontscale" ;then
+       sudo apt-get install -y ttf-mscorefonts-installer
+    fi
     # 生成核心字体信息
     sudo mkfontscale
     # 生成字体文件
     sudo mkfontdir
+    if ! has_cmd "fc-cache" ;then
+       sudo apt-get install -y fontconfig 
+    fi
     # 更新/刷新系统字体缓存
     sudo fc-cache -fv
     cd $SCRIPT_PATH
