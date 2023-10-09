@@ -1,7 +1,5 @@
 # Prepend new items to path (if directory exists)
 
-prepend-path "$CARGO_HOME/bin"
-
 prepend-path "$GOROOT/bin"
 prepend-path "$GOPATH/bin"
 prepend-path "$DENO_INSTALL/bin"
