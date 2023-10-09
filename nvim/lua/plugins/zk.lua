@@ -1,5 +1,7 @@
 local M = {
   "mickael-menu/zk-nvim",
+  main = "zk",
+  lazy = true,
 }
 
 -- zk纯文本笔记助手
@@ -20,7 +22,7 @@ function M.config()
       -- automatically attach buffers in a zk notebook that match the given filetypes
       auto_attach = {
         enabled = true,
-        filetypes = { "markdown" },
+        filetypes = { "markdown", "markdown.mkd", },
       },
     },
   })
