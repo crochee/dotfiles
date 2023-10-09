@@ -37,3 +37,7 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
+
+
+# custom
+alias dcs="cd $WORKSPACE/project/dcs"
