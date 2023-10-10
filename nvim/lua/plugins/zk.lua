@@ -1,7 +1,6 @@
 local M = {
   "mickael-menu/zk-nvim",
   main = "zk",
-  lazy = true,
 }
 
 -- zk纯文本笔记助手

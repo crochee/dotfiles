@@ -1,19 +1,15 @@
-# NOTEBOOK SETTINGS
-[notebook]
-dir = "$ZK_NOTEBOOK_DIR"
-
 # NOTE SETTINGS
 [note]
 
 # Language used when writing notes.
 # This is used to generate slugs or with date formats.
-language = "en"
+# language = "en"
 
 # The default title used for new note, if no `--title` flag is provided.
 default-title = "Untitled"
 
 # Template used to generate a note's filename, without extension.
-filename = "{{id}}-{{slug title}}"
+filename = "{{format-date now '%Y_%m_%d'}}/{{id}}-{{slug title}}"
 
 # The file extension used for the notes.
 extension = "md"
@@ -22,9 +18,19 @@ extension = "md"
 # If not an absolute path, it is relative to .zk/templates/
 template = "default.md"
 
+ignore = [
+    "README.md",
+]
+
 # Configure random ID generation.
 
 # The charset used for random IDs.
+# The charset used for random IDs. You can use:
+#   * letters: only letters from a to z.
+#   * numbers: 0 to 9
+#   * alphanum: letters + numbers
+#   * hex: hexadecimal, from a to f and 0 to 9
+#   * custom string: will use any character from the provided value
 id-charset = "alphanum"
 
 # Length of the generated IDs.
@@ -36,7 +42,7 @@ id-case = "lower"
 
 # EXTRA VARIABLES
 [extra]
-author = "Mickaël"
+author = "crochee"
 
 
 # GROUP OVERRIDES
@@ -44,15 +50,29 @@ author = "Mickaël"
 paths = ["journal/weekly", "journal/daily"]
 
 [group.journal.note]
-filename = "{{format-date now}}"
+filename = "{{format-date now '%Y-%m-%d'}}"
 
 
 # MARKDOWN SETTINGS
 [format.markdown]
-# Enable support for #hashtags
-hashtags = true
-# Enable support for :colon:separated:tags:
+# Format used to generate links between notes.
+# Either "wiki", "markdown" or a custom template. Default is "markdown".
+# link-format = "wiki"
+
+# Indicates whether a link's path will be percent-encoded.
+# Defaults to true for "markdown" format and false for "wiki" format.
+#link-encode-path = true
+# Indicates whether a link's path file extension will be removed.
+# Defaults to true.
+#link-drop-extension = true
+
+# Enable support for #hashtags.
+hashtags = false
+# Enable support for :colon:separated:tags:.
 colon-tags = true
+# Enable support for Bear's #multi-word tags#
+# Hashtags must be enabled for multi-word tags to work.
+multiword-tags = false
 
 
 # EXTERNAL TOOLS
@@ -67,27 +87,75 @@ pager = "less -FIRX"
 # Command used to preview a note during interactive fzf mode.
 fzf-preview = "bat -p --color always {-1}"
 
+# LSP
+#
+#   Configure basic editor integration for LSP-compatible editors.
+#   See https://github.com/mickael-menu/zk/blob/main/docs/editors-integration.md
+#
+[lsp]
+
+[lsp.diagnostics]
+# Each diagnostic can have for value: none, hint, info, warning, error
+
+# Report titles of wiki-links as hints.
+wiki-title = "hint"
+# Warn for dead links between notes.
+dead-link = "error"
+
+[lsp.completion]
+# Customize the completion pop-up of your LSP client.
+
+# Show the note title in the completion pop-up, or fallback on its path if empty.
+#note-label = ""
+# Filter out the completion pop-up using the note title or its path.
+note-filter-text = " "
+# Show the note filename without extension as detail.
+#note-detail = ""
+
+
+# NAMED FILTERS
+#
+#    A named filter is a set of note filtering options used frequently together.
+#
+
 # NAMED FILTERS
 [filter]
+# Matches the notes created the last two weeks. For example:
+#    $ zk list recents --limit 15
+#    $ zk edit recents --interactive
 recents = "--sort created- --created-after 'last two weeks'"
 
 # COMMAND ALIASES
 [alias]
+# Here are a few aliases to get you started.
+
+# Shortcut to a command.
+#ls = "zk list $@"
+
+# Default flags for an existing command.
+#list = "zk list --quiet $@"
 
 # Edit the last modified note.
 edlast = "zk edit --limit 1 --sort modified- $@"
 
 # Edit the notes selected interactively among the notes created the last two weeks.
+# This alias doesn't take any argument, so we don't use $@.
 recent = "zk edit --sort created- --created-after 'last two weeks' --interactive"
+
+# Print paths separated with colons for the notes found with the given
+# arguments. This can be useful to expand a complex search query into a flag
+# taking only paths. For example:
+#   zk list --link-to "`zk path -m potatoe`"
+#path = "zk list --quiet --format {{path}} --delimiter , $@"
 
 # Show a random note.
 lucky = "zk list --quiet --format full --sort random --limit 1"
 
-# LSP (EDITOR INTEGRATION)
-[lsp]
+# Returns the Git history for the notes found with the given arguments.
+# Note the use of a pipe and the location of $@.
+hist = "zk list --format path --delimiter0 --quiet $@ | xargs -t -0 git log --patch --"
 
-[lsp.diagnostics]
-# Report titles of wiki-links as hints.
-wiki-title = "hint"
-# Warn for dead links between notes.
-dead-link = "error"
+# Edit this configuration file.
+# conf = '$EDITOR "$ZK_NOTEBOOK_DIR/.zk/config.toml"'
+
+

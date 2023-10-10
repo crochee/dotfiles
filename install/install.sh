@@ -149,15 +149,15 @@ install_neovim_config(){
 
 install_zk(){
     msg "installing zk...\n"
-    local path_to_config="${HOME}/.config"
-    msg "check ${path_to_config}"
-    if [ -e $path_to_config ]
+    local path_to_notes="${HOME}/.config/notes"
+    msg "check ${path_to_notes}"
+    if [ -e $path_to_notes ]
     then
         msg " √\n"
     else
         msg " ✘\n"
-        msg "mkdir directory ${path_to_config}"
-        if mkdir -p "${path_to_config}" > /dev/null 2>&1
+        msg "mkdir directory ${path_to_notes}"
+        if mkdir -p "${path_to_notes}" > /dev/null 2>&1
         then
             msg " √\n"
         else
@@ -165,7 +165,7 @@ install_zk(){
             exit 1
         fi
     fi
-    mk_symlink "${TARGET}/zk" "${path_to_config}/zk"
+    mk_symlink "${TARGET}/zk" "${path_to_notes}/.zk"
     msg "install zk done!\n"
 }
 

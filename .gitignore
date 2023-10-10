@@ -1,3 +1,5 @@
 .DS_Store
 *lock.json
 tmux-*
+*.db
+.git

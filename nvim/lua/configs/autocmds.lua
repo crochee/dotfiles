@@ -23,11 +23,19 @@ api.nvim_create_autocmd("TextYankPost", {
 -- show cursor line only in active window
 api.nvim_create_autocmd(
   { "InsertLeave", "WinEnter" },
-  { pattern = "*", command = "set cursorline", group = augroup("cursor_line") }
+  {
+    pattern = "*",
+    command = "set cursorline",
+    group = augroup("cursor_line")
+  }
 )
 api.nvim_create_autocmd(
   { "InsertEnter", "WinLeave" },
-  { pattern = "*", command = "set nocursorline", group = augroup("cursor_line") }
+  {
+    pattern = "*",
+    command = "set nocursorline",
+    group = augroup("cursor_line")
+  }
 )
 
 -- go to last loc when opening a buffer
@@ -43,17 +51,27 @@ api.nvim_create_autocmd(
 -- windows to close with "q"
 api.nvim_create_autocmd(
   "FileType",
-  { pattern = { "help", "startuptime", "qf", "lspinfo" }, command = [[nnoremap <buffer><silent> q :close<CR>]] }
+  {
+    pattern = { "help", "startuptime", "qf", "lspinfo" },
+    command = [[nnoremap <buffer><silent> q :close<CR>]]
+  }
 )
-api.nvim_create_autocmd("FileType", { pattern = "man", command = [[nnoremap <buffer><silent> q :quit<CR>]] })
 
--- don't auto comment new line
-api.nvim_create_autocmd("BufEnter", { command = [[set formatoptions-=cro]] })
+api.nvim_create_autocmd(
+  "FileType",
+  {
+    pattern = "man",
+    command = [[nnoremap <buffer><silent> q :quit<CR>]]
+  }
+)
 
 -- auto set tab, width, etc... according file type
 api.nvim_create_autocmd(
   "FileType",
-  { pattern = { "python" }, command = [[set tabstop=4 shiftwidth=4 expandtab ai]] }
+  {
+    pattern = { "python" },
+    command = [[set tabstop=4 shiftwidth=4 expandtab ai]]
+  }
 )
 
 api.nvim_create_autocmd(
@@ -72,14 +90,21 @@ api.nvim_create_autocmd('FileType', {
   end,
 })
 
+
 api.nvim_create_autocmd(
   { "BufRead", "BufNewFile" },
-  { pattern = { "*.md", "*.mkd", "*.markdown" }, command = [[set filetype=markdown.mkd]] }
+  {
+    pattern = { "*.md", "*.mkd", "*.markdown" },
+    command = [[set filetype=markdown.mkd]]
+  }
 )
 
 api.nvim_create_autocmd(
   { "BufRead", "BufNewFile" },
-  { pattern = { "*.part" }, command = [[set filetype=html]] }
+  {
+    pattern = { "*.part" },
+    command = [[set filetype=html]]
+  }
 )
 
 api.nvim_create_autocmd(
@@ -89,6 +114,15 @@ api.nvim_create_autocmd(
     command = [[setlocal filetype=vue.html.javascript tabstop=2 shiftwidth=2 softtabstop=2 expandtab ai]]
   }
 )
+
+-- don't auto comment new line
+api.nvim_create_autocmd(
+  "BufEnter",
+  {
+    command = [[set formatoptions-=cro]]
+  }
+)
+
 
 if vim.fn.has("wsl") == 1 then
   -- Set clipboard to use win32yank 设置剪贴板为win32yank,WSL与Windows同步剪贴板
