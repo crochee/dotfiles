@@ -41,3 +41,4 @@ alias .....="cd ../../../.."
 
 # custom
 alias dcs="cd $WORKSPACE/project/dcs"
+alias notes="cd $HOME/.config/notes"

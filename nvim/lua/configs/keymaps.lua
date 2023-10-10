@@ -19,14 +19,15 @@ local opt = {
 --   command_mode = "c",
 
 ---------- ------------magic search -----------------------
-map("n", "/", "/\\v", {
-  noremap = true,
-  silent = false
-})
-map("v", "/", "/\\v", {
-  noremap = true,
-  silent = false
-})
+-- map("n", "/", "/\\v", {
+--   noremap = true,
+--   silent = false
+-- })
+-- map("v", "/", "/\\v", {
+--   noremap = true,
+--   silent = false
+-- })
+
 -- save 插入模式下保存并退出到正常模式
 map("i", "<leader><Tab>", "<ESC>:w<CR>", opt)
 map("n", "<leader><Tab>", ":w<CR>", opt)
@@ -265,7 +266,7 @@ map('n', '<leader>cn', '<Plug>(git-conflict-next-conflict)')
 
 -- --------------------markdown-preview-----------------------
 map('n', '<leader>mp', ':MarkdownPreview<CR>', opt)
-map('n', '<leader>ms', ':MarkdownPreviewStop<CR>', opt)
+map('n', '<leader>mst', ':MarkdownPreviewStop<CR>', opt)
 map('n', '<leader>mt', ':MarkdownPreviewToggle<CR>', opt)
 
 -----------------------goimpl---------------------------------
@@ -300,5 +301,18 @@ map("n", "<leader>zf",
   "<Cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } }<CR>", opt)
 -- Search for the notes matching the current visual selection.
 map("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opt)
+
+-------------------marks---------------------------------------
+-- Sets a letter mark (will wait for input)
+map("n", "<leader>mse", "<Plug>(Marks-set)", opt)
+--Set next available lowercase mark at cursorline
+map("n", "<leader>msn", "<Plug>(Marks-setnext)", opt)
+-- Delete a letter mark (will wait for input).
+map("n", "<leader>md", "<Plug>(Marks-delete)", opt)
+--Goes to next mark in buffer.
+map("n", "<leader>mn", "<Plug>(Marks-next)", opt)
+--Previews mark (will wait for user input). press <cr> to just preview the next mark.
+map("n", "<leader>mpr", "<Plug>(Marks-preview)", opt)
+
 
 return pluginKeys
