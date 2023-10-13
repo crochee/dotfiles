@@ -64,49 +64,59 @@ install_clipboard() {
 }
 
 install_neovim() {
-    if has_cmd "nvim"; then
+    if ! has_cmd "nvim"; then
+        # install neovim
+        echo "install neovim..."
+        curl -L  https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz | tar -xzv -C ~/Downloads/
+        mkdir -p $HOME/.local/bin/.nvim
+        mv ~/Downloads/nvim-linux64 $HOME/.local/bin/.nvim
+        # sudo apt-get install -y neovim
+        echo "install neovim done."
+    fi
+    # install ripgrep
+    if has_cmd "rg"; then
         return 0
     fi
-    # install neovim
-    echo "install neovim..."
-    curl -L  https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz | tar -xzv -C ~/Downloads/
-    mkdir -p $HOME/.nvim
-    mv ~/Downloads/nvim-linux64 $HOME/.nvim/
-    # sudo apt-get install -y neovim
-    # install ripgrep
+    echo "install ripgrep..."
     if has_cmd "cargo"; then
       cargo install ripgrep
     else
       sudo apt-get install -y ripgrep
     fi
+    echo "install ripgrep done."
     # apt-get install python-pip python3-pip python-dev python-pip python3-dev python3-pip
-    echo "install neovim done."
 }
 
 install_zsh() {
-    if has_cmd "zsh"; then
-        return 0
+    if ! has_cmd "zsh"; then
+        # install zsh
+        echo "install zsh..."
+        sudo apt-get install zsh
+        # change default shell
+        chsh -s $(which zsh)
+        echo "install zsh done."
     fi
-    # install zsh
-    echo "install zsh and setup oh_my_zsh..."
-    sudo apt-get install zsh
-    # change default shell
-    chsh -s $(which zsh)
-    # setup oh_my_zsh
-    sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-    # curl -sS https://starship.rs/install.sh | sh
-    echo "install zsh and setup oh_my_zsh done."
+    if [ -d "$ZSH" ]; then
+        # install oh_my_zsh
+        echo "install setup oh_my_zsh..."
+        sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+        # curl -sS https://starship.rs/install.sh | sh
+        echo "install setup oh_my_zsh done."
+    fi
 }
 
 install_nodejs() {
-    if has_cmd "node"; then
-        return 0
+    if ! has_cmd "node"; then
+        echo "install nodejs v4.x..."
+        #curl -sL https://deb.nodesource.com/setup_4.x | -E bash -
+        sudo apt-get install -y nodejs
+        echo "install nodejs v4.x done."
     fi
-    # install nodejs v4.x
-    echo "install nodejs v4.x and npm..."
-    #curl -sL https://deb.nodesource.com/setup_4.x | -E bash -
-    sudo apt-get install -y nodejs npm
-    echo "install nodejs and npm done."
+    if ! has_cmd "npm"; then
+        echo "install npm..."
+        sudo apt-get install -y npm
+        echo "install npm done."
+    fi
 }
 
 install_tmux() {
@@ -165,6 +175,21 @@ install_go(){
     echo "install go done."
 }
 
+install_deno() {
+    if ! has_cmd "cargo"; then
+        return 0
+    fi
+    # Install the Protobuf compiler
+    sudo apt install -y protobuf-compiler # Linux
+    if has_cmd "deno"; then
+        return 0
+    fi
+    echo "install deno..."
+    # Build and install Deno
+    cargo install deno --locked
+    echo "install deno done."
+}
+
 install(){
     for command in $*
     do
@@ -178,7 +203,7 @@ show_menu(){
     sudo apt -y install curl wget
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select go, rust, zk, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, or quit:"
+    echo "please select go, rust, zk, clipboard, neovim, zsh, nodejs, deno, nerdfonts, tmux, or quit:"
     echo -n "select: "
     read num
     install $num
