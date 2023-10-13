@@ -1,7 +1,13 @@
 local dap = require('dap')
 --codelldb地址https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb
 -- https://marketplace.visualstudio.com/_apis/public/gallery/publishers/vadimcn/vsextensions/vscode-lldb/1.9.2/vspackage
-local extension_path = vim.env.HOME .. '/.vscode/extensions/vadimcn.vscode-lldb-1.9.2/'
+
+-- 获取环境变量
+local extension_path = os.getenv('VSCODE_LLDB')
+if extension_path == nil then
+  extension_path = vim.env.HOME .. '/.vscode/extensions/vadimcn.vscode-lldb-1.9.2/'
+end
+
 local codelldb_path = extension_path .. 'adapter/codelldb'
 local liblldb_path = extension_path .. 'lldb/lib/liblldb'
 local this_os = vim.loop.os_uname().sysname;

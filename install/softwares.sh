@@ -178,6 +178,18 @@ install_go(){
     fi
 }
 
+install_vscode_lldb(){
+    if [ ! -d "$VSCODE_LLDB" ]; then
+        echo "install vscode lldb..."
+        mkdir -p ~/.config/golang/
+        vscode_lldb_pkg="https://marketplace.visualstudio.com/_apis/public/gallery/publishers/vadimcn/"
+        version="vsextensions/vscode-lldb/1.10.0/vspackage"
+        wget --no-check-certificate -O - "${vscode_lldb_pkg}${version}" | unzip
+        echo "install vscode lldb done."
+    fi
+}
+
+
 install(){
     for command in $*
     do
