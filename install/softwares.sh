@@ -175,21 +175,6 @@ install_go(){
     echo "install go done."
 }
 
-install_deno() {
-    if ! has_cmd "cargo"; then
-        return 0
-    fi
-    # Install the Protobuf compiler
-    sudo apt install -y protobuf-compiler # Linux
-    if has_cmd "deno"; then
-        return 0
-    fi
-    echo "install deno..."
-    # Build and install Deno
-    cargo install deno --locked
-    echo "install deno done."
-}
-
 install(){
     for command in $*
     do
@@ -203,7 +188,7 @@ show_menu(){
     sudo apt -y install curl wget
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select go, rust, zk, clipboard, neovim, zsh, nodejs, deno, nerdfonts, tmux, or quit:"
+    echo "please select go, rust, zk, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, or quit:"
     echo -n "select: "
     read num
     install $num

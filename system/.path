@@ -2,7 +2,6 @@
 
 prepend-path "$GOROOT/bin"
 prepend-path "$GOPATH/bin"
-prepend-path "$DENO_INSTALL/bin"
 prepend-path "$HOME/.local/share/nvim/mason/bin"
 
 # set PATH so it includes user's private bin if it exists
