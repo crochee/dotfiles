@@ -26,11 +26,6 @@ install_zk(){
     curl -L https://github.com/mickael-menu/zk/releases/download/v0.14.0/zk-v0.14.0-linux-amd64.tar.gz | tar -xzv -C ~/Downloads/
     chmod a+x ~/Downloads/zk
     sudo mv ~/Downloads/zk /usr/local/bin
-    if has_cmd "cargo"; then
-        cargo install --locked bat
-    else
-        sudo apt install -y bat
-    fi
     echo "install zk done."
 }
 
@@ -73,17 +68,6 @@ install_neovim() {
         # sudo apt-get install -y neovim
         echo "install neovim done."
     fi
-    # install ripgrep
-    if has_cmd "rg"; then
-        return 0
-    fi
-    echo "install ripgrep..."
-    if has_cmd "cargo"; then
-      cargo install ripgrep
-    else
-      sudo apt-get install -y ripgrep
-    fi
-    echo "install ripgrep done."
     # apt-get install python-pip python3-pip python-dev python-pip python3-dev python3-pip
 }
 
@@ -96,7 +80,7 @@ install_zsh() {
         chsh -s $(which zsh)
         echo "install zsh done."
     fi
-    if [ -d "$ZSH" ]; then
+    if [ ! -d "$ZSH" ]; then
         # install oh_my_zsh
         echo "install setup oh_my_zsh..."
         sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
@@ -156,23 +140,42 @@ install_nerdfonts() {
 }
 
 install_rust() {
-    if has_cmd "cargo"; then
-        return 0
+    if ! has_cmd "cargo"; then
+        echo "install rust..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        echo "install rust done."
     fi
-    echo "install rust..."
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-    echo "install rust done."
+    if ! has_cmd "bat"; then
+        echo "install bat..."
+        cargo install --locked bat
+        echo "install bat done."
+    fi
+    # install ripgrep
+    if ! has_cmd "rg"; then
+        echo "install ripgrep..."
+        cargo install ripgrep
+        echo "install ripgrep done."
+    fi
 }
 
 install_go(){
-    if has_cmd "go"; then
-        return 0
+    if ! has_cmd "go"; then
+        echo "install go..."
+        mkdir -p ~/.config/golang/
+        local GO_VERSION="1.17.13"
+        wget --no-check-certificate -O - https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz | tar -C ~/.config/golang -xzf
+        echo "install go done."
     fi
-    echo "install go..."
-    mkdir -p ~/.config/golang/
-    local GO_VERSION="1.17.13"
-    wget --no-check-certificate -O - https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz | tar -C ~/.config/golang -xzf
-    echo "install go done."
+    if ! has_cmd "mockgen"; then
+        echo "install mockgen..."
+        go install go.uber.org/mock/mockgen@latest
+        echo "install mockgen done."
+    fi
+    if ! has_cmd "gotests"; then
+        echo "install gotests..."
+        go install github.com/cweill/gotests/gotests@latest
+        echo "install gotests done."
+    fi
 }
 
 install(){
