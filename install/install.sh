@@ -147,6 +147,28 @@ install_neovim_config(){
     msg "install neovim config done!\n"
 }
 
+install_cargo(){
+    msg "install cargo...\n"
+    local path_to_cargo="${CARGO_HOME}"
+    msg "check ${path_to_cargo}"
+    if [ -e $path_to_cargo ]
+        then
+            msg " √\n"
+        else
+            msg " ✘\n"
+            msg "mkdir directory ${path_to_cargo}"
+            if mkdir -p "${path_to_cargo}" > /dev/null 2>&1
+            then
+                msg " √\n"
+            else
+                msg " ✘\n"
+                exit 1
+            fi
+    fi
+    mk_symlink "${TARGET}/cargo/config.toml" "${path_to_cargo}/config.toml"
+    msg "install cargo done!\n"
+}
+
 install_zk(){
     msg "installing zk...\n"
     local path_to_notes="${HOME}/.config/notes"
@@ -174,15 +196,17 @@ show_menu(){
     msg_title "INSTALL"
     echo "1) install neovim config"
     echo "2) install dotfiles"
-    echo "3) install zk"
-    echo "4) install dotfiles and neovim config"
+    echo "3) install dotfiles and neovim config"
+    echo "4) install zk"
+    echo "5) install cargo config"
     echo -n "select: "
     read num
     case $num in
         1) check_repo && install_neovim_config ;;
         2) check_repo && install_dotfiles ;;
-        3) check_repo && install_zk ;;
-        4) check_repo && install_dotfiles && install_neovim_config ;;
+        3) check_repo && install_dotfiles && install_neovim_config ;;
+        4) check_repo && install_zk ;;
+        5) check_repo && install_cargo ;;
         *) msg "your option is invalid! Goodbye!";;
     esac
 }

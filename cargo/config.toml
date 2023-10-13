@@ -1,0 +1,28 @@
+[alias]
+b = "build"
+c = "check"
+d = "doc"
+t = "test"
+r = "run"
+rm = "remove"
+rr = "run --release"
+recursive_example = "rr --example recursions"
+space_example = ["run", "--release", "--", "\"command list\""]
+
+[source.crates-io]
+# registry = "https://github.com/rust-lang/crates.io-index"
+registry = "git://github.com/rust-lang/crates.io-index.git"
+# replace-with = "rsproxy"
+
+[source.ustc]
+registry = "git://mirrors.ustc.edu.cn/crates.io-index"
+
+[source.rsproxy]
+registry = "https://rsproxy.cn/crates.io-index"
+
+[source.tuna]
+registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"
+
+[net]
+retry = 3                   # network retries
+git-fetch-with-cli = true   # use the `git` executable for git operations
