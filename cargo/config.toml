@@ -10,9 +10,9 @@ recursive_example = "rr --example recursions"
 space_example = ["run", "--release", "--", "\"command list\""]
 
 [source.crates-io]
-# registry = "https://github.com/rust-lang/crates.io-index"
-registry = "git://github.com/rust-lang/crates.io-index.git"
-# replace-with = "rsproxy"
+registry = "https://github.com/rust-lang/crates.io-index"
+# registry = "git://gtthub.com/rust-lang/crates.io-index.git"
+replace-with = "rsproxy"
 
 [source.ustc]
 registry = "git://mirrors.ustc.edu.cn/crates.io-index"
