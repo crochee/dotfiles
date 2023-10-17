@@ -15,6 +15,7 @@ local M = {
     'leoluz/nvim-dap-go',
     'theHamsta/nvim-dap-virtual-text',
     "rcarriga/nvim-dap-ui",
+    'simrat39/rust-tools.nvim',
   }
 }
 
@@ -103,7 +104,7 @@ function M.config()
     {
       name = "codelldb",
       alone = true,
-      need_installed = false,
+      need_installed = true,
     }
   }
 

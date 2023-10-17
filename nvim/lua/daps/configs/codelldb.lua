@@ -1,25 +1,26 @@
-local dap = require('dap')
+local status, dap = pcall(require, "dap")
+if not status then
+  vim.notify("not found dap")
+  return
+end
 --codelldb地址https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb
 -- https://marketplace.visualstudio.com/_apis/public/gallery/publishers/vadimcn/vsextensions/vscode-lldb/1.9.2/vspackage
-
--- 获取环境变量
-local extension_path = os.getenv('VSCODE_LLDB')
-if extension_path == nil then
-  extension_path = vim.env.HOME .. '/.vscode/extensions/vadimcn.vscode-lldb-1.9.2/'
-end
-
-local codelldb_path = extension_path .. 'adapter/codelldb'
-local liblldb_path = extension_path .. 'lldb/lib/liblldb'
+local extension_path = vim.fn.stdpath("data") .. "/mason/packages/codelldb/extension/"
+local codelldb_path = ''
+local liblldb_path = ''
 local this_os = vim.loop.os_uname().sysname;
-local package_path = '' -- set your windows path
 -- The path in windows is different
 if this_os:find "Windows" then
-  codelldb_path = package_path .. "adapter\\codelldb.exe"
-  liblldb_path = package_path .. "lldb\\bin\\liblldb.dll"
+  codelldb_path = extension_path .. "adapter/codelldb.exe"
+  liblldb_path = extension_path .. "lldb/bin/liblldb.dll"
 else
+  codelldb_path = extension_path .. 'adapter/codelldb'
   -- The liblldb extension is .so for linux and .dylib for macOS
-  liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
+  liblldb_path = extension_path .. 'lldb/lib/liblldb' .. (this_os == "Linux" and ".so" or ".dylib")
 end
+
+vim.notify(codelldb_path .. " " .. liblldb_path)
+
 -- 参考 dap.configurations.codelldb
 dap.adapters.codelldb = {
   type = 'server',
@@ -30,6 +31,7 @@ dap.adapters.codelldb = {
     detached = vim.fn.has('win32') == 0,
   },
 }
+
 dap.configurations.cpp = {
   {
     name = "Launch file",
@@ -39,7 +41,6 @@ dap.configurations.cpp = {
       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
     end,
     cwd = '${workspaceFolder}',
-    stopOnEntry = false,
   },
 }
 
@@ -80,32 +81,11 @@ dap.configurations.c = dap.configurations.cpp
 --   "sourceLanguages": [
 --     "rust"
 --   ],}
-local executableArgs = {}
-dap.configurations.rust = {
-  {
-    name = "Launch file",
-    type = "codelldb",
-    request = "launch",
-    program = function()
-      local input = vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-      executableArgs = {}
-      for word in string.gmatch(input, '%S+') do
-        table.insert(executableArgs, word)
-      end
-      if #executableArgs > 1 then
-        table.insert(executableArgs, "--exact")
-        table.insert(executableArgs, "--nocapture")
-      end
-      local path = executableArgs[1]
-      table.remove(executableArgs, 1)
-      return path
-    end,
-    args = executableArgs or {}, -- 参考vscode 的debug设置
-    cwd = '${workspaceFolder}',
-    stopOnEntry = false,
-    sourceLanguages = {
-      "rust"
-    },
-    runInTerminal = false,
-  },
+local opts = {
+  -- ... other configs
+  dap = {
+    adapter = dap.adapters.codelldb,
+  }
 }
+-- Normal setup
+require('rust-tools').setup(opts)

@@ -178,18 +178,6 @@ install_go(){
     fi
 }
 
-install_vscode_lldb(){
-    if [ ! -d "$VSCODE_LLDB" ]; then
-        echo "install vscode lldb..."
-        mkdir -p ~/.config/golang/
-        vscode_lldb_pkg="https://marketplace.visualstudio.com/_apis/public/gallery/publishers/vadimcn/"
-        version="vsextensions/vscode-lldb/1.10.0/vspackage"
-        wget --no-check-certificate -O - "${vscode_lldb_pkg}${version}" | unzip
-        echo "install vscode lldb done."
-    fi
-}
-
-
 install(){
     for command in $*
     do
@@ -203,10 +191,15 @@ show_menu(){
     sudo apt -y install curl wget
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select go, rust, zk, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, or quit:"
+    echo "please select go, rust, zk, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, codelldb, or quit:"
     echo -n "select: "
     read num
     install $num
 }
 
-show_menu
+if [ "$#" -eq 0 ]; then
+    show_menu
+else
+    mkdir -p ~/Downloads
+    install $*
+fi
