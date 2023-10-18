@@ -10,7 +10,11 @@ function M.config()
     vim.notify("没有找到 crates")
     return
   end
-  crates.setup {}
+  crates.setup({
+    src = {
+      cmp = { enabled = true },
+    },
+  })
 end
 
 return M

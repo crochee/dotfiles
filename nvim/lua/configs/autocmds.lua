@@ -47,15 +47,26 @@ api.nvim_create_autocmd(
   }
 )
 
-
--- windows to close with "q"
-api.nvim_create_autocmd(
-  "FileType",
-  {
-    pattern = { "help", "startuptime", "qf", "lspinfo" },
-    command = [[nnoremap <buffer><silent> q :close<CR>]]
-  }
-)
+-- close some filetypes with <q>
+api.nvim_create_autocmd("FileType", {
+  group = augroup("close_with_q"),
+  pattern = {
+    "PlenaryTestPopup",
+    "help",
+    "lspinfo",
+    "notify",
+    "qf",
+    "query",
+    "spectre_panel",
+    "startuptime",
+    "tsplayground",
+    "neotest-output",
+    "checkhealth",
+    "neotest-summary",
+    "neotest-output-panel",
+  },
+  command = [[nnoremap <buffer><silent> q :close<CR>]]
+})
 
 api.nvim_create_autocmd(
   "FileType",
@@ -64,6 +75,16 @@ api.nvim_create_autocmd(
     command = [[nnoremap <buffer><silent> q :quit<CR>]]
   }
 )
+
+-- wrap and check for spell in text filetypes
+api.nvim_create_autocmd("FileType", {
+  group = augroup("wrap_spell"),
+  pattern = { "gitcommit", "markdown" },
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.spell = true
+  end,
+})
 
 -- auto set tab, width, etc... according file type
 api.nvim_create_autocmd(
@@ -123,6 +144,17 @@ api.nvim_create_autocmd(
   }
 )
 
+-- Auto create dir when saving a file, in case some intermediate directory does not exist
+api.nvim_create_autocmd({ "BufWritePre" }, {
+  group = augroup("auto_create_dir"),
+  callback = function(event)
+    if event.match:match("^%w%w+://") then
+      return
+    end
+    local file = vim.loop.fs_realpath(event.match) or event.match
+    vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
+  end,
+})
 
 if vim.fn.has("wsl") == 1 then
   -- Set clipboard to use win32yank 设置剪贴板为win32yank,WSL与Windows同步剪贴板

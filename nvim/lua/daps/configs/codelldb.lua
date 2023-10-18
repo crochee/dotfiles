@@ -5,32 +5,31 @@ if not status then
 end
 --codelldb地址https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb
 -- https://marketplace.visualstudio.com/_apis/public/gallery/publishers/vadimcn/vsextensions/vscode-lldb/1.9.2/vspackage
-local extension_path = vim.fn.stdpath("data") .. "/mason/packages/codelldb/extension/"
-local codelldb_path = ''
-local liblldb_path = ''
-local this_os = vim.loop.os_uname().sysname;
--- The path in windows is different
-if this_os:find "Windows" then
-  codelldb_path = extension_path .. "adapter/codelldb.exe"
-  liblldb_path = extension_path .. "lldb/bin/liblldb.dll"
-else
-  codelldb_path = extension_path .. 'adapter/codelldb'
-  -- The liblldb extension is .so for linux and .dylib for macOS
-  liblldb_path = extension_path .. 'lldb/lib/liblldb' .. (this_os == "Linux" and ".so" or ".dylib")
+-- rust tools configuration for debugging support
+local ok, mason_registry = pcall(require, "mason-registry")
+if ok then
+  local codelldb = mason_registry.get_package("codelldb")
+  local extension_path = codelldb:get_install_path() .. "/extension/"
+  local codelldb_path = extension_path .. "adapter/codelldb"
+  local liblldb_path = ""
+  if vim.loop.os_uname().sysname:find("Windows") then
+    liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
+  elseif vim.fn.has("mac") == 1 then
+    liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"
+  else
+    liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+  end
+  -- 参考 dap.configurations.codelldb
+  dap.adapters.codelldb = {
+    type = 'server',
+    port = '${port}',
+    executable = {
+      command = codelldb_path,
+      args = { "--liblldb", liblldb_path, '--port', '${port}' },
+      detached = vim.fn.has('win32') == 0,
+    },
+  }
 end
-
-vim.notify(codelldb_path .. " " .. liblldb_path)
-
--- 参考 dap.configurations.codelldb
-dap.adapters.codelldb = {
-  type = 'server',
-  port = '${port}',
-  executable = {
-    command = codelldb_path,
-    args = { "--liblldb", liblldb_path, '--port', '${port}' },
-    detached = vim.fn.has('win32') == 0,
-  },
-}
 
 dap.configurations.cpp = {
   {
@@ -81,11 +80,3 @@ dap.configurations.c = dap.configurations.cpp
 --   "sourceLanguages": [
 --     "rust"
 --   ],}
-local opts = {
-  -- ... other configs
-  dap = {
-    adapter = dap.adapters.codelldb,
-  }
-}
--- Normal setup
-require('rust-tools').setup(opts)

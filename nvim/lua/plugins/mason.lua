@@ -38,53 +38,7 @@ function M.config()
     install_root_dir = vim.fn.stdpath("data") .. "/mason",
   })
 
-  -------------------- LSP Install List
-  -- https://github.com/williamboman/nvim-lsp-installer#available-lsps
-  -- { key: lsp_name, value: lsp_config }
-  local mason_lspconfig
-  status, mason_lspconfig = pcall(require, "mason-lspconfig")
-  if not status then
-    vim.notify("Plugin `mason-lspconfig` not found")
-    return
-  end
 
-  local lspconfig
-  status, lspconfig = pcall(require, "lspconfig")
-  if not status then
-    vim.notify("Plugin `lspconfig` not found")
-    return
-  end
-
-
-  local servers = {
-    gopls = require("lsp.gopls"),
-    rust_analyzer = require("lsp.rust_analyzer"),
-    lua_ls = require("lsp.lua"),
-    bashls = require("lsp.bashls"),
-    jsonls = require("lsp.jsonls"),
-    pyright = require("lsp.pyright"),
-    vimls = require("lsp.vimls"),
-    cssls = require("lsp.cssls"),
-    html = require("lsp.html"),
-    golangci_lint_ls = require("lsp.golangci_lint_ls"),
-    denols = require("lsp.denols"),
-    eslint = require("lsp.eslint"),
-  }
-
-  local ensure_installed = { type = "list" }
-  for name, _ in pairs(servers) do
-    table.insert(ensure_installed, name)
-  end
-
-  mason_lspconfig.setup({
-    ensure_installed = ensure_installed,
-    automatic_installation = true,
-  })
-
-  -- 加载配置
-  for name, config in pairs(servers) do
-    lspconfig[name].setup(config)
-  end
   -----------------dap Install List ---------------------
   local mason_dap
   status, mason_dap = pcall(require, "mason-nvim-dap")
@@ -133,6 +87,60 @@ function M.config()
 
   for _, ele in pairs(alones) do
     require(ele)
+  end
+
+  -------------------- LSP Install List
+  -- https://github.com/williamboman/nvim-lsp-installer#available-lsps
+  -- { key: lsp_name, value: lsp_config }
+  local mason_lspconfig
+  status, mason_lspconfig = pcall(require, "mason-lspconfig")
+  if not status then
+    vim.notify("Plugin `mason-lspconfig` not found")
+    return
+  end
+
+  local lspconfig
+  status, lspconfig = pcall(require, "lspconfig")
+  if not status then
+    vim.notify("Plugin `lspconfig` not found")
+    return
+  end
+  local servers = {
+    gopls = require("lsp.gopls"),
+    rust_analyzer = require("lsp.rust_analyzer"),
+    lua_ls = require("lsp.lua"),
+    bashls = require("lsp.bashls"),
+    jsonls = require("lsp.jsonls"),
+    pyright = require("lsp.pyright"),
+    vimls = require("lsp.vimls"),
+    cssls = require("lsp.cssls"),
+    html = require("lsp.html"),
+    golangci_lint_ls = require("lsp.golangci_lint_ls"),
+    denols = require("lsp.denols"),
+    eslint = require("lsp.eslint"),
+  }
+
+  local ensure_installed = { type = "list" }
+  for name, _ in pairs(servers) do
+    table.insert(ensure_installed, name)
+  end
+
+  mason_lspconfig.setup({
+    ensure_installed = ensure_installed,
+    automatic_installation = true,
+  })
+
+  -- 加载配置
+  for name, config in pairs(servers) do
+    if config.setup then
+      -- config删除setup元素
+      local opts = vim.tbl_deep_extend("force", config, {
+        setup = nil,
+      })
+      config.setup(opts)
+    else
+      lspconfig[name].setup(config)
+    end
   end
 end
 

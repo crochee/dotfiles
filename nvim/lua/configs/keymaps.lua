@@ -18,19 +18,8 @@ local opt = {
 --   term_mode = "t",
 --   command_mode = "c",
 
----------- ------------magic search -----------------------
--- map("n", "/", "/\\v", {
---   noremap = true,
---   silent = false
--- })
--- map("v", "/", "/\\v", {
---   noremap = true,
---   silent = false
--- })
-
 -- save 插入模式下保存并退出到正常模式
-map("i", "<leader><Tab>", "<ESC>:w<CR>", opt)
-map("n", "<leader><Tab>", ":w<CR>", opt)
+map({ "i", "x", "n", "s" }, "<leader><Tab>", "<cmd>w<cr><esc>", { desc = "Save file" })
 
 -- Clean search (highlight)取消高亮
 map("n", "<leader><space>", ":noh<CR>", opt)
