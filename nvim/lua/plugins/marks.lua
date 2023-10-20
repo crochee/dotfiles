@@ -5,7 +5,6 @@ local M = {
 
 function M.config()
   require("marks").setup({
-    default_mappings = false,
   })
 end
 
