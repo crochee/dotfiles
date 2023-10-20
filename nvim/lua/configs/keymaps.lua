@@ -89,17 +89,6 @@ map("n", "<leader>cc", ":bd<CR>", opt)
 map("n", "<leader>cr", ":BufferLineCloseRight<CR>", opt)
 map("n", "<leader>cl", ":BufferLineCloseLeft<CR>", opt)
 
---------------------------------- hop for easy motion --------------
--- map('', 'f',
---   "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>"
---   , {})
--- map('', 'F',
---   "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>"
---   , {})
--- map('n', 't', "<cmd>HopWord<cr>", {})
-map('n', '<leader>df', ':HopChar1<CR>', opt)
-map('n', '<leader>dw', ':HopChar2<CR>', opt)
-
 ------------------------------- Telescope  文件搜索 -------------------------
 map("n", "<leader>ff", ":Telescope find_files<CR>", opt)
 map("n", "<leader>fg", ":Telescope live_grep<CR>", opt)
