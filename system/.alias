@@ -6,7 +6,6 @@ else
     alias reload="source ~/.zshrc"
 fi
 
-alias g="git"
 alias rr="rm -rf"
 
 alias wk="cd $WORKSPACE"
