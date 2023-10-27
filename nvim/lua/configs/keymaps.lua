@@ -282,4 +282,7 @@ map("n", "<leader>zf",
 -- Search for the notes matching the current visual selection.
 map("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opt)
 
+----------------------marks-------------------------------------
+map("n", "<leader>ma", "<Cmd>MarksListAll<CR>", opt)
+
 return pluginKeys
