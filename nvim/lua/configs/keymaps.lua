@@ -36,15 +36,15 @@ map("v", "K", ":m '<-2<CR>gv=gv", opt)
 
 ----------------------- 分屏快捷键 ---------------------
 -- sv 水平分屏sh 垂直分屏sc 关闭当前分屏 (s = close)so
-map("n", "sv", ":vsp<CR>", opt) --水平分屏
-map("n", "sh", ":sp<CR>", opt)  --垂直分屏
-map("n", "sc", "<C-w>c", opt)   --关闭当前分屏 (s = close)
-map("n", "so", "<C-w>o", opt)   --关闭其他分屏 (o = other)
+map("n", "vsp", ":vsp<CR>", opt) --水平分屏
+map("n", "hsp", ":sp<CR>", opt)  --垂直分屏
 -- alt + hjkl 在窗口之间跳转
 map("n", "<A-h>", "<C-w>h", opt)
 map("n", "<A-j>", "<C-w>j", opt)
 map("n", "<A-k>", "<C-w>k", opt)
 map("n", "<A-l>", "<C-w>l", opt)
+map("n", "<A-o>", "<C-w>o", opt) --关闭其他分屏 (o = other)
+map("n", "<A-c>", "<C-w>c", opt) --关闭当前分屏 (s = close)
 
 --------------------------------------------------------------------
 
