@@ -18,17 +18,6 @@ has_cmd() {
     fi
 }
 
-install_zk(){
-    if has_cmd "zk"; then
-        return 0
-    fi
-    echo "install zk..."
-    curl -L https://github.com/mickael-menu/zk/releases/download/v0.14.0/zk-v0.14.0-linux-amd64.tar.gz | tar -xzv -C ~/Downloads/
-    chmod a+x ~/Downloads/zk
-    sudo mv ~/Downloads/zk /usr/local/bin
-    echo "install zk done."
-}
-
 install_clipboard() {
     # 检查系统是否为WSL
     if [ -f "/proc/version" ]; then
@@ -191,7 +180,7 @@ show_menu(){
     sudo apt -y install curl wget
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select go, rust, zk, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, codelldb, or quit:"
+    echo "please select go, rust, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, or quit:"
     echo -n "select: "
     read num
     install $num
