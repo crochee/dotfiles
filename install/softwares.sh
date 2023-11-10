@@ -151,19 +151,17 @@ install_go(){
     if ! has_cmd "go"; then
         echo "install go..."
         mkdir -p ~/.config/golang/
-        local GO_VERSION="1.17.13"
-        wget --no-check-certificate -O - https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz | tar -C ~/.config/golang -xzf
+        local GO_VERSION="1.21.4"
+        cd ~/Downloads/
+        wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
+        tar -C ~/.config/golang -xzf go${GO_VERSION}.linux-amd64.tar.gz
+        cd $SCRIPT_PATH
         echo "install go done."
     fi
     if ! has_cmd "mockgen"; then
         echo "install mockgen..."
         go install go.uber.org/mock/mockgen@latest
         echo "install mockgen done."
-    fi
-    if ! has_cmd "gotests"; then
-        echo "install gotests..."
-        go install github.com/cweill/gotests/gotests@latest
-        echo "install gotests done."
     fi
 }
 
@@ -192,3 +190,5 @@ else
     mkdir -p ~/Downloads
     install $*
 fi
+
+unset SCRIPT_PATH GO_VERSION
