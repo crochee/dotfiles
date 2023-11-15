@@ -250,7 +250,7 @@ map('n', '<leader>ms', ':MarkdownPreviewStop<CR>', opt)
 map('n', '<leader>mt', ':MarkdownPreviewToggle<CR>', opt)
 
 -----------------------goimpl---------------------------------
-map('n', '<leader>im', '<Plug>(go-impl>')
+map('n', '<leader>im', "<Cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>", opt)
 
 -----------------------open file with browser-------------------
 function _SHOW_BROWSER_FILE_PATH()

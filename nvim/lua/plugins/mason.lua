@@ -47,6 +47,8 @@ function M.config()
     return
   end
 
+  require("telescope").load_extension("dap")
+
   -- import dap's config
   require("daps.config")
   local list = {

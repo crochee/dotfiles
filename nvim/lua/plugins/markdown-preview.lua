@@ -5,13 +5,13 @@ local M = {
   -- -- install with yarn or npm
   build = "cd app && npm install",
   lazy = true,
-  ft = { "markdown", "markdown.mkd" },
+  ft = { "markdown" },
 }
 
 function M.config()
   vim.g.mkdp_echo_preview_url = true
   vim.g.mkdp_theme = "light"
-  vim.g.mkdp_filetypes = { "markdown", "markdown.mkd" }
+  vim.g.mkdp_filetypes = { "markdown" }
   vim.g.markdown_fenced_languages = {
     'html',
     'bash=sh',

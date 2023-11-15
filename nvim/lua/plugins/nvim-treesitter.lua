@@ -4,7 +4,7 @@ local M = {
 }
 
 function M.config()
-  require('nvim-treesitter.configs').setup {
+  require('nvim-treesitter.configs').setup({
     -- 安装 language parser
     -- :TSInstallInfo 命令查看支持的语言
     ensure_installed = {
@@ -36,7 +36,7 @@ function M.config()
     auto_install = true,
     highlight = {
       enable = true,
-      additional_vim_regex_highlighting = false
+      additional_vim_regex_highlighting = { "markdown" },
     },
     -- incremental_selection = {
     --   enable = true,
@@ -51,7 +51,7 @@ function M.config()
     indent = {
       enable = false
     }
-  }
+  })
   -- 开启 Folding
   -- vim.wo.foldmethod = 'expr'
   -- vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'

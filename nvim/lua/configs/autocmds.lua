@@ -111,15 +111,6 @@ api.nvim_create_autocmd('FileType', {
   end,
 })
 
-
-api.nvim_create_autocmd(
-  { "BufRead", "BufNewFile" },
-  {
-    pattern = { "*.md", "*.mkd", "*.markdown" },
-    command = [[set filetype=markdown.mkd]]
-  }
-)
-
 api.nvim_create_autocmd(
   { "BufRead", "BufNewFile" },
   {

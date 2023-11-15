@@ -17,6 +17,7 @@ function M.config()
     -- Table of lsp clients to ignore by name
     -- eg: { "efm", ... }
   }
+  require("telescope").load_extension("projects")
 end
 
 return M

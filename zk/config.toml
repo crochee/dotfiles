@@ -9,7 +9,7 @@
 default-title = "Untitled"
 
 # Template used to generate a note's filename, without extension.
-filename = "{{format-date now '%Y_%m_%d'}}/{{id}}_{{slug title}}"
+filename = "{{format-date now '%Y_%m_%d'}}/{{id}}_{{title}}"
 
 # The file extension used for the notes.
 extension = "md"
