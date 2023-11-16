@@ -51,9 +51,7 @@ install_neovim() {
     if ! has_cmd "nvim"; then
         # install neovim
         echo "install neovim..."
-        curl -L  https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz | tar -xzv -C ~/Downloads/
-        mkdir -p $HOME/.local/bin/.nvim
-        mv ~/Downloads/nvim-linux64 $HOME/.local/bin/.nvim
+        curl -L  https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz|tar -xzv -C ~/.local/bin
         # sudo apt-get install -y neovim
         echo "install neovim done."
     fi
