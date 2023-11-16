@@ -4,7 +4,7 @@ if require("zk.util").notebook_root(vim.fn.expand('%:p')) ~= nil then
   local opts = { noremap = true, silent = false }
 
   -- Open the link under the caret.
-  map("n", "<CR>", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
+  map("n", "<leader>gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
 
   -- Create a new note after asking for its title.
   -- This overrides the global `<leader>zn` mapping to create the note in the same directory as the current buffer.
@@ -23,7 +23,7 @@ if require("zk.util").notebook_root(vim.fn.expand('%:p')) ~= nil then
   map("n", "<leader>zl", "<Cmd>ZkLinks<CR>", opts)
 
   -- Preview a linked note.
-  map("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", opts)
+  map("n", "<leader>gh", "<Cmd>lua vim.lsp.buf.hover()<CR>", opts)
   -- Open the code actions for a visual selection.
   map("v", "<leader>za", ":'<,'>lua vim.lsp.buf.range_code_action()<CR>", opts)
 end

@@ -16,6 +16,7 @@ api.nvim_create_autocmd({
 
 -- Highlight on yank
 api.nvim_create_autocmd("TextYankPost", {
+  pattern = "*",
   command = "silent! lua vim.highlight.on_yank()",
   group = augroup("highlight_yank"),
 })
@@ -42,6 +43,7 @@ api.nvim_create_autocmd(
 api.nvim_create_autocmd(
   "BufReadPost",
   {
+    pattern = "*",
     command = [[if line("'\"") > 1 && line("'\"") <= line("$") | execute "normal! g`\"" | endif]],
     group = augroup("last_loc")
   }
@@ -73,6 +75,14 @@ api.nvim_create_autocmd(
   {
     pattern = "man",
     command = [[nnoremap <buffer><silent> q :quit<CR>]]
+  }
+)
+
+api.nvim_create_autocmd(
+  "FileType",
+  {
+    pattern = "*",
+    command = [[filetype plugin on]]
   }
 )
 
