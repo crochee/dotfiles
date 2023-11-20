@@ -3,13 +3,13 @@ local M = {
   event = 'VeryLazy',
   keys = {
     {
-      "s",
+      "<leader>s",
       mode = { "n", "x", "o" },
       function() require("flash").jump() end,
       desc = "Flash"
     },
     {
-      "S",
+      "<leader>e",
       mode = { "n", "x", "o" },
       function() require("flash").treesitter() end,
       desc = "Flash Treesitter"
