@@ -24,7 +24,6 @@ require("lazy").setup({
   'folke/lazy.nvim',
   -- Edit
   'rafamadriz/friendly-snippets',
-  'machakann/vim-sandwich',
 
   -- import/override with your plugins
   { import = "plugins" },

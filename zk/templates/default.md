@@ -1,21 +1,7 @@
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <title>{{title}}</title>
-  </head>
-  <body>
-  </body>
-  <footer>
-      <p>{{id}}</p>
-      <p>{{format-date now '%Y-%m-%d %H:%M:%S'}}</p>
-  </footer>
-</html>
-```
----
+<div style="text-align: center">
+    <h4>创建时间: {{format-date now '%Y-%m-%d %H:%M:%S'}}</h4>
+</div>
+
 # {{title}}
 
 {{content}}

@@ -20,6 +20,9 @@ function M.config()
     persist_size = true,
     direction = 'float',
     close_on_exit = true,
+    on_open = function(term)
+      vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+    end,
     shell = vim.o.shell,
     float_opts = {
       border = "double", -- 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
@@ -36,25 +39,22 @@ function M.config()
       end
     },
   })
-  local Terminal = require("toggleterm.terminal").Terminal
 
   -- local lazygit = Terminal:new({ cmd = "lazygit", hidden = true })
-  local lazygit = Terminal:new({
-    id = 1000, --[[ 解决lazygit关闭通用窗口问题 ]]
-    cmd = "lazygit",
-    dir = "git_dir",
-    direction = "float",
-    float_opts = {
-      border = "curved", -- 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
-    },
-    -- function to run on opening the terminal
-    on_open = function(term)
-      vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
-    end,
-  })
+  function _LAZYGIT_OPEN(opts)
+    opts = vim.tbl_deep_extend("force", {}, opts or {})
 
-  function _LAZYGIT_TOGGLE()
-    lazygit:toggle()
+    local cmd = { "lazygit" }
+    vim.list_extend(cmd, opts.args or {})
+
+    require("toggleterm.terminal").Terminal:new({
+      id = 1000, --[[ 解决lazygit关闭通用窗口问题 ]]
+      dir = "git_dir",
+      float_opts = {
+        border = "curved", -- 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+      },
+      cmd = table.concat(cmd, " "),
+    }):toggle()
   end
 end
 

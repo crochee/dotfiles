@@ -83,26 +83,12 @@ vim.o.pumheight = 10
 vim.o.showtabline = 2
 -- 使用增强状态栏插件后不再需要 vim 的模式提示
 vim.o.showmode = false
--- 代码折叠
-vim.opt.foldenable = true
--- 折叠方法
--- manual    手工折叠
--- indent    使用缩进表示折叠
--- expr      使用表达式定义折叠
--- syntax    使用语法定义折叠
--- diff      对没有更改的文本进行折叠
--- marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
-vim.opt.foldlevel = 99
-vim.opt.foldtext = "require'util'.ui.foldtext()"
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "vim.treesitter.foldexpr()"
 
 -- 配置剪切板的内来源为寄存器"*(主选择)和"+（剪切）
 vim.opt.clipboard = "unnamed,unnamedplus"
 
-vim.g.loaded_python3_provider = 0
-vim.g.loaded_node_provider = 0
-vim.g.loaded_perl_provider = 0
+vim.g.python3_host_prog = "/usr/bin/python3"
 
-vim.opt.grepformat = "%f:%l:%c:%m"
-vim.opt.grepprg = "rg --vimgrep"
+vim.g.loaded_node_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_perl_provider = 0

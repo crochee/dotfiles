@@ -1,15 +1,12 @@
 # Shortcuts
-
-if [[ $SHELL == "/bin/bash" ]]; then
-    alias reload="source ~/.bashrc"
-else
-    alias reload="source ~/.zshrc"
-fi
+alias rl="exec bash"
 
 alias rr="rm -rf"
+alias v="nvim"
 
 alias wk="cd $WORKSPACE"
-
+alias notes="cd $HOME/.config/notes"
+alias dot="cd $DOTFILES_DIR"
 # Directory listing/traversal
 
 # Set LSCOLORS
@@ -40,5 +37,9 @@ alias .....="cd ../../../.."
 
 # custom
 alias dcs="cd $WORKSPACE/project/dcs"
-alias notes="cd $HOME/.config/notes"
-alias dot="cd $DOTFILES_DIR"
+
+function gph {
+  if (($# == 1)); then
+    command git push origin "HEAD:$*"
+  fi
+}

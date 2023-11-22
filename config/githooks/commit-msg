@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+LC_ALL=C
+# <type>[optional scope]: <description>
+#
+# [optional body]
+#
+# [optional footer(s)]
+commit_msg=`cat $1`
+
+echo "feat – a new feature is introduced with the changes 增加了一个新功能
+fix – a bug fix has occurred 修复错误
+chore – changes that do not relate to a fix or feature and don't modify src or test files (for example updating dependencies) 与修复或功能无关且不修改 src 或测试文件的更改（例如更新依赖项）
+refactor – refactored code that neither fixes a bug nor adds a feature 重构的代码既不修复错误也不添加功能
+docs – updates to documentation such as a the README or other markdown files 文档更新，例如自述文件或其他Markdown 文件
+style – changes that do not affect the meaning of the code, likely related to code formatting such as white-space, missing semi-colons, and so on. 不影响代码含义的更改，可能与代码格式化有关如空格缺失分号等
+test – including new or correcting previous tests 包括新的或纠正以前的测试
+perf – performance improvements 性能改进
+ci – continuous integration related 持续集成相关
+build – changes that affect the build system or external dependencies 影响构建系统或外部依赖项的更改
+revert – reverts a previous commit 撤销上一个提交
+"
+
+ msg_re="^(feat|fix|docs|style|refactor|perf|test|chore|revert|build|ci)(\(.+\))?:\s.{1,125}"
+
+if [[ ! $commit_msg =~ $msg_re ]]; then
+  echo -e "please use conventional commit:\ntype(scope): description\n\n[optional body]\n\n[optional footer(s)]"
+  exit 1
+fi

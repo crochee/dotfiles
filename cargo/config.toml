@@ -12,7 +12,7 @@ space_example = ["run", "--release", "--", "\"command list\""]
 [source.crates-io]
 registry = "https://github.com/rust-lang/crates.io-index"
 # registry = "git://gtthub.com/rust-lang/crates.io-index.git"
-replace-with = "rsproxy"
+# replace-with = "rsproxy"
 
 # 中科大
 [source.ustc]
@@ -27,5 +27,5 @@ registry = "https://rsproxy.cn/crates.io-index"
 registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"
 
 [net]
-retry = 3                   # network retries
-git-fetch-with-cli = true   # use the `git` executable for git operations
+retry = 3                 # network retries
+git-fetch-with-cli = true # use the `git` executable for git operations

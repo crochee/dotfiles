@@ -12,6 +12,7 @@ local opts = {
       staticcheck = true,
     },
   },
+  capabilities = require('lsp.utils').capabilities,
   on_attach = function(client, bufnr)
     -- 自动执行goimports
     vim.api.nvim_create_autocmd('BufWritePre', {

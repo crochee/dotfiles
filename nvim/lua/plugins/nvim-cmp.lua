@@ -33,26 +33,28 @@ function M.config()
     },
     -- 来源
     sources = cmp.config.sources({
-      { name = 'nvim_lsp' },
-      -- For vsnip users.
-      { name = 'vsnip' },
-      -- For luasnip users.
-      -- { name = 'luasnip' },
-      --For ultisnips users.
-      -- { name = 'ultisnips' },
-      -- -- For snippy users.
-      -- { name = 'snippy' },
-    }, { { name = 'buffer' },
-      { name = 'path' }
-    }),
+        { name = 'nvim_lsp' },
+        -- For vsnip users.
+        { name = 'vsnip' },
+        -- For luasnip users.
+        -- { name = 'luasnip' },
+        --For ultisnips users.
+        -- { name = 'ultisnips' },
+        -- -- For snippy users.
+        -- { name = 'snippy' },
+      },
+      {
+        { name = 'buffer' },
+        { name = 'path' }
+      }),
 
     -- 快捷键
     mapping = require 'configs.keymaps'.cmp(cmp),
     -- 使用lspkind-nvim显示类型图标
     formatting = {
       format = lspkind.cmp_format({
-        with_text = true, -- do not show text alongside icons
-        maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+        with_text = true,         -- do not show text alongside icons
+        maxwidth = 50,            -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
         before = function(entry, vim_item)
           -- Source 显示提示来源
           vim_item.menu = "[" .. string.upper(entry.source.name) .. "]"

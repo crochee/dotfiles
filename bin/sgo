@@ -1,0 +1,37 @@
+#!/bin/sh
+set -e
+
+# 检查GOROOT是否存在
+if [ -z "$GOROOT" ]; then
+	echo "GOROOT is not set ."
+	exit 1
+fi
+
+P_DIR="$(dirname "$GOROOT")"
+
+switch_goroot() {
+	if [ ! -d "$P_DIR/$1" ]; then
+		echo "$1 is not set or directory does not exist."
+		return
+	fi
+	# 检查GOROOT是否是一个符号链接
+	if [ -d "$GOROOT" ] && [ ! -L "$GOROOT" ]; then
+		mv "$GOROOT" "$P_DIR/$(go version)"
+	elif [ -L "$GOROOT" ]; then
+		# 删除原始的GOROOT
+		rm -rf "$GOROOT"
+	fi
+	# 创建新的GOROOT
+	ln -s "$P_DIR/$1" "$GOROOT"
+}
+
+if [ "$#" -eq 0 ]; then
+	find "$P_DIR" -maxdepth 1 -type d ! -wholename "$GOROOT" ! -name 'golang' ! -name 'gopath' ! -name 'go' -printf '%f\n'
+	echo "select: "
+	read -r input
+	switch_goroot "$input"
+else
+	switch_goroot "$@"
+fi
+
+unset P_DIR

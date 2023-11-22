@@ -5,7 +5,7 @@ vim.g.maplocalleader = " "
 -- 本地变量
 local map = vim.keymap.set
 
-local opt = {
+local opts = {
   noremap = true, --禁止递归
   silent = true   --执行命令时不回显内容
 }
@@ -18,83 +18,81 @@ local opt = {
 --   term_mode = "t",
 --   command_mode = "c",
 
+local function dopts(desc)
+  return { desc = desc, noremap = true, silent = true }
+end
+
 -- save 插入模式下保存并退出到正常模式
-map({ "i", "x", "n", "s" }, "<leader><Tab>", "<cmd>w<cr><esc>", { desc = "Save file" })
+map({ "i", "x", "n", "s" }, "<leader><Tab>", "<cmd>w<cr><esc>", dopts("save and exit"))
 
 -- Clean search (highlight)取消高亮
-map("n", "<leader><space>", ":noh<CR>", opt)
+map("n", "<leader><space>", ":noh<CR>", dopts("clean highlight"))
 
--- 上下左右(kjhl)
 ------------------------- visual模式下缩进代码-----------
 
-map("v", "<", "<gv", opt)
-map("v", ">", ">gv", opt)
+map("v", "<", "<gv", dopts("indent left"))
+map("v", ">", ">gv", dopts("indent right"))
 
 -- 上下移动选中文本
-map("v", "J", ":m '>+1<CR>gv=gv", opt)
-map("v", "K", ":m '<-2<CR>gv=gv", opt)
-
------------------------ 分屏快捷键 ---------------------
--- sv 水平分屏sh 垂直分屏sc 关闭当前分屏 (s = close)so
-map("n", "vsp", ":vsp<CR>", opt) --水平分屏
-map("n", "hsp", ":sp<CR>", opt)  --垂直分屏
--- alt + hjkl 在窗口之间跳转
-map("n", "<A-h>", "<C-w>h", opt)
-map("n", "<A-j>", "<C-w>j", opt)
-map("n", "<A-k>", "<C-w>k", opt)
-map("n", "<A-l>", "<C-w>l", opt)
-map("n", "<A-o>", "<C-w>o", opt) --关闭其他分屏 (o = other)
-map("n", "<A-c>", "<C-w>c", opt) --关闭当前分屏 (s = close)
-
---------------------------------------------------------------------
+-- Move Lines
+map("n", "<A-j>", "<cmd>m .+1<cr>==", dopts("Move Down"))
+map("n", "<A-k>", "<cmd>m .-2<cr>==", dopts("Move Up"))
+map("i", "<A-j>", "<esc><cmd>m .+1<cr>==gi", dopts("Move Down"))
+map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", dopts("Move Up"))
+map("v", "<A-j>", ":m '>+1<cr>gv=gv", dopts("move down with selection"))
+map("v", "<A-k>", ":m '<-2<cr>gv=gv", dopts("move up with selection"))
 
 -- 插件快捷键
 local pluginKeys = {}
 
 -------------------------- nvimTree 目录树插件 ---------------------
-map('n', '<leader>ll', ':NvimTreeToggle<CR>', opt)
+map('n', '<leader>ll', ':NvimTreeToggle<CR>', dopts('toggle nvimtree'))
 -- 列表快捷键
 pluginKeys.nvimTree = function(bufnr)
   local api = require('nvim-tree.api')
 
-  local function opts(desc)
+  local function opt(desc)
     return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
   end
-  map('n', '<CR>', api.node.open.edit, opts('Open'))
-  map('n', '<2-LeftMouse>', api.node.open.edit, opts('Open'))
-  map('n', '<Tab>', api.node.open.preview, opts('Open Preview'))
-  map('n', '.', api.tree.toggle_hidden_filter, opts('Toggle Dotfiles'))
-  map('n', 'i', api.tree.toggle_gitignore_filter, opts('Toggle Git Ignore'))
-  map('n', 'f', api.live_filter.start, opts('Filter'))
-  map('n', 'F', api.live_filter.clear, opts('Clean Filter'))
-  map('n', 'a', api.fs.create, opts('Create'))
-  map('n', 'd', api.fs.remove, opts('Delete'))
-  map('n', 'r', api.fs.rename, opts('Rename'))
-  map('n', 'x', api.fs.cut, opts('Cut'))
-  map('n', 'c', api.fs.copy.node, opts('Copy'))
-  map('n', 'p', api.fs.paste, opts('Paste'))
-  map('n', 'R', api.tree.reload, opts('Refresh'))
-  map('n', 'A', api.tree.expand_all, opts('Expand All'))
-  map('n', 'y', api.fs.copy.filename, opts('Copy Name'))
-  map('n', 'yr', api.fs.copy.relative_path, opts('Copy Relative Path'))
-  map('n', 'ya', api.fs.copy.absolute_path, opts('Copy Absolute Path'))
+  map('n', '<CR>', api.node.open.edit, opt('Open'))
+  map('n', '<2-LeftMouse>', api.node.open.edit, opt('Open'))
+  map('n', '<Tab>', api.node.open.preview, opt('Open Preview'))
+  map('n', '.', api.tree.toggle_hidden_filter, opt('Toggle Dotfiles'))
+  map('n', 'i', api.tree.toggle_gitignore_filter, opt('Toggle Git Ignore'))
+  map('n', 'f', api.live_filter.start, opt('Filter'))
+  map('n', 'F', api.live_filter.clear, opt('Clean Filter'))
+  map('n', 'a', api.fs.create, opt('Create'))
+  map('n', 'd', api.fs.remove, opt('Delete'))
+  map('n', 'r', api.fs.rename, opt('Rename'))
+  map('n', 'x', api.fs.cut, opt('Cut'))
+  map('n', 'c', api.fs.copy.node, opt('Copy'))
+  map('n', 'p', api.fs.paste, opt('Paste'))
+  map('n', 'R', api.tree.reload, opt('Refresh'))
+  map('n', 'A', api.tree.expand_all, opt('Expand All'))
+  map('n', 'yn', api.fs.copy.filename, opt('Copy Name'))
+  map('n', 'yr', api.fs.copy.relative_path, opt('Copy Relative Path'))
+  map('n', 'ya', api.fs.copy.absolute_path, opt('Copy Absolute Path'))
 end
 
 ----------------------------------- bufferline --------------
 -- Buffer nav
-map("n", "<leader>q", ":BufferLineCyclePrev<CR>", opt)
-map("n", "<leader>w", ":BufferLineCycleNext<CR>", opt)
+map("n", "<leader>q", ":BufferLineCyclePrev<CR>", dopts("move previous buffer"))
+map("n", "<leader>w", ":BufferLineCycleNext<CR>", dopts("move next buffer"))
 -- Close buffer
-map("n", "<leader>cc", ":bd<CR>", opt)
-map("n", "<leader>cr", ":BufferLineCloseRight<CR>", opt)
-map("n", "<leader>cl", ":BufferLineCloseLeft<CR>", opt)
+map("n", "<leader>cc", ":bd<CR>", dopts("close current buffer"))
+map("n", "<leader>cr", ":BufferLineCloseRight<CR>", dopts("close right buffers"))
+map("n", "<leader>cl", ":BufferLineCloseLeft<CR>", dopts("close left buffers"))
+map("n", "<leader>co", ":BufferLineCloseRight<CR>:BufferLineCloseLeft<CR>", dopts("close other buffers"))
 
 ------------------------------- Telescope  文件搜索 -------------------------
-map("n", "<leader>ff", ":Telescope find_files<CR>", opt)
-map("n", "<leader>fg", ":Telescope live_grep<CR>", opt)
-map("n", "<leader>fs", ":Telescope lsp_document_symbols<CR>", opt)
-map("n", "<leader>fb", ":Telescope buffers<CR>", opt)
-map("n", "<leader>fh", ":Telescope help_tags<CR>", opt)
+map("n", "<leader>ff", ":Telescope find_files<CR>", opts)
+map("n", "<leader>fg", ":Telescope live_grep<CR>", opts)
+map("n", "<leader>fs", ":Telescope lsp_document_symbols<CR>", opts)
+map("n", "<leader>fb", ":Telescope buffers<CR>", opts)
+map("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
+map("n", "<leader>fp", ":Telescope projects<CR>", opts)
+map("n", "<leader>fc", ":Telescope command_history<CR>", opts)
+
 -- Telescope 列表中 插入模式快捷键
 pluginKeys.telescopeList = {
   i = {
@@ -105,7 +103,6 @@ pluginKeys.telescopeList = {
     ["<Down>"] = "cycle_history_next",
     ["<Up>"] = "cycle_history_prev",
     -- 关闭窗口
-    -- ["<esc>"] = actions.close,
     ["<C-c>"] = "close",
     -- 预览窗口上下滚动
     ["<C-u>"] = "preview_scrolling_up",
@@ -117,28 +114,33 @@ pluginKeys.telescopeList = {
 -- lsp 回调函数快捷键设置
 pluginKeys.maplsp = function(mapbuf)
   -- rename
-  mapbuf('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opt)
+  mapbuf('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   -- code action
-  mapbuf('n', '<leader>a', '<cmd>lua vim.lsp.buf.code_action()<CR>', opt)
+  mapbuf('n', '<leader>a', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   -- go xx
-  mapbuf('n', '<leader>gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opt)
-  mapbuf('n', '<leader>gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opt)
-  mapbuf('n', '<leader>gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opt)
-  mapbuf('n', '<leader>gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opt)
-  mapbuf('n', '<leader>gr', '<cmd>lua vim.lsp.buf.references()<CR>', opt)
+  mapbuf('n', '<leader>gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  mapbuf('n', '<leader>gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  mapbuf('n', '<leader>gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  mapbuf('n', '<leader>gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  mapbuf('n', '<leader>gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   -- diagnostic
-  mapbuf('n', '<leader>go', '<cmd>lua vim.diagnostic.open_float()<CR>', opt)
-  mapbuf('n', '<leader>gp', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opt)
-  mapbuf('n', '<leader>gn', '<cmd>lua vim.diagnostic.goto_next()<CR>', opt)
-  mapbuf('n', '<leader>gq', '<cmd>lua vim.diagnostic.setloclist()<CR>', opt)
+  mapbuf('n', '<leader>go', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  mapbuf('n', '<leader>gp', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  mapbuf('n', '<leader>gn', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  mapbuf('n', '<leader>gq', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 
-  mapbuf('n', '<leader>gf', '<cmd>lua vim.lsp.buf.format{ async = true }<CR>', opt)
-  mapbuf('n', '<leader>gs', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
+  mapbuf('n', '<leader>fm', '<cmd>lua require("conform").format{ async = true,lsp_fallback = true }<CR>', opts)
+  mapbuf('n', '<leader>gs', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   -- mapbuf('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opt)
   -- mapbuf('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opt)
   -- mapbuf('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opt)
-  mapbuf('n', '<space>gtd', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opt)
+  mapbuf('n', '<space>gtd', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
 end
+
+map("n", "<leader>tc", ':lua require("treesitter-context").go_to_context()<CR>', opts)
+-- close lspinlayHit
+map('n', '<leader>ie',
+  '<CMD>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }), {bufnr=0})<CR>', opts)
 
 -------------------- nvim-cmp 自动补全 --------------------------
 pluginKeys.cmp = function(cmp)
@@ -169,15 +171,48 @@ end
 
 --------------------- floating terminal -----------------------------
 -- toggleTerm & Lazygit
-map('n', '<leader>tg', '<CMD>lua _LAZYGIT_TOGGLE()<CR>', opt)
-map('n', '<leader>th', '<CMD>ToggleTerm direction=horizontal<CR>', opt)
-map('n', '<leader>tv', '<CMD>ToggleTerm direction=vertical<CR>', opt)
-map('n', '<leader>ta', '<CMD>ToggleTerm direction=tab<CR>', opt)
-map('n', '<leader>tf', '<CMD>ToggleTerm direction=float<CR>', opt)
+map('n', '<leader>tg', '<CMD>lua _LAZYGIT_OPEN()<CR>', dopts("toggle lazygit tirminal"))
+map("n", "<leader>tF", function()
+  local git_path = vim.api.nvim_buf_get_name(0)
+  _LAZYGIT_OPEN({ args = { "-f", vim.trim(git_path) } })
+end, dopts("Lazygit Current File History"))
+map("n", "<leader>tL", function()
+  _LAZYGIT_OPEN({ args = { "log" } })
+end, dopts("Lazygit Log (cwd)"))
+
+map('n', '<leader>th', '<CMD>ToggleTerm direction=horizontal<CR>', opts)
+map('n', '<leader>tv', '<CMD>ToggleTerm direction=vertical<CR>', opts)
+map('n', '<leader>ta', '<CMD>ToggleTerm direction=tab<CR>', opts)
+map('n', '<leader>tf', '<CMD>ToggleTerm direction=float<CR>', opts)
+
+-- git history for select
+map({ 'n', 'v' }, '<leader>gl', "<Cmd>lua require'git-log'.check_log()<CR>", dopts("git log history for select"))
+
+map({ 'n', 'v' }, '<leader>tH', function()
+  local file_name = vim.api.nvim_buf_get_name(0)
+  local range = function()
+    if vim.fn.mode() == "n" then
+      local pos = vim.api.nvim_win_get_cursor(0)
+      return {
+        pos[1],
+        pos[1],
+      }
+    end
+
+    return {
+      vim.fn.getpos("v")[2],
+      vim.fn.getpos(".")[2],
+    }
+  end
+  local line_range = range()
+  local cmd = string.format("git log  -L %s,%s:%s", line_range[1], line_range[2], file_name)
+  require('toggleterm').exec(cmd, 1001)
+end, dopts("git log history for select"))
+
 ----------------------dap debug ------------------------------------
 -- Begin
-map("n", "<leader>dc", ":lua require('dap').continue()<CR>", opt)
-map("n", "<leader>dd", ":RustDebuggables<CR>", opt)
+map("n", "<leader>dc", ":lua require('dap').continue()<CR>", opts)
+map("n", "<leader>dC", ":lua require('dap').run_to_cursor()<CR>", opts)
 -- Stop
 map(
   "n",
@@ -188,69 +223,44 @@ map(
   .. ":lua require'dapui'.close()<CR>"
   .. ":lua require('dap').clear_breakpoints()<CR>"
   .. "<C-w>o<CR>",
-  opt
+  opts
 )
 -- Set BreakPoint
-map("n", "<leader>dt", ":lua require('dap').toggle_breakpoint()<CR>", opt)
+map("n", "<leader>dt", ":lua require('dap').toggle_breakpoint()<CR>", opts)
 --  stepOver, stepOut, stepInto
-map("n", "<leader>dn", ":lua require'dap'.step_over()<CR>", opt)
-map("n", "<leader>do", ":lua require'dap'.step_out()<CR>", opt)
-map("n", "<leader>di", ":lua require'dap'.step_into()<CR>", opt)
-map("n", "<leader>dl", ":lua require'dap'.run_last()<CR>", opt)
+map("n", "<leader>dn", ":lua require'dap'.step_over()<CR>", opts)
+map("n", "<leader>do", ":lua require'dap'.step_out()<CR>", opts)
+map("n", "<leader>di", ":lua require'dap'.step_into()<CR>", opts)
+map("n", "<leader>dl", ":lua require'dap'.run_last()<CR>", opts)
 -- Pop-ups
-map("n", "<leader>dh", ":lua require'dapui'.eval()<CR>", opt)
+map("n", "<leader>dh", ":lua require'dapui'.eval()<CR>", opts)
 
 -- golang debug test
-map("n", "<leader>dgt", ":lua require('dap-go').debug_test()<CR>", opt)
-map("n", "<leader>dgl", ":lua require('dap-go').debug_last_test()<CR>", opt)
+map("n", "<leader>dgt", ":lua require('dap-go').debug_test()<CR>", opts)
+map("n", "<leader>dgl", ":lua require('dap-go').debug_last_test()<CR>", opts)
 
-
---------------------gitsigns ----------------------------------
-pluginKeys.mapgit = function(mapbuf)
-  -- Navigation
-  mapbuf('n', ']c', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", { expr = true })
-  mapbuf('n', '[c', "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", { expr = true })
-
-  -- Actions
-  mapbuf('n', '<leader>hs', ':Gitsigns stage_hunk<CR>')
-  mapbuf('v', '<leader>hs', ':Gitsigns stage_hunk<CR>')
-  mapbuf('n', '<leader>hr', ':Gitsigns reset_hunk<CR>')
-  mapbuf('v', '<leader>hr', ':Gitsigns reset_hunk<CR>')
-  mapbuf('n', '<leader>hS', '<cmd>Gitsigns stage_buffer<CR>')
-  mapbuf('n', '<leader>hu', '<cmd>Gitsigns undo_stage_hunk<CR>')
-  mapbuf('n', '<leader>hR', '<cmd>Gitsigns reset_buffer<CR>')
-  mapbuf('n', '<leader>hp', '<cmd>Gitsigns preview_hunk<CR>')
-  mapbuf('n', '<leader>hb', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>')
-  mapbuf('n', '<leader>tb', '<cmd>Gitsigns toggle_current_line_blame<CR>')
-  mapbuf('n', '<leader>hd', '<cmd>Gitsigns diffthis<CR>')
-  mapbuf('n', '<leader>hD', '<cmd>lua require"gitsigns".diffthis("~")<CR>')
-  mapbuf('n', '<leader>td', '<cmd>gitsigns toggle_deleted<cr>')
-
-  -- Text object
-  mapbuf('o', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-  mapbuf('x', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-end
 
 ------------------------gotests golang单元测试自动生成-----------------------
-map("n", "<leader>ge", ":GoTests<CR>", opt)
-map("n", "<leader>gta", ":GoTestsAll<CR>", opt)
-map("n", "<leader>gte", ":GoTestsExported<CR>", opt)
+map("n", "<leader>ge", ":GoTests<CR>", opts)
+map("n", "<leader>gta", ":GoTestsAll<CR>", opts)
+map("n", "<leader>gte", ":GoTestsExported<CR>", opts)
 
 ----------------------git-conflict------------------------
-map('n', '<leader>co', '<Plug>(git-conflict-ours)')
-map('n', '<leader>ct', '<Plug>(git-conflict-theirs)')
-map('n', '<leader>cb', '<Plug>(git-conflict-both)')
-map('n', '<leader>c0', '<Plug>(git-conflict-none)')
-map('n', '<leader>cp', '<Plug>(git-conflict-prev-conflict)')
-map('n', '<leader>cn', '<Plug>(git-conflict-next-conflict)')
+map('n', '<leader>gco', '<Plug>(git-conflict-ours)')
+map('n', '<leader>gct', '<Plug>(git-conflict-theirs)')
+map('n', '<leader>gcb', '<Plug>(git-conflict-both)')
+map('n', '<leader>gc0', '<Plug>(git-conflict-none)')
+map('n', '<leader>gcp', '<Plug>(git-conflict-prev-conflict)')
+map('n', '<leader>gcn', '<Plug>(git-conflict-next-conflict)')
 
 -- --------------------markdown-preview-----------------------
-map('n', '<leader>mp', ':MarkdownPreview<CR>', opt)
-map('n', '<leader>ms', ':MarkdownPreviewStop<CR>', opt)
-map('n', '<leader>mt', ':MarkdownPreviewToggle<CR>', opt)
+map('n', '<leader>mp', ':MarkdownPreview<CR>', opts)
+map('n', '<leader>ms', ':MarkdownPreviewStop<CR>', opts)
+map('n', '<leader>mt', ':MarkdownPreviewToggle<CR>', opts)
 
 -----------------------goimpl---------------------------------
-map('n', '<leader>im', "<Cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>", opt)
+map('n', '<leader>im', "<Cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>",
+  dopts("go struct implement interface"))
 
 -----------------------open file with browser-------------------
 function _SHOW_BROWSER_FILE_PATH()
@@ -269,20 +279,23 @@ vim.api.nvim_create_user_command('ShowBrowserFilePath', _SHOW_BROWSER_FILE_PATH,
 
 ----------------------zk-------------------------------------
 -- Create a new note after asking for its title.
-map("n", "<leader>zn", "<Cmd>ZkNew { title = vim.fn.input('Title: ') }<CR>", opt)
+map("n", "<leader>zn", "<Cmd>ZkNew { title = vim.fn.input('Title: ') }<CR>", opts)
 
 -- Open notes.
-map("n", "<leader>zo", "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", opt)
+map("n", "<leader>zo", "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", opts)
 -- Open notes associated with the selected tags.
-map("n", "<leader>zt", "<Cmd>ZkTags<CR>", opt)
+map("n", "<leader>zt", "<Cmd>ZkTags<CR>", opts)
 
 -- Search for the notes matching a given query.
 map("n", "<leader>zf",
-  "<Cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } }<CR>", opt)
+  "<Cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } }<CR>", opts)
 -- Search for the notes matching the current visual selection.
-map("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opt)
+map("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opts)
 
-----------------------marks-------------------------------------
-map("n", "<leader>ma", "<Cmd>MarksListAll<CR>", opt)
+-----------------------falsh-------------------------------------
+map({ "n", "x", "o" }, "<leader>s", function() require("flash").jump() end, dopts("Flash"))
+map({ "n", "x", "o" }, "<leader>e", function() require("flash").treesitter() end, dopts("Flash Treesitter"))
+map({ "n", "x", "o" }, "<leader>re", function() require("flash").remote() end, dopts("remote Flash"))
+map({ "n", "x", "o" }, "<leader>v", function() require("flash").treesitter_search() end, dopts("Treesitter Search"))
 
 return pluginKeys
