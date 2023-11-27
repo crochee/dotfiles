@@ -78,14 +78,6 @@ api.nvim_create_autocmd(
   }
 )
 
-api.nvim_create_autocmd(
-  "FileType",
-  {
-    pattern = "*",
-    command = [[filetype plugin on]]
-  }
-)
-
 -- wrap and check for spell in text filetypes
 api.nvim_create_autocmd("FileType", {
   group = augroup("wrap_spell"),

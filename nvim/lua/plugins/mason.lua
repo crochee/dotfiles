@@ -8,6 +8,7 @@ local M = {
     'williamboman/mason-lspconfig.nvim',
     'neovim/nvim-lspconfig',
     -------- dap
+    'nvim-telescope/telescope-dap.nvim',
     'jayp0521/mason-nvim-dap.nvim',
     'mfussenegger/nvim-dap',
     "theHamsta/nvim-dap-virtual-text",
@@ -47,7 +48,6 @@ function M.config()
     return
   end
 
-  require("telescope").load_extension("dap")
 
   -- import dap's config
   require("daps.config")

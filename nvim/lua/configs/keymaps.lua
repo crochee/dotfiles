@@ -105,7 +105,6 @@ pluginKeys.telescopeList = {
     ["<Down>"] = "cycle_history_next",
     ["<Up>"] = "cycle_history_prev",
     -- 关闭窗口
-    -- ["<esc>"] = actions.close,
     ["<C-c>"] = "close",
     -- 预览窗口上下滚动
     ["<C-u>"] = "preview_scrolling_up",

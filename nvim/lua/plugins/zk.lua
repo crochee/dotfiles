@@ -14,7 +14,6 @@ function M.config()
   require("zk").setup({
     picker = "telescope",
   })
-  require("telescope").load_extension("zk")
 end
 
 return M
