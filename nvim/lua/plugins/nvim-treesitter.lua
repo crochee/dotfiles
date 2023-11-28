@@ -1,6 +1,7 @@
 local M = {
   'nvim-treesitter/nvim-treesitter',
   build = ':TSInstall',
+  run = ':TSUpdate',
 }
 
 function M.config()

@@ -1,5 +1,5 @@
 local M = {
-  'glepnir/dashboard-nvim',
+  'nvimdev/dashboard-nvim',
   dependencies = { { 'nvim-tree/nvim-web-devicons' } },
 }
 
@@ -31,12 +31,6 @@ function M.config()
           group = 'Label',
           action = 'Telescope find_files',
           key = 'f'
-        },
-        {
-          desc = ' Apps',
-          group = 'Special',
-          action = 'Telescope app',
-          key = 'a'
         },
         {
           desc = ' dotfiles',

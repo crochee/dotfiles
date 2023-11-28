@@ -229,6 +229,8 @@ pluginKeys.mapgit = function(mapbuf)
   mapbuf('o', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
   mapbuf('x', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
 end
+-- git history for select
+map({ 'n', 'v' }, '<leader>gl', "<Cmd>lua require'git-log'.check_log()<CR>", opt)
 
 ------------------------gotests golang单元测试自动生成-----------------------
 map("n", "<leader>ge", ":GoTests<CR>", opt)
