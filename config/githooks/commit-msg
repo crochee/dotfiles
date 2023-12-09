@@ -1,4 +1,8 @@
-#!/bin/sh
+#!/bin/bash
+
+set -e
+
+LC_ALL=C
 # <type>[optional scope]: <description>
 #
 # [optional body]
@@ -20,11 +24,7 @@ commit_msg=`cat $1`
 
  msg_re="^(feat|fix|docs|style|refactor|perf|test|chore|revert|build|ci)(\(.+\))?:\s.{1,125}"
 
-if [[ $commit_msg =~ $msg_re ]]
-then
-  echo "please use conventional commit:"
-  echo "type(scope): description"
-  echo "\n[optional body]"
-  echo "\n[optional footer(s)]"
+if [[ ! $commit_msg =~ $msg_re ]]; then
+  echo -e "please use conventional commit:\ntype(scope): description\n\n[optional body]\n\n[optional footer(s)]"
   exit 1
 fi
