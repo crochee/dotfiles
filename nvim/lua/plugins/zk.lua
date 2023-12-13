@@ -4,7 +4,7 @@ local M = {
   dependencies = {
     'plasticboy/vim-markdown',
     branch = 'master',
-    require = { 'godlygeek/tabular' },
+    dependencies = { 'godlygeek/tabular' },
   }
 }
 
