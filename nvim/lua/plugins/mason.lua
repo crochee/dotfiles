@@ -118,8 +118,8 @@ function M.config()
     cssls = require("lsp.cssls"),
     html = require("lsp.html"),
     golangci_lint_ls = require("lsp.golangci_lint_ls"),
-    denols = require("lsp.denols"),
     eslint = require("lsp.eslint"),
+    tsserver = require("lsp.tsserver"),
   }
 
   local ensure_installed = { type = "list" }
