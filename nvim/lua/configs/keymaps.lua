@@ -139,6 +139,8 @@ pluginKeys.maplsp = function(mapbuf)
   mapbuf('n', '<space>gtd', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opt)
 end
 
+map("n", "<leader>tc", ':lua require("treesitter-context").go_to_context()<CR>', opt)
+
 -------------------- nvim-cmp 自动补全 --------------------------
 pluginKeys.cmp = function(cmp)
   return {

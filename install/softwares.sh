@@ -55,7 +55,6 @@ install_neovim() {
         # sudo apt-get install -y neovim
         echo "install neovim done."
     fi
-    # apt-get install python-pip python3-pip python-dev python-pip python3-dev python3-pip
 }
 
 install_zsh() {
@@ -163,6 +162,14 @@ install_go(){
     fi
 }
 
+install_python3(){
+        if ! has_cmd "python3"; then
+            echo "install python3..."
+            sudo apt-get install -y python3-full
+            echo "install python3 done."
+        fi
+}
+
 install(){
     for command in $*
     do
@@ -176,7 +183,7 @@ show_menu(){
     sudo apt -y install curl wget
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select go, rust, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, or quit:"
+    echo "please select go, rust, python3, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, or quit:"
     echo -n "select: "
     read num
     install $num
