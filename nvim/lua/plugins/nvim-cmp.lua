@@ -42,7 +42,9 @@ function M.config()
       -- { name = 'ultisnips' },
       -- -- For snippy users.
       -- { name = 'snippy' },
-    }, { { name = 'buffer' },
+    },
+    {
+      { name = 'buffer' },
       { name = 'path' }
     }),
 

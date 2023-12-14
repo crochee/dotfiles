@@ -178,6 +178,7 @@ map('n', '<leader>tf', '<CMD>ToggleTerm direction=float<CR>', opt)
 ----------------------dap debug ------------------------------------
 -- Begin
 map("n", "<leader>dc", ":lua require('dap').continue()<CR>", opt)
+map("n", "<leader>dC", ":lua require('dap').run_to_cursor()<CR>", opt)
 map("n", "<leader>dd", ":RustDebuggables<CR>", opt)
 -- Stop
 map(
