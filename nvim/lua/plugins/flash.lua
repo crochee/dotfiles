@@ -16,12 +16,12 @@ local M = {
     },
     {
       "<leader>re",
-      mode = "o",
+      mode = { "n", "x", "o" },
       function() require("flash").remote() end,
       desc = "Remote Flash"
     },
     {
-      "<leader>fr",
+      "<leader>ts",
       mode = { "n", "o", "x" },
       function() require("flash").treesitter_search() end,
       desc = "Treesitter Search"
