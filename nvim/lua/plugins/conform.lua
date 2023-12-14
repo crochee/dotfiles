@@ -3,13 +3,12 @@ local M = {
 }
 
 function M.config()
-  require("conform").setup()
-  -- 保存时自动格式化
-  vim.api.nvim_create_autocmd('BufWritePre', {
-    pattern = "*",
-    callback = function(args)
-      require("conform").format({ bufnr = args.buf })
-    end,
+  require("conform").setup({
+    format_on_save = {
+      -- These options will be passed to conform.format()
+      timeout_ms = 500,
+      lsp_fallback = true,
+    },
   })
 end
 
