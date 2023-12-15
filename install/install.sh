@@ -191,6 +191,19 @@ install_zk(){
     msg "install zk done!\n"
 }
 
+init_bashrc(){
+    FILE_PATH="$HOME/.bashrc"
+    if [ ! -f "$FILE_PATH" ];then
+        touch $FILE_PATH
+        echo 'source $HOME/.dotfiles/.bashrc' >>$FILE_PATH
+    else
+        if grep -q  'source $HOME/.dotfiles/.bashrc' $FILE_PATH ;then
+            return
+        else
+            echo 'source $HOME/.dotfiles/.bashrc' >>$FILE_PATH
+        fi
+    fi
+}
 
 show_menu(){
     msg_title "INSTALL"
@@ -210,5 +223,5 @@ show_menu(){
         *) msg "your option is invalid! Goodbye!";;
     esac
 }
-
+init_bashrc
 show_menu

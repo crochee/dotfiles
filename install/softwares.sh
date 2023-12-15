@@ -57,22 +57,10 @@ install_neovim() {
     fi
 }
 
-install_zsh() {
-    if ! has_cmd "zsh"; then
-        # install zsh
-        echo "install zsh..."
-        sudo apt-get install zsh
-        # change default shell
-        chsh -s $(which zsh)
-        echo "install zsh done."
-    fi
-    if [ ! -d "$ZSH" ]; then
-        # install oh_my_zsh
-        echo "install setup oh_my_zsh..."
-        sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-        # curl -sS https://starship.rs/install.sh | sh
-        echo "install setup oh_my_zsh done."
-    fi
+install_ohmybash() {
+        echo "install setup oh_my_bash..."
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+        echo "install setup oh_my_bash done."
 }
 
 install_nodejs() {
@@ -88,15 +76,6 @@ install_nodejs() {
         echo "install nodejs v${NODE_MAJOR}.x done."
         unset NODE_MAJOR
     fi
-}
-
-install_tmux() {
-    if has_cmd "tmux"; then
-        return 0
-    fi
-    echo "install tmux..."
-    sudo apt-get install -y tmux
-    echo "install tmux done."
 }
 
 install_nerdfonts() {
@@ -130,17 +109,6 @@ install_rust() {
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         echo "install rust done."
     fi
-    if ! has_cmd "bat"; then
-        echo "install bat..."
-        cargo install --locked bat
-        echo "install bat done."
-    fi
-    # install ripgrep
-    if ! has_cmd "rg"; then
-        echo "install ripgrep..."
-        cargo install ripgrep
-        echo "install ripgrep done."
-    fi
 }
 
 install_go(){
@@ -155,11 +123,6 @@ install_go(){
         unset GO_VERSION
         echo "install go done."
     fi
-    if ! has_cmd "mockgen"; then
-        echo "install mockgen..."
-        go install go.uber.org/mock/mockgen@latest
-        echo "install mockgen done."
-    fi
 }
 
 install_python3(){
@@ -168,6 +131,34 @@ install_python3(){
             sudo apt-get install -y python3-full
             echo "install python3 done."
         fi
+}
+
+install_tools(){
+    if has_cmd "go"; then
+        if ! has_cmd "mockgen"; then
+            echo "install mockgen..."
+            go install go.uber.org/mock/mockgen@latest
+            echo "install mockgen done."
+        fi
+        if ! has_cmd "lazygit"; then
+            echo "install lazygit..."
+            go install github.com/jesseduffield/lazygit@latest
+            echo "install lazygit done."
+        fi
+    fi
+    if has_cmd "cargo"; then
+        if ! has_cmd "bat"; then
+            echo "install bat..."
+            cargo install --locked bat
+            echo "install bat done."
+        fi
+        # install ripgrep
+        if ! has_cmd "rg"; then
+            echo "install ripgrep..."
+            cargo install ripgrep
+            echo "install ripgrep done."
+        fi
+    fi
 }
 
 install(){
@@ -180,10 +171,10 @@ install(){
 show_menu(){
     sudo apt update
     sudo apt upgrade
-    sudo apt -y install curl wget
+    sudo apt -y install curl wget gcc
     mkdir -p ~/Downloads
     echo "================INSTALL================="
-    echo "please select go, rust, python3, clipboard, neovim, zsh, nodejs, nerdfonts, tmux, or quit:"
+    echo "please select bash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, or quit:"
     echo -n "select: "
     read num
     install $num

@@ -1,5 +1,9 @@
 # Prepend new items to path (if directory exists)
 
+prepend-path() {
+  [ -d $1 ] && PATH="$1:$PATH"
+}
+
 prepend-path "$GOROOT/bin"
 prepend-path "$GOPATH/bin"
 prepend-path "$HOME/.local/share/nvim/mason/bin"
