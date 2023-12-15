@@ -173,8 +173,9 @@ show_menu(){
     sudo apt upgrade
     sudo apt -y install curl wget gcc
     mkdir -p ~/Downloads
+    mkdir -p ~/.local/bin
     echo "================INSTALL================="
-    echo "please select bash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, or quit:"
+    echo "please select ohmybash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, tools or quit:"
     echo -n "select: "
     read num
     install $num

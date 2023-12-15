@@ -81,9 +81,6 @@ bash_prompt_command() {
     echo -ne "\033]0;${P_PWD}\007"
   fi
 
-  # Parse Git branch name
-  P_GIT=$(parse_git_branch)
-
   # Exit code
   if [[ $EXIT_CODE != 0 ]]; then
     P_EXIT+="${P_RED}✘ "

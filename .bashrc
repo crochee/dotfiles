@@ -18,6 +18,7 @@ export DOTFILES_DIR
 
 # set workspace
 mkdir -p $HOME/workspace
+mkdir -p $HOME/.local/bin
 export WORKSPACE=$HOME/workspace
 
 # Make utilities available
