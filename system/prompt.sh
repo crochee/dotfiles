@@ -86,7 +86,7 @@ bash_prompt_command() {
     P_EXIT+="${P_RED}✘ "
   fi
 
-  PS1="${P_EXIT}${P_WHITE}{${P_YELLOW}\t${P_WHITE}} ${P_USER}${P_WHITE}@${P_HOST} ${P_YELLOW}${P_PWD} $(git_prompt_info)\n${P_YELLOW}➤  ${P_RESET}"
+  PS1="${P_EXIT}${P_WHITE}{${P_YELLOW}$(date +"%y-%m-%d %H:%M:%S")${P_WHITE}} ${P_USER}${P_WHITE}@${P_HOST} ${P_YELLOW}${P_PWD} $(git_prompt_info)\n${P_YELLOW}➤  ${P_RESET}"
 }
 
 ## git-theme
