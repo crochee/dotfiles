@@ -171,7 +171,7 @@ install(){
 show_menu(){
     sudo apt update
     sudo apt upgrade
-    sudo apt -y install curl wget gcc
+    sudo apt -y install curl wget gcc g++
     mkdir -p ~/Downloads
     mkdir -p ~/.local/bin
     echo "================INSTALL================="
