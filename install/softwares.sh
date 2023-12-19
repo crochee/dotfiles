@@ -161,6 +161,14 @@ install_tools(){
     fi
 }
 
+install_mycli(){
+        if has_cmd "pip3"&&! has_cmd "mycli"; then
+            echo "install mycli..."
+            sudo pip3 install mycli
+            echo "install mycli done."
+        fi
+}
+
 install(){
     for command in $*
     do
@@ -175,7 +183,7 @@ show_menu(){
     mkdir -p ~/Downloads
     mkdir -p ~/.local/bin
     echo "================INSTALL================="
-    echo "please select ohmybash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, tools or quit:"
+    echo "please select ohmybash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, mycli, tools or quit:"
     echo -n "select: "
     read num
     install $num
