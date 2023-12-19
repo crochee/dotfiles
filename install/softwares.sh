@@ -128,7 +128,7 @@ install_go(){
 install_python3(){
         if ! has_cmd "python3"; then
             echo "install python3..."
-            sudo apt-get install -y python3-full
+            sudo apt-get install -y python3-full python3-pip
             echo "install python3 done."
         fi
 }
