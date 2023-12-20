@@ -121,6 +121,8 @@ function M.config()
     eslint = require("lsp.eslint"),
     tsserver = require("lsp.tsserver"),
     taplo = require("lsp.taplo"),
+    sqlls = require("lsp.sqlls"),
+    yamlls = require("lsp.yamlls"),
   }
 
   local ensure_installed = { type = "list" }
