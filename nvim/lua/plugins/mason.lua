@@ -120,6 +120,7 @@ function M.config()
     golangci_lint_ls = require("lsp.golangci_lint_ls"),
     eslint = require("lsp.eslint"),
     tsserver = require("lsp.tsserver"),
+    taplo = require("lsp.taplo"),
   }
 
   local ensure_installed = { type = "list" }
