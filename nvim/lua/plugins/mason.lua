@@ -2,11 +2,11 @@ local M = {
   'williamboman/mason.nvim',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'nanotee/sqls.nvim',
     'b0o/schemastore.nvim',
     ------ lsp
     'williamboman/mason-lspconfig.nvim',
     'neovim/nvim-lspconfig',
+    'nanotee/sqls.nvim',
     -------- dap
     'nvim-telescope/telescope-dap.nvim',
     'jayp0521/mason-nvim-dap.nvim',
@@ -17,17 +17,22 @@ local M = {
     'theHamsta/nvim-dap-virtual-text',
     "rcarriga/nvim-dap-ui",
     'simrat39/rust-tools.nvim',
+    ----------linter
+    {
+      "jay-babu/mason-null-ls.nvim",
+      event = { "BufReadPre", "BufNewFile" },
+      dependencies = {
+        "williamboman/mason.nvim",
+        "jose-elias-alvarez/null-ls.nvim",
+      },
+      config = function()
+      end,
+    }
   }
 }
 
 function M.config()
-  local status, mason = pcall(require, "mason")
-  if not status then
-    vim.notify("Plugin `mason.nvim` not found")
-    return
-  end
-
-  mason.setup({
+  require("mason").setup({
     ui = {
       icons = {
         package_installed = "✓",
@@ -41,73 +46,43 @@ function M.config()
 
 
   -----------------dap Install List ---------------------
-  local mason_dap
-  status, mason_dap = pcall(require, "mason-nvim-dap")
-  if not status then
-    vim.notify("Plugin `mason-nvim-dap` not found")
-    return
-  end
-
-
   -- import dap's config
   require("daps.config")
-  local list = {
+  local dap_list = {
     {
       name = "delve",
       alone = true,
-      need_installed = true,
     },
     {
       name = "codelldb",
       alone = true,
-      need_installed = true,
     }
   }
 
-  local handlers = {}
-  local alones = {}
-  local sources = {}
+  local dap_handlers = {}
+  local dap_ensure_installed = {}
 
-  for _, ele in pairs(list) do
-    if ele.need_installed then
-      table.insert(sources, ele.name)
-    end
+  for _, ele in pairs(dap_list) do
+    table.insert(dap_ensure_installed, ele.name)
 
     if ele.alone then
-      table.insert(alones, "daps.configs." .. ele.name)
+      require("daps.configs." .. ele.name)
     else
-      handlers[ele.name] = require("daps.configs." .. ele.name)
+      dap_handlers[ele.name] = require("daps.configs." .. ele.name)
     end
   end
 
   -- list the debug dependence that must be installed
-  mason_dap.setup({
-    ensure_installed = sources,
+  require("mason-nvim-dap").setup({
+    ensure_installed = dap_ensure_installed,
     automatic_installation = true,
-    handlers = handlers,
+    handlers = dap_handlers,
   })
-
-  for _, ele in pairs(alones) do
-    require(ele)
-  end
 
   -------------------- LSP Install List
   -- https://github.com/williamboman/nvim-lsp-installer#available-lsps
   -- { key: lsp_name, value: lsp_config }
-  local mason_lspconfig
-  status, mason_lspconfig = pcall(require, "mason-lspconfig")
-  if not status then
-    vim.notify("Plugin `mason-lspconfig` not found")
-    return
-  end
-
-  local lspconfig
-  status, lspconfig = pcall(require, "lspconfig")
-  if not status then
-    vim.notify("Plugin `lspconfig` not found")
-    return
-  end
-  local servers = {
+  local lsp_servers = {
     gopls = require("lsp.gopls"),
     rust_analyzer = require("lsp.rust_analyzer"),
     lua_ls = require("lsp.lua"),
@@ -125,18 +100,9 @@ function M.config()
     yamlls = require("lsp.yamlls"),
   }
 
-  local ensure_installed = { type = "list" }
-  for name, _ in pairs(servers) do
-    table.insert(ensure_installed, name)
-  end
-
-  mason_lspconfig.setup({
-    ensure_installed = ensure_installed,
-    automatic_installation = true,
-  })
-
-  -- 加载配置
-  for name, config in pairs(servers) do
+  local lsp_ensure_installed = { type = "list" }
+  for name, config in pairs(lsp_servers) do
+    table.insert(lsp_ensure_installed, name)
     if config.setup then
       -- config删除setup元素
       local opts = vim.tbl_deep_extend("force", config, {
@@ -144,9 +110,33 @@ function M.config()
       })
       config.setup(opts)
     else
-      lspconfig[name].setup(config)
+      require("lspconfig")[name].setup(config)
     end
   end
+
+  -- linters
+  require("mason-lspconfig").setup({
+    ensure_installed = lsp_ensure_installed,
+    automatic_installation = true,
+  })
+
+  -------------------- Linter Install List
+  local linters = {
+    shellcheck = require("linter.shellcheck"),
+    golangci_lint = {},
+    vacuum = {},
+    stylelint = {},
+  }
+  local linter_ensure_installed = { type = "list" }
+  for name, _ in pairs(linters) do
+    table.insert(linter_ensure_installed, name)
+  end
+
+  require("null-ls").setup()
+  require("mason-null-ls").setup({
+    ensure_installed = linter_ensure_installed,
+    automatic_installation = true,
+  })
 end
 
 return M

@@ -1,7 +1,5 @@
 -- set history
 vim.opt.history = 2000
----- 高亮所在行
-vim.opt.cursorline = true
 -- utf8
 vim.g.encoding = "UTF-8"
 vim.o.fileencoding = "utf-8"
