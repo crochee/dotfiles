@@ -1,0 +1,11 @@
+
+"\C-x\C-k" kill-whole-line
+
+"\C-xf": dump-functions
+"\C-xv": dump-variables
+"\C-xm": dump-macros
+
+"\C-xl": "\C-e | less\C-m"
+"\C-x\'": "\'\'\C-b"
+"\C-x\"": "\"\"\C-b"
+
