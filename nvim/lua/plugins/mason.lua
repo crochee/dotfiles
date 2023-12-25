@@ -7,6 +7,15 @@ local M = {
     'williamboman/mason-lspconfig.nvim',
     'neovim/nvim-lspconfig',
     'nanotee/sqls.nvim',
+    {
+      "mickael-menu/zk-nvim",
+      main = "zk",
+      dependencies = {
+        'plasticboy/vim-markdown',
+        branch = 'master',
+        dependencies = { 'godlygeek/tabular' },
+      }
+    },
     -------- dap
     'nvim-telescope/telescope-dap.nvim',
     'jayp0521/mason-nvim-dap.nvim',
@@ -98,6 +107,7 @@ function M.config()
     taplo = require("lsp.taplo"),
     sqlls = require("lsp.sqlls"),
     yamlls = require("lsp.yamlls"),
+    zk = require("lsp.zk"),
   }
 
   local lsp_ensure_installed = { type = "list" }
