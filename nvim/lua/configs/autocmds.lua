@@ -91,22 +91,6 @@ api.nvim_create_autocmd(
     end,
   })
 
--- auto set tab, width, etc... according file type
-api.nvim_create_autocmd(
-  "FileType",
-  {
-    pattern = { "python" },
-    command = [[set tabstop=4 shiftwidth=4 expandtab ai]]
-  }
-)
-
-api.nvim_create_autocmd(
-  "FileType",
-  {
-    pattern = { "ruby", "javascript", "html", "css", "xml", "lua" },
-    command = [[set tabstop=2 shiftwidth=2 softtabstop=2 expandtab ai]]
-  }
-)
 
 --set indent for jsx tsx
 api.nvim_create_autocmd(
@@ -123,14 +107,6 @@ api.nvim_create_autocmd(
   {
     pattern = { "*.part" },
     command = [[set filetype=html]]
-  }
-)
-
-api.nvim_create_autocmd(
-  { "BufRead", "BufNewFile" },
-  {
-    pattern = { "*.vue" },
-    command = [[setlocal filetype=vue.html.javascript tabstop=2 shiftwidth=2 softtabstop=2 expandtab ai]]
   }
 )
 
