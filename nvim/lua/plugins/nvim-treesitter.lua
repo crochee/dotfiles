@@ -4,7 +4,7 @@ return {
   -- syntax highlighting.
   {
     "nvim-treesitter/nvim-treesitter",
-    version = false, -- last release is way too old and doesn't work on Windows
+    version = false,     -- last release is way too old and doesn't work on Windows
     build = ":TSUpdate",
     event = { "VeryLazy" },
     init = function(plugin)
@@ -28,7 +28,8 @@ return {
             if name:find("goto") == 1 then
               move[name] = function(q, ...)
                 if vim.wo.diff then
-                  local config = configs.get_module("textobjects.move")[name] ---@type table<string,string>
+                  local config = configs.get_module("textobjects.move")
+                      [name] ---@type table<string,string>
                   for key, query in pairs(config or {}) do
                     if q == query and key:find("[%]%[][cC]") then
                       vim.cmd("normal! " .. key)
@@ -62,6 +63,7 @@ return {
     },
     ---@param opts TSConfig
     config = function(_, opts)
+      require("nvim-treesitter.install").compilers = { "gcc", "g++" }
       require("nvim-treesitter.configs").setup(opts)
       -- 开启 Folding
       vim.wo.foldmethod = 'expr'

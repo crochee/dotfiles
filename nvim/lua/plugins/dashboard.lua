@@ -8,7 +8,7 @@ return {
       theme = 'hyper',
       config = {
         week_header = { enable = true },
-        packages = { enable = true }, -- show how many plugins neovim loaded
+        packages = { enable = true },         -- show how many plugins neovim loaded
         -- limit how many projects list, action when you press key or enter it will run this action.
         project = {
           enable = false,
