@@ -65,6 +65,10 @@ function M.config()
     {
       name = "codelldb",
       alone = true,
+    },
+    {
+      name = "chrome-debug-adapter",
+      alone = true,
     }
   }
 
