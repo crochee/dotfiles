@@ -38,15 +38,6 @@ map("v", "K", ":m '<-2<CR>gv=gv", opts)
 -- sv 水平分屏sh 垂直分屏sc 关闭当前分屏 (s = close)so
 map("n", "vsp", ":vsp<CR>", opts) --水平分屏
 map("n", "hsp", ":sp<CR>", opts)  --垂直分屏
--- alt + hjkl 在窗口之间跳转
-map("n", "<A-h>", "<C-w>h", opts)
-map("n", "<A-j>", "<C-w>j", opts)
-map("n", "<A-k>", "<C-w>k", opts)
-map("n", "<A-l>", "<C-w>l", opts)
-map("n", "<A-o>", "<C-w>o", opts) --关闭其他分屏 (o = other)
-map("n", "<A-c>", "<C-w>c", opts) --关闭当前分屏 (s = close)
-
---------------------------------------------------------------------
 
 -- 插件快捷键
 local pluginKeys = {}
@@ -141,6 +132,9 @@ pluginKeys.maplsp = function(mapbuf)
 end
 
 map("n", "<leader>tc", ':lua require("treesitter-context").go_to_context()<CR>', opts)
+-- close lspinlayHit
+map('n', '<leader>io', '<CMD>lua vim.lsp.inlay_hint(0, true)<CR>', opts)
+map('n', '<leader>ic', '<CMD>lua vim.lsp.inlay_hint(0, false)<CR>', opts)
 
 -------------------- nvim-cmp 自动补全 --------------------------
 pluginKeys.cmp = function(cmp)

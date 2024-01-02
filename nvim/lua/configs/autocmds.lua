@@ -59,6 +59,16 @@ vim.api.nvim_create_autocmd(
   }
 )
 
+-- resize splits if window got resized
+vim.api.nvim_create_autocmd({ "VimResized" }, {
+  group = augroup("resize_splits"),
+  callback = function()
+    local current_tab = vim.fn.tabpagenr()
+    vim.cmd("tabdo wincmd =")
+    vim.cmd("tabnext " .. current_tab)
+  end,
+})
+
 -- open help in right split
 vim.api.nvim_create_autocmd("BufWinEnter", {
   group = augroup("help_window_right"),
