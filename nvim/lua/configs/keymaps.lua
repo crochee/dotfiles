@@ -6,8 +6,8 @@ vim.g.maplocalleader = " "
 local map = vim.keymap.set
 
 local opts = {
-  noremap = true,   --禁止递归
-  silent = true     --执行命令时不回显内容
+  noremap = true, --禁止递归
+  silent = true   --执行命令时不回显内容
 }
 
 -- Modes
@@ -289,5 +289,8 @@ map("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opts)
 
 ----------------------marks-------------------------------------
 map("n", "<leader>ma", "<Cmd>MarksListAll<CR>", opts)
+
+-----------------------rust-------------------------------------
+map("n", "<leader>rr", "<Cmd>RustRunnables<CR>", opts)
 
 return pluginKeys
