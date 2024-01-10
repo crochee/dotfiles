@@ -3,10 +3,7 @@ return {
   event = "VeryLazy",
   enabled = false,
   config = function()
-    local home = vim.fn.expand("$HOME")
-    require("chatgpt").setup({
-      api_key_cmd = "cat " .. home .. "/gpt-api-key.txt",
-    })
+    require("chatgpt").setup()
   end,
   dependencies = {
     "MunifTanjim/nui.nvim",
