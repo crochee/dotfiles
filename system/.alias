@@ -37,3 +37,9 @@ alias .....="cd ../../../.."
 
 # custom
 alias dcs="cd $WORKSPACE/project/dcs"
+
+function gph {
+  if (($# == 1)); then
+    command git push origin "HEAD:$*"
+  fi
+}
