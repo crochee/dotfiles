@@ -12,7 +12,7 @@ _bash_prompt_config() {
     local BOLD="$( { tput bold || tput md ; } 2>/dev/null )"
   else
     # Fallback
-    _setaf () { echo "\033[0;$(($1+30))m" ; }
+    _setaf () { printf "\033[0;%sm" $(($1+30)); }
     local RESET="\033[m"
     local BOLD=""
     ESC_OPEN=""

@@ -1,7 +1,7 @@
 # Prepend new items to path (if directory exists)
 
 prepend-path() {
-  [ -d $1 ] && PATH="$1:$PATH"
+  [ -d "$1" ] && PATH="$1:$PATH"
 }
 
 prepend-path "$GOROOT/bin"
