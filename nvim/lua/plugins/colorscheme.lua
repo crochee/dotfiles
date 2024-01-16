@@ -1,7 +1,7 @@
 local M = {
   -- 'ellisonleao/gruvbox.nvim',
-  -- 'sainnhe/everforest',
-  'navarasu/onedark.nvim',
+  'sainnhe/everforest',
+  -- 'navarasu/onedark.nvim',
   -- "folke/tokyonight.nvim",
 }
 
@@ -19,8 +19,8 @@ function M.config()
   ]]
 
   -- require("colorschemes.gruvbox")
-  -- require("colorschemes.everforest")
-  require("colorschemes.onedark")
+  require("colorschemes.everforest")
+  -- require("colorschemes.onedark")
   -- require("colorschemes.tokyonight")
 end
 

@@ -49,7 +49,7 @@ _bash_prompt_config() {
 
   # Expose the variables we need in prompt command
   P_USER=${BRIGHT_VIOLET}${USER_SYMBOL}
-  P_HOST=${BRIGHT_BLUE}${HOST_SYMBOL}
+  P_HOST=${BRIGHT_GREEN}${HOST_SYMBOL}
   P_WHITE=${WHITE}
   P_GREEN=${BRIGHT_GREEN}
   P_YELLOW=${YELLOW}

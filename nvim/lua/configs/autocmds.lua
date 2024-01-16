@@ -69,18 +69,6 @@ vim.api.nvim_create_autocmd({ "VimResized" }, {
   end,
 })
 
--- open help in right split
-vim.api.nvim_create_autocmd("BufWinEnter", {
-  group = augroup("help_window_right"),
-  pattern = { "*.txt" },
-  callback = function()
-    if vim.o.filetype == "help" then
-      vim.cmd.wincmd("L")
-    end
-  end,
-  desc = "Open help pages in a vertical split",
-})
-
 -- wrap and check for spell in text filetypes
 vim.api.nvim_create_autocmd(
   "FileType",
