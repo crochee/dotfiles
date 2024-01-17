@@ -18,32 +18,30 @@ local opts = {
 --   term_mode = "t",
 --   command_mode = "c",
 
+local function dopts(desc)
+  return { desc = desc, noremap = true, silent = true }
+end
+
 -- save 插入模式下保存并退出到正常模式
-map({ "i", "x", "n", "s" }, "<leader><Tab>", "<cmd>w<cr><esc>", { desc = "Save file" })
+map({ "i", "x", "n", "s" }, "<leader><Tab>", "<cmd>w<cr><esc>", dopts("save and exit"))
 
 -- Clean search (highlight)取消高亮
-map("n", "<leader><space>", ":noh<CR>", opts)
+map("n", "<leader><space>", ":noh<CR>", dopts("clean highlight"))
 
--- 上下左右(kjhl)
 ------------------------- visual模式下缩进代码-----------
 
-map("v", "<", "<gv", opts)
-map("v", ">", ">gv", opts)
+map("v", "<", "<gv", dopts("indent left"))
+map("v", ">", ">gv", dopts("indent right"))
 
 -- 上下移动选中文本
-map("v", "J", ":m '>+1<CR>gv=gv", opts)
-map("v", "K", ":m '<-2<CR>gv=gv", opts)
-
------------------------ 分屏快捷键 ---------------------
--- sv 水平分屏sh 垂直分屏sc 关闭当前分屏 (s = close)so
-map("n", "vsp", ":vsp<CR>", opts) --水平分屏
-map("n", "hsp", ":sp<CR>", opts)  --垂直分屏
+map("v", "J", ":m '>+1<CR>gv=gv", dopts("move down with selection"))
+map("v", "K", ":m '<-2<CR>gv=gv", dopts("move up with selection"))
 
 -- 插件快捷键
 local pluginKeys = {}
 
 -------------------------- nvimTree 目录树插件 ---------------------
-map('n', '<leader>ll', ':NvimTreeToggle<CR>', opts)
+map('n', '<leader>ll', ':NvimTreeToggle<CR>', dopts('toggle nvimtree'))
 -- 列表快捷键
 pluginKeys.nvimTree = function(bufnr)
   local api = require('nvim-tree.api')
@@ -66,19 +64,20 @@ pluginKeys.nvimTree = function(bufnr)
   map('n', 'p', api.fs.paste, opt('Paste'))
   map('n', 'R', api.tree.reload, opt('Refresh'))
   map('n', 'A', api.tree.expand_all, opt('Expand All'))
-  map('n', 'y', api.fs.copy.filename, opt('Copy Name'))
+  map('n', 'yn', api.fs.copy.filename, opt('Copy Name'))
   map('n', 'yr', api.fs.copy.relative_path, opt('Copy Relative Path'))
   map('n', 'ya', api.fs.copy.absolute_path, opt('Copy Absolute Path'))
 end
 
 ----------------------------------- bufferline --------------
 -- Buffer nav
-map("n", "<leader>q", ":BufferLineCyclePrev<CR>", opts)
-map("n", "<leader>w", ":BufferLineCycleNext<CR>", opts)
+map("n", "<leader>q", ":BufferLineCyclePrev<CR>", dopts("move previous buffer"))
+map("n", "<leader>w", ":BufferLineCycleNext<CR>", dopts("move next buffer"))
 -- Close buffer
-map("n", "<leader>cc", ":bd<CR>", opts)
-map("n", "<leader>cr", ":BufferLineCloseRight<CR>", opts)
-map("n", "<leader>cl", ":BufferLineCloseLeft<CR>", opts)
+map("n", "<leader>cc", ":bd<CR>", dopts("close current buffer"))
+map("n", "<leader>cr", ":BufferLineCloseRight<CR>", dopts("close right buffers"))
+map("n", "<leader>cl", ":BufferLineCloseLeft<CR>", dopts("close left buffers"))
+map("n", "<leader>co", ":BufferLineCloseRight<CR>:BufferLineCloseLeft<CR>", dopts("close other buffers"))
 
 ------------------------------- Telescope  文件搜索 -------------------------
 map("n", "<leader>ff", ":Telescope find_files<CR>", opts)
@@ -165,7 +164,7 @@ end
 
 --------------------- floating terminal -----------------------------
 -- toggleTerm & Lazygit
-map('n', '<leader>tg', '<CMD>lua _LAZYGIT_TOGGLE()<CR>', opts)
+map('n', '<leader>tg', '<CMD>lua _LAZYGIT_TOGGLE()<CR>', dopts("toggle lazygit tirminal"))
 map('n', '<leader>th', '<CMD>ToggleTerm direction=horizontal<CR>', opts)
 map('n', '<leader>tv', '<CMD>ToggleTerm direction=vertical<CR>', opts)
 map('n', '<leader>ta', '<CMD>ToggleTerm direction=tab<CR>', opts)
@@ -228,7 +227,7 @@ pluginKeys.mapgit = function(mapbuf)
   mapbuf('x', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
 end
 -- git history for select
-map({ 'n', 'v' }, '<leader>gl', "<Cmd>lua require'git-log'.check_log()<CR>", opts)
+map({ 'n', 'v' }, '<leader>gl', "<Cmd>lua require'git-log'.check_log()<CR>", dopts("git log history for select"))
 
 ------------------------gotests golang单元测试自动生成-----------------------
 map("n", "<leader>ge", ":GoTests<CR>", opts)
@@ -236,12 +235,12 @@ map("n", "<leader>gta", ":GoTestsAll<CR>", opts)
 map("n", "<leader>gte", ":GoTestsExported<CR>", opts)
 
 ----------------------git-conflict------------------------
-map('n', '<leader>co', '<Plug>(git-conflict-ours)')
-map('n', '<leader>ct', '<Plug>(git-conflict-theirs)')
-map('n', '<leader>cb', '<Plug>(git-conflict-both)')
-map('n', '<leader>c0', '<Plug>(git-conflict-none)')
-map('n', '<leader>cp', '<Plug>(git-conflict-prev-conflict)')
-map('n', '<leader>cn', '<Plug>(git-conflict-next-conflict)')
+map('n', '<leader>gco', '<Plug>(git-conflict-ours)')
+map('n', '<leader>gct', '<Plug>(git-conflict-theirs)')
+map('n', '<leader>gcb', '<Plug>(git-conflict-both)')
+map('n', '<leader>gc0', '<Plug>(git-conflict-none)')
+map('n', '<leader>gcp', '<Plug>(git-conflict-prev-conflict)')
+map('n', '<leader>gcn', '<Plug>(git-conflict-next-conflict)')
 
 -- --------------------markdown-preview-----------------------
 map('n', '<leader>mp', ':MarkdownPreview<CR>', opts)
@@ -249,7 +248,8 @@ map('n', '<leader>ms', ':MarkdownPreviewStop<CR>', opts)
 map('n', '<leader>mt', ':MarkdownPreviewToggle<CR>', opts)
 
 -----------------------goimpl---------------------------------
-map('n', '<leader>im', "<Cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>", opts)
+map('n', '<leader>im', "<Cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>",
+  dopts("go struct implement interface"))
 
 -----------------------open file with browser-------------------
 function _SHOW_BROWSER_FILE_PATH()
@@ -286,5 +286,11 @@ map("n", "<leader>ma", "<Cmd>MarksListAll<CR>", opts)
 
 -----------------------rust-------------------------------------
 map("n", "<leader>rr", "<Cmd>RustRunnables<CR>", opts)
+
+-----------------------falsh-------------------------------------
+map({ "n", "x", "o" }, "<leader>s", function() require("flash").jump() end, dopts("Flash"))
+map({ "n", "x", "o" }, "<leader>e", function() require("flash").treesitter() end, dopts("Flash Treesitter"))
+map({ "n", "x", "o" }, "<leader>re", function() require("flash").remote() end, dopts("remote Flash"))
+map({ "n", "x", "o" }, "<leader>ts", function() require("flash").treesitter_search() end, dopts("Treesitter Search"))
 
 return pluginKeys
