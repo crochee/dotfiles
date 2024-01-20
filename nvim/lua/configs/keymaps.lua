@@ -85,6 +85,7 @@ map("n", "<leader>fg", ":Telescope live_grep<CR>", opts)
 map("n", "<leader>fs", ":Telescope lsp_document_symbols<CR>", opts)
 map("n", "<leader>fb", ":Telescope buffers<CR>", opts)
 map("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
+map("n", "<leader>fp", ":Telescope projects<CR>", opts)
 
 -- Telescope 列表中 插入模式快捷键
 pluginKeys.telescopeList = {

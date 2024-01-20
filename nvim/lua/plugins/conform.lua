@@ -9,6 +9,9 @@ function M.config()
       timeout_ms = 500,
       lsp_fallback = true,
     },
+    formatters_by_ft = {
+      go = { "goimports", "gofumpt" },
+    }
   })
 end
 
