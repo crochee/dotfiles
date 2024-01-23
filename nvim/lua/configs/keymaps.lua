@@ -292,6 +292,6 @@ map("n", "<leader>rr", "<Cmd>RustRunnables<CR>", opts)
 map({ "n", "x", "o" }, "<leader>s", function() require("flash").jump() end, dopts("Flash"))
 map({ "n", "x", "o" }, "<leader>e", function() require("flash").treesitter() end, dopts("Flash Treesitter"))
 map({ "n", "x", "o" }, "<leader>re", function() require("flash").remote() end, dopts("remote Flash"))
-map({ "n", "x", "o" }, "<leader>ts", function() require("flash").treesitter_search() end, dopts("Treesitter Search"))
+map({ "n", "x", "o" }, "<leader>v", function() require("flash").treesitter_search() end, dopts("Treesitter Search"))
 
 return pluginKeys
