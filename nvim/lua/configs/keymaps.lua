@@ -86,6 +86,7 @@ map("n", "<leader>fs", ":Telescope lsp_document_symbols<CR>", opts)
 map("n", "<leader>fb", ":Telescope buffers<CR>", opts)
 map("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
 map("n", "<leader>fp", ":Telescope projects<CR>", opts)
+map("n", "<leader>fc", ":Telescope command_history<CR>", opts)
 
 -- Telescope 列表中 插入模式快捷键
 pluginKeys.telescopeList = {
