@@ -17,8 +17,8 @@ fi
 export DOTFILES_DIR
 
 # set workspace
-mkdir -p $HOME/workspace
-mkdir -p $HOME/.local/bin
+mkdir -p "$HOME/workspace"
+mkdir -p "$HOME/.local/bin"
 export WORKSPACE=$HOME/workspace
 
 # Make utilities available
@@ -37,6 +37,6 @@ unset CURRENT_SCRIPT SCRIPT_PATH DOTFILE
 # Remove duplicates (preserving prepended items)
 # Source: http://unix.stackexchange.com/a/40755
 
-PATH=$(echo -n $PATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s",!ln++?"":":",$0)}}')
+PATH=$(echo -n "$PATH" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s",!ln++?"":":",$0)}}')
 
 export PATH

@@ -54,6 +54,7 @@ install_neovim() {
         curl -L  https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz|tar -xzv -C ~/.local/bin
         # sudo apt-get install -y neovim
         echo "install neovim done."
+        source "$HOME/.bashrc"
     fi
 }
 
@@ -75,6 +76,7 @@ install_nodejs() {
         sudo apt-get install -y nodejs
         echo "install nodejs v${NODE_MAJOR}.x done."
         unset NODE_MAJOR
+        source "$HOME/.bashrc"
     fi
 }
 
@@ -108,6 +110,7 @@ install_rust() {
         echo "install rust..."
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         echo "install rust done."
+        source "$HOME/.bashrc"
     fi
 }
 
@@ -122,6 +125,7 @@ install_go(){
         cd $SCRIPT_PATH
         unset GO_VERSION
         echo "install go done."
+        source "$HOME/.bashrc"
     fi
 }
 
@@ -130,6 +134,7 @@ install_python3(){
             echo "install python3..."
             sudo apt-get install -y python3-full python3-pip
             echo "install python3 done."
+            source "$HOME/.bashrc"
         fi
 }
 
@@ -201,5 +206,6 @@ else
     mkdir -p ~/Downloads
     install $*
 fi
+
 
 unset SCRIPT_PATH

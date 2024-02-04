@@ -30,7 +30,7 @@ check_cmd() {
 }
 
 mkdir_backup() {
-    msg "create backup dir:" $1
+    msg "create backup dir: $1"
     if mkdir "$1" > /dev/null 2>&1
     then
         msg " √\n"
@@ -44,11 +44,11 @@ mk_symlink() {
     if [ -e "$1" ]
     then
         # check dotfile is exists
-        if [ -e $2 -o -L $2 ]
+        if [ -e "$2" -o -L "$2" ]
         then
             # create backup dir if not exists
-            backup_dir="$HOME/backup_`date +%Y-%m-%d_%H-%M-%S`"
-            if [ ! -d $backup_dir ]; then mkdir_backup $backup_dir; fi
+            backup_dir="$HOME/backup_$(date +%Y-%m-%d_%H-%M-%S)"
+            if [ ! -d "$backup_dir" ]; then mkdir_backup "$backup_dir"; fi
             # backup dotfile
             msg "mv $2 to $backup_dir"
             if mv "$2" "$backup_dir/" > /dev/null 2>&1
@@ -72,7 +72,7 @@ mk_symlink() {
 
 clone_repo() {
     TARBALL="$SOURCE/tarball/master"
-    TAR_CMD="tar -xzv -C "$TARGET" --strip-components=1 --exclude='.gitignore'"
+    TAR_CMD="tar -xzv -C $TARGET --strip-components=1 --exclude='.gitignore'"
     if check_cmd "git"; then
         CMD="git clone $SOURCE $TARGET"
     elif check_cmd "curl"; then
@@ -96,7 +96,7 @@ clone_repo() {
 
 check_repo() {
     msg "check ${TARGET}"
-        if [ -e $TARGET ]
+        if [ -e "$TARGET" ]
         then
             msg " √\n"
             return 0
@@ -125,11 +125,11 @@ install_dotfiles(){
     msg "install dotfiles done!\n"
 }
 
-install_neovim_config(){
-    msg "installing neovim config...\n"
+install_config(){
+    msg "installing config...\n"
     local path_to_config="${HOME}/.config"
     msg "check ${path_to_config}"
-    if [ -e $path_to_config ]
+    if [ -e "$path_to_config" ]
     then
         msg " √\n"
     else
@@ -143,15 +143,21 @@ install_neovim_config(){
             exit 1
         fi
     fi
+    msg "installing neovim config...\n"
     mk_symlink "${TARGET}/nvim" "${path_to_config}/nvim"
     msg "install neovim config done!\n"
+
+    msg "installing wezterm config...\n"
+    mk_symlink "${TARGET}/wezterm" "${path_to_config}/wezterm"
+    msg "install wezterm config done!\n"
 }
 
 install_cargo(){
+    source "$HOME/.bashrc"
     msg "install cargo...\n"
     local path_to_cargo="${CARGO_HOME}"
     msg "check ${path_to_cargo}"
-    if [ -e $path_to_cargo ]
+    if [ -e "$path_to_cargo" ]
         then
             msg " √\n"
         else
@@ -173,7 +179,7 @@ install_zk(){
     msg "installing zk...\n"
     local path_to_notes="${HOME}/.config/notes"
     msg "check ${path_to_notes}"
-    if [ -e $path_to_notes ]
+    if [ -e "$path_to_notes" ]
     then
         msg " √\n"
     else
@@ -207,17 +213,17 @@ init_bashrc(){
 
 show_menu(){
     msg_title "INSTALL"
-    echo "1) install neovim config"
+    echo "1) install config"
     echo "2) install dotfiles"
-    echo "3) install dotfiles and neovim config"
+    echo "3) install dotfiles and config"
     echo "4) install zk"
     echo "5) install cargo config"
     echo -n "select: "
     read num
     case $num in
-        1) check_repo && install_neovim_config ;;
+        1) check_repo && install_config ;;
         2) check_repo && install_dotfiles ;;
-        3) check_repo && install_dotfiles && install_neovim_config ;;
+        3) check_repo && install_dotfiles && install_config ;;
         4) check_repo && install_zk ;;
         5) check_repo && install_cargo ;;
         *) msg "your option is invalid! Goodbye!";;
