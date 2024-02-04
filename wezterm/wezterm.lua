@@ -14,7 +14,7 @@ local function theme_for_appearance(appearance)
   if appearance:find 'Dark' then
     return 'Molokai'
   else
-    return 'catppuccin-macchiato'
+    return 'Catppuccin Macchiato (Gogh)'
   end
 end
 
