@@ -150,6 +150,10 @@ install_config(){
     msg "installing wezterm config...\n"
     mk_symlink "${TARGET}/wezterm" "${path_to_config}/wezterm"
     msg "install wezterm config done!\n"
+
+    msg "installing awesomewm config...\n"
+    mk_symlink "${TARGET}/awesome" "${path_to_config}/awesome"
+    msg "install awesomewm config done!\n"
 }
 
 install_awesomewm(){

@@ -30,7 +30,7 @@ end
 
 -- and finally, return the configuration to wezterm
 return {
-  enable_wayland = false,
+  enable_wayland = true,
   color_scheme = theme_for_appearance(get_appearance()),
 
   font_size = 18,
