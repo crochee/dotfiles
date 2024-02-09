@@ -152,6 +152,12 @@ install_config(){
     msg "install wezterm config done!\n"
 }
 
+install_awesomewm(){
+    msg "installing awesomevm config...\n"
+    mk_symlink "${TARGET}/awesome" "/etc/xdg/awesome"
+    msg "install awesomevm config done!\n"
+}
+
 install_cargo(){
     source "$HOME/.bashrc"
     msg "install cargo...\n"
@@ -218,6 +224,7 @@ show_menu(){
     echo "3) install dotfiles and config"
     echo "4) install zk"
     echo "5) install cargo config"
+    echo "6) install awsomewm config"
     echo -n "select: "
     read num
     case $num in
@@ -226,6 +233,7 @@ show_menu(){
         3) check_repo && install_dotfiles && install_config ;;
         4) check_repo && install_zk ;;
         5) check_repo && install_cargo ;;
+        6) check_repo && install_awesomewm ;;
         *) msg "your option is invalid! Goodbye!";;
     esac
 }
