@@ -138,6 +138,17 @@ install_python3(){
         fi
 }
 
+install_wezterm(){
+        if ! has_cmd "wezterm"; then
+            echo "install wezterm..."
+            cd ~/Downloads/
+            curl -LO https://github.com/wez/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Ubuntu22.04.deb
+            sudo apt install -y ./wezterm-20240203-110809-5046fc22.Ubuntu22.04.deb
+            cd "$SCRIPT_PATH"
+            echo "install wezterm done."
+        fi
+}
+
 install_tools(){
     if has_cmd "go"; then
         if ! has_cmd "mockgen"; then
@@ -194,7 +205,7 @@ show_menu(){
     mkdir -p ~/Downloads
     mkdir -p ~/.local/bin
     echo "================INSTALL================="
-    echo "please select ohmybash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, mycli, tools or quit:"
+    echo "please select ohmybash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, mycli, wezterm, tools or quit:"
     echo -n "select: "
     read num
     install $num
