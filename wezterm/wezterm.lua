@@ -25,7 +25,7 @@ local function default_prog()
     return { 'wsl', '~' }
   end
   -- return { 'tmux' }
-  return {}
+  return { 'bash' }
 end
 
 -- and finally, return the configuration to wezterm
