@@ -40,7 +40,7 @@ return {
 
   default_prog = default_prog(),
   window_close_confirmation = "NeverPrompt",
-  window_decorations = "RESIZE",
+  window_decorations = "NONE",
   hide_tab_bar_if_only_one_tab = true,
 
   window_padding = {
