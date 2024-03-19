@@ -175,7 +175,6 @@ map('n', '<leader>tf', '<CMD>ToggleTerm direction=float<CR>', opts)
 -- Begin
 map("n", "<leader>dc", ":lua require('dap').continue()<CR>", opts)
 map("n", "<leader>dC", ":lua require('dap').run_to_cursor()<CR>", opts)
-map("n", "<leader>dd", ":RustDebuggables<CR>", opts)
 -- Stop
 map(
   "n",
@@ -285,9 +284,6 @@ map("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opts)
 
 ----------------------marks-------------------------------------
 map("n", "<leader>ma", "<Cmd>MarksListAll<CR>", opts)
-
------------------------rust-------------------------------------
-map("n", "<leader>rr", "<Cmd>RustRunnables<CR>", opts)
 
 -----------------------falsh-------------------------------------
 map({ "n", "x", "o" }, "<leader>s", function() require("flash").jump() end, dopts("Flash"))

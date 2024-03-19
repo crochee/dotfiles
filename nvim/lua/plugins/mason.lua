@@ -25,7 +25,11 @@ local M = {
     'leoluz/nvim-dap-go',
     'theHamsta/nvim-dap-virtual-text',
     "rcarriga/nvim-dap-ui",
-    'simrat39/rust-tools.nvim',
+    {
+      'mrcjkb/rustaceanvim',
+      version = '^4', -- Recommended
+      ft = { 'rust' },
+    },
     ----------linter
     {
       "jay-babu/mason-null-ls.nvim",
