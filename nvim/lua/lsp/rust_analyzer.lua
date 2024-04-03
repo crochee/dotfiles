@@ -29,15 +29,13 @@ local opts = {
       },
       procMacro = {
         enable = true,
-        ignored = {
-          ["async-trait"] = { "async_trait" },
-          ["napi-derive"] = { "napi" },
-          ["async-recursion"] = { "async_recursion" },
-        },
       },
     },
   },
-  on_attach        = require('lsp.utils').on_attach,
+  on_attach        = function(client, bufnr)
+    vim.lsp.inlay_hint.enable(bufnr)
+    require('lsp.utils').on_attach(client, bufnr)
+  end,
   setup            = function(opts)
     vim.g.rustaceanvim = function()
       return {
