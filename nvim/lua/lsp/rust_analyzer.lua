@@ -1,10 +1,5 @@
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rust_analyzer
-local util = require('lspconfig/util')
-
 local opts = {
-  cmd              = { "rust-analyzer" },
-  filetyps         = { "rust" },
-  root_dir         = util.root_pattern("Cargo.toml", "rust-project.json"),
   settings         = function(project_root)
     local ra = require('rustaceanvim.config.server')
     return ra.load_rust_analyzer_settings(project_root, {
@@ -32,10 +27,7 @@ local opts = {
       },
     },
   },
-  on_attach        = function(client, bufnr)
-    vim.lsp.inlay_hint.enable(bufnr)
-    require('lsp.utils').on_attach(client, bufnr)
-  end,
+  on_attach        = require('lsp.utils').on_attach,
   setup            = function(opts)
     vim.g.rustaceanvim = function()
       return {
