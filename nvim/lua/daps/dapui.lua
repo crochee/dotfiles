@@ -1,22 +1,7 @@
-local status, dap = pcall(require, "dap")
-if not status then
-  vim.notify("not found dap")
-  return
-end
+local dap = require("dap")
+local dapui = require("dapui")
 
-local status_dapui, dapui = pcall(require, "dapui")
-if not status_dapui then
-  vim.notify("not found dapui")
-  return
-end
-
-local status_dap_virtual_text, dap_virtual_text = pcall(require, "nvim-dap-virtual-text")
-if not status_dap_virtual_text then
-  vim.notify("not found nvim-dap-virtual-text")
-  return
-end
-
-dap_virtual_text.setup({
+require("nvim-dap-virtual-text").setup({
   commented = true,
 })
 

@@ -20,8 +20,9 @@ local M = {
     'nvim-telescope/telescope-dap.nvim',
     'jayp0521/mason-nvim-dap.nvim',
     'mfussenegger/nvim-dap',
-    "theHamsta/nvim-dap-virtual-text",
     "rcarriga/nvim-dap-ui",
+    "theHamsta/nvim-dap-virtual-text",
+    "nvim-neotest/nvim-nio",
     'leoluz/nvim-dap-go',
     {
       'mrcjkb/rustaceanvim',
@@ -57,8 +58,8 @@ function M.config()
 
 
   -----------------dap Install List ---------------------
-  -- import dap's config
-  require("daps.config")
+  require("daps.dapui")
+
   local dap_list = {
     {
       name = "delve",
@@ -81,9 +82,9 @@ function M.config()
     table.insert(dap_ensure_installed, ele.name)
 
     if ele.alone then
-      require("daps.configs." .. ele.name)
+      require("daps." .. ele.name)
     else
-      dap_handlers[ele.name] = require("daps.configs." .. ele.name)
+      dap_handlers[ele.name] = require("daps." .. ele.name)
     end
   end
 
