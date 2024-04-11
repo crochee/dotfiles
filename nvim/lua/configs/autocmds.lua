@@ -130,36 +130,21 @@ vim.api.nvim_create_autocmd(
     end,
   })
 
-if vim.fn.has("wsl") == 1 then
-  -- Set clipboard to use win32yank 设置剪贴板为win32yank,WSL与Windows同步剪贴板
-  -- 下载win32yank.exe,参考http://github.com/equalsraf/win32yank/releases 将执行文件放置于/usr/local/bin/目录下
+if vim.loop.os_uname().sysname:find("Windows") then
   vim.cmd [[
   let g:clipboard = {
-    \   'name': 'win32yank-wsl',
+    \   'name': 'clipx.exe',
     \   'copy': {
-    \      '+': 'win32yank.exe -i --crlf',
-    \      '*': 'win32yank.exe -i --crlf',
+    \      '+': 'clipx.exe -i --crlf',
+    \      '*': 'clipx.exe -i --crlf',
     \    },
     \   'paste': {
-    \      '+': 'win32yank.exe -o --lf',
-    \      '*': 'win32yank.exe -o --lf',
+    \      '+': 'clipx.exe -o --lf',
+    \      '*': 'clipx.exe -o --lf',
     \   },
     \   'cache_enabled': 0,
     \ }
    ]]
 else
-  vim.cmd [[
-  let g:clipboard = {
-    \   'name': 'xclip',
-    \   'copy': {
-    \      '+': 'xclip -selection clipboard -i',
-    \      '*': 'xclip -selection clipboard -i',
-    \    },
-    \   'paste': {
-    \      '+': 'xclip -selection clipboard -o',
-    \      '*': 'xclip -selection clipboard -o',
-    \   },
-    \   'cache_enabled': 0,
-    \ }
-  ]]
+  -- linux need xclip sudo apt install xclip -y
 end

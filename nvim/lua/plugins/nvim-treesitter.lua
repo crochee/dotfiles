@@ -4,8 +4,7 @@ return {
   -- syntax highlighting.
   {
     "nvim-treesitter/nvim-treesitter",
-    version = false,     -- last release is way too old and doesn't work on Windows
-    build = ":TSUpdate",
+    version = false, -- last release is way too old and doesn't work on Windows
     event = { "VeryLazy" },
     init = function(plugin)
       -- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
