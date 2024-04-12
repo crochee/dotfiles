@@ -282,9 +282,6 @@ map("n", "<leader>zf",
 -- Search for the notes matching the current visual selection.
 map("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opts)
 
-----------------------marks-------------------------------------
-map("n", "<leader>ma", "<Cmd>MarksListAll<CR>", opts)
-
 -----------------------falsh-------------------------------------
 map({ "n", "x", "o" }, "<leader>s", function() require("flash").jump() end, dopts("Flash"))
 map({ "n", "x", "o" }, "<leader>e", function() require("flash").treesitter() end, dopts("Flash Treesitter"))
