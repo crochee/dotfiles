@@ -174,12 +174,6 @@ install_tools() {
 			cargo install ripgrep
 			echo "install ripgrep done."
 		fi
-		# install delta
-		if ! has_cmd "delta"; then
-			echo "install git-delta..."
-			cargo install git-delta
-			echo "install git-delta done."
-		fi
 	fi
 }
 
