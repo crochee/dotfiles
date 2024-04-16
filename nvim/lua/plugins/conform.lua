@@ -10,7 +10,8 @@ function M.config()
       lsp_fallback = true,
     },
     formatters_by_ft = {
-      go = { "goimports", "gofumpt" },
+      go = { "golines" },
+      sql = { "sqlfmt" }
     }
   })
 end
