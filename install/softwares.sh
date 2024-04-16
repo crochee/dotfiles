@@ -19,31 +19,31 @@ has_cmd() {
 
 install_clipboard() {
 	# 检查系统是否为WSL
-	if [ -f "/proc/version" ]; then
-		if grep -q "microsoft" "/proc/version"; then
-			echo "system is WSL"
-			if has_cmd "win32yank.exe"; then
-				return 0
-			fi
-			echo "install clipboard..."
-			#下载win32yank.exe,参考http://github.com/equalsraf/win32yank/releases 将执行文件放置于/usr/local/bin/目录下
-			curl -sL https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x86.zip -o ~/Downloads/win32yank-x86.zip
-			unzip ~/Downloads/win32yank-x86.zip -d ~/Downloads/win32yank/
-			chmod +x ~/Downloads/win32yank/win32yank.exe
-			sudo mv ~/Downloads/win32yank/win32yank.exe /usr/local/bin
-		else
+	# if [ -f "/proc/version" ]; then
+	# 	if grep -q "microsoft" "/proc/version"; then
+	# 		echo "system is WSL"
+	# 		if has_cmd "win32yank.exe"; then
+	# 			return 0
+	# 		fi
+	# 		echo "install clipboard..."
+	# 		#下载win32yank.exe,参考http://github.com/equalsraf/win32yank/releases 将执行文件放置于/usr/local/bin/目录下
+	# 		curl -sL https://github.com/equalsraf/win32yank/releases/download/v0.1.1/win32yank-x86.zip -o ~/Downloads/win32yank-x86.zip
+	# 		unzip ~/Downloads/win32yank-x86.zip -d ~/Downloads/win32yank/
+	# 		chmod +x ~/Downloads/win32yank/win32yank.exe
+	# 		sudo mv ~/Downloads/win32yank/win32yank.exe /usr/local/bin
+	# 	else
 			echo "system is Linux"
 			if has_cmd "xclip"; then
 				return 0
 			fi
 			echo "install clipboard..."
-			sudo apt-get install xclip
-		fi
+			sudo apt-get install xclip -y
+		# fi
 		echo "install clipboard done."
-	else
-		echo "unknown system type"
-		exit 1
-	fi
+	# else
+	# 	echo "unknown system type"
+	# 	exit 1
+	# fi
 }
 
 install_neovim() {
