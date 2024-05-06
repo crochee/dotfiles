@@ -4,3 +4,6 @@ fi
 if type zoxide >/dev/null 2>&1; then
   eval "$(zoxide init bash)"
 fi
+if type mcfly >/dev/null 2>&1; then
+  eval "$(mcfly init bash)"
+fi
