@@ -85,7 +85,7 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   "FileType",
   {
-    pattern = { "ruby", "javascript", "html", "css", "xml", "lua" },
+    pattern = { "ruby", "javascript", "typescript", "jsonc", "html", "css", "xml", "lua" },
     command = [[set tabstop=2 shiftwidth=2 softtabstop=2 expandtab ai]]
   }
 )
@@ -130,21 +130,21 @@ vim.api.nvim_create_autocmd(
     end,
   })
 
-if vim.loop.os_uname().sysname:find("Windows") then
-  vim.cmd [[
-  let g:clipboard = {
-    \   'name': 'clipx.exe',
-    \   'copy': {
-    \      '+': 'clipx.exe -i --crlf',
-    \      '*': 'clipx.exe -i --crlf',
-    \    },
-    \   'paste': {
-    \      '+': 'clipx.exe -o --lf',
-    \      '*': 'clipx.exe -o --lf',
-    \   },
-    \   'cache_enabled': 0,
-    \ }
-   ]]
-else
-  -- linux need xclip sudo apt install xclip -y
-end
+-- if vim.loop.os_uname().sysname:find("Windows") then
+--   vim.cmd [[
+--   let g:clipboard = {
+--     \   'name': 'clipx.exe',
+--     \   'copy': {
+--     \      '+': 'clipx.exe -i --crlf',
+--     \      '*': 'clipx.exe -i --crlf',
+--     \    },
+--     \   'paste': {
+--     \      '+': 'clipx.exe -o --lf',
+--     \      '*': 'clipx.exe -o --lf',
+--     \   },
+--     \   'cache_enabled': 0,
+--     \ }
+--    ]]
+-- else
+--   -- linux need xclip sudo apt install xclip -y
+-- end
