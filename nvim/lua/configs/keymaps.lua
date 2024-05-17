@@ -134,8 +134,8 @@ end
 
 map("n", "<leader>tc", ':lua require("treesitter-context").go_to_context()<CR>', opts)
 -- close lspinlayHit
-map('n', '<leader>io', '<CMD>lua vim.lsp.inlay_hint(0, true)<CR>', opts)
-map('n', '<leader>ic', '<CMD>lua vim.lsp.inlay_hint(0, false)<CR>', opts)
+map('n', '<leader>ie',
+  '<CMD>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }), {bufnr=0})<CR>', opts)
 
 -------------------- nvim-cmp 自动补全 --------------------------
 pluginKeys.cmp = function(cmp)
