@@ -4,17 +4,32 @@ local M = {
 -- 底部状态栏
 function M.config()
   local spaces = function()
-    return "spaces: " .. vim.api.nvim_buf_get_option(0, "shiftwidth")
+    return vim.api.nvim_buf_get_option(0, "shiftwidth")
   end
 
+  local lsp = {
+    function()
+      local bufnr = vim.api.nvim_get_current_buf()
+      local clients = vim.lsp.get_clients { bufnr = bufnr }
+
+      if next(clients) == nil then
+        return 'No Active Lsp'
+      end
+
+      local active_lsps = {}
+      for _, client in ipairs(clients) do
+        table.insert(active_lsps, client.name)
+      end
+
+      return table.concat(active_lsps, ',')
+    end,
+    icon = '',
+  }
   require('lualine').setup {
     options = {
-      icons_enabled = true,
-      theme = "auto",
-      component_separators = { left = "", right = "" },
-      section_separators = { left = "", right = "" },
       disabled_filetypes = { "alpha", "dashboard", "NvimTree", "Outline" },
-      always_divide_middle = true,
+      component_separators = '',
+      section_separators = '',
     },
     sections = {
       lualine_c = {
@@ -25,16 +40,12 @@ function M.config()
         }
       },
       lualine_x = {
+        lsp,
         spaces,
         "encoding",
         {
           "filetype",
           icons_enabled = true,
-        },
-      },
-      lualine_y = {
-        {
-          "progress",
         },
       },
     },
