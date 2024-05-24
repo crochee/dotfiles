@@ -36,6 +36,7 @@ local opts = {
           adapter = require("dap").adapters.codelldb,
         },
         tools = {
+          test_executor = 'termopen',
           on_initialized = function()
             vim.cmd([[
                  augroup RustLSP
