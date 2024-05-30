@@ -9,6 +9,7 @@ local opts = {
   init_options = {
     command = { "golangci-lint", "run", "--out-format", "json" }
   },
+  capabilities = require('lsp.utils').capabilities,
   on_attach = require('lsp.utils').on_attach
 }
 

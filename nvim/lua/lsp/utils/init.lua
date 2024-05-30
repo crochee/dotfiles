@@ -15,6 +15,14 @@ function M.on_attach(client, bufnr)
 
   -- 绑定快捷键
   require("configs.keymaps").maplsp(buf_set_keymap)
+
+  local lsp_status = require('lsp-status')
+  lsp_status.on_attach(client)
 end
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+local lsp_status = require('lsp-status')
+M.capabilities = vim.tbl_extend('keep', capabilities or {}, lsp_status.capabilities)
 
 return M

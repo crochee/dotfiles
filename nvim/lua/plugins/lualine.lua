@@ -1,5 +1,5 @@
 local M = {
-  'nvim-lualine/lualine.nvim'
+  'nvim-lualine/lualine.nvim',
 }
 -- 底部状态栏
 function M.config()
@@ -7,24 +7,15 @@ function M.config()
     return vim.api.nvim_buf_get_option(0, "shiftwidth")
   end
 
-  local lsp = {
-    function()
-      local bufnr = vim.api.nvim_get_current_buf()
-      local clients = vim.lsp.get_clients { bufnr = bufnr }
+  local lsp = function()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local clients = vim.lsp.get_clients { bufnr = bufnr }
 
-      if next(clients) == nil then
-        return 'No Active Lsp'
-      end
-
-      local active_lsps = {}
-      for _, client in ipairs(clients) do
-        table.insert(active_lsps, client.name)
-      end
-
-      return table.concat(active_lsps, ',')
-    end,
-    icon = '',
-  }
+    if next(clients) == nil then
+      return 'No Active Lsp'
+    end
+    return require('lsp-status').status()
+  end
   require('lualine').setup {
     options = {
       disabled_filetypes = { "alpha", "dashboard", "NvimTree", "Outline" },

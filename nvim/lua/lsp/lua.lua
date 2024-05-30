@@ -40,10 +40,8 @@ local opts = {
     debounce_text_changes = 150,
   },
   on_attach = require('lsp.utils').on_attach,
+  capabilities = require('lsp.utils').capabilities,
 }
 
--- local capabilities = vim.lsp.protocol.make_client_capabilities()
--- capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
--- opts.capabilities = capabilities
 
 return opts
