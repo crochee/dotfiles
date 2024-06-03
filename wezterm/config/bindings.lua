@@ -1,9 +1,14 @@
 local wezterm = require("wezterm")
-
+local platform = require('utils.platform')()
 local act = wezterm.action
+
 local M = {}
 
-M.mod = wezterm.target_triple:find("windows") and "SHIFT|CTRL" or "SHIFT|SUPER"
+if platform.is_mac then
+  M.mod = 'SHIFT|SUPER'
+elseif platform.is_win or platform.is_linux then
+  M.mod = 'SHIFT|CTRL'
+end
 
 M.smart_split = wezterm.action_callback(function(window, pane)
   local dim = pane:get_dimensions()
@@ -17,23 +22,6 @@ end)
 M.close_pane = wezterm.action_callback(function(window, pane)
   window:perform_action(act.CloseCurrentPane({ confirm = false }), pane)
 end)
-
----@param config Config
-function M.setup(config)
-  config.keys = {
-    { mods = M.mod, key = "Enter", action = M.smart_split },
-    { mods = M.mod, key = "q",     action = M.close_pane },
-    -- resize and move
-    M.split_nav("resize", "CTRL", "LeftArrow", "Right"),
-    M.split_nav("resize", "CTRL", "RightArrow", "Left"),
-    M.split_nav("resize", "CTRL", "UpArrow", "Up"),
-    M.split_nav("resize", "CTRL", "DownArrow", "Down"),
-    M.split_nav("move", "CTRL", "h", "Left"),
-    M.split_nav("move", "CTRL", "j", "Down"),
-    M.split_nav("move", "CTRL", "k", "Up"),
-    M.split_nav("move", "CTRL", "l", "Right"),
-  }
-end
 
 ---@param resize_or_move "resize" | "move"
 ---@param mods string
@@ -77,4 +65,46 @@ function M.is_nvim(pane)
   return pane:get_user_vars().IS_NVIM == "true" or pane:get_foreground_process_name():find("n?vim")
 end
 
-return M
+return {
+  leader = { key = 'a', mods = M.mod },
+  keys = {
+    -- misc/useful --
+    { key = 'F3', mods = 'NONE', action = act.ShowLauncher },
+    { key = 'F4', mods = 'NONE', action = act.ShowLauncherArgs({ flags = 'FUZZY|TABS' }) },
+    {
+      key = 'F5',
+      mods = 'NONE',
+      action = act.ShowLauncherArgs({ flags = 'FUZZY|WORKSPACES' }),
+    },
+    { mods = M.mod, key = "Enter", action = M.smart_split },
+    { mods = M.mod, key = "q",     action = M.close_pane },
+    {
+      key = 'u',
+      mods = M.mod,
+      action = wezterm.action.QuickSelectArgs({
+        label = 'open url',
+        patterns = {
+          '\\((https?://\\S+)\\)',
+          '\\[(https?://\\S+)\\]',
+          '\\{(https?://\\S+)\\}',
+          '<(https?://\\S+)>',
+          '\\bhttps?://\\S+[)/a-zA-Z0-9-]+'
+        },
+        action = wezterm.action_callback(function(window, pane)
+          local url = window:get_selection_text_for_pane(pane)
+          wezterm.log_info('opening: ' .. url)
+          wezterm.open_with(url)
+        end),
+      }),
+    },
+    -- resize and move
+    M.split_nav("resize", "CTRL", "LeftArrow", "Right"),
+    M.split_nav("resize", "CTRL", "RightArrow", "Left"),
+    M.split_nav("resize", "CTRL", "UpArrow", "Up"),
+    M.split_nav("resize", "CTRL", "DownArrow", "Down"),
+    M.split_nav("move", "CTRL", "h", "Left"),
+    M.split_nav("move", "CTRL", "j", "Down"),
+    M.split_nav("move", "CTRL", "k", "Up"),
+    M.split_nav("move", "CTRL", "l", "Right"),
+  },
+}
