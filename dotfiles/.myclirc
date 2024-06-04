@@ -106,5 +106,4 @@ Token.Toolbar.Arg.Text = 'nobold'
 # Use the -d option to reference a DSN.
 [alias_dsn]
 l = mysql://root:1234567@localhost:3306
-d = mysql://root:be88b33bdb7eTi0*@172.31.254.3:30336
-pr = mysql://root:8dc83b31aa49Ti0*@172.31.248.3:30336
+pr = mysql://root:8dc83b31aa49Ti0*@172.31.248.2:30336
