@@ -16,6 +16,9 @@ function M.config()
     end
     return require('lsp-status').status()
   end
+  local codeium = function()
+    return vim.api.nvim_call_function("codeium#GetStatusString", {})
+  end
   require('lualine').setup {
     options = {
       disabled_filetypes = { "alpha", "dashboard", "NvimTree", "Outline" },
@@ -32,6 +35,7 @@ function M.config()
       },
       lualine_x = {
         lsp,
+        codeium,
         spaces,
         "encoding",
         {
