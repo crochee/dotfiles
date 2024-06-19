@@ -108,7 +108,6 @@ function M.config()
     vimls = require("lsp.vimls"),
     cssls = require("lsp.cssls"),
     html = require("lsp.html"),
-    golangci_lint_ls = require("lsp.golangci_lint_ls"),
     eslint = require("lsp.eslint"),
     tsserver = require("lsp.tsserver"),
     taplo = require("lsp.taplo"),
@@ -140,7 +139,6 @@ function M.config()
   -------------------- Linter Install List
   local linters = {
     shellcheck = require("linter.shellcheck"),
-    golangci_lint = {},
     vacuum = {},
     stylelint = {},
   }
