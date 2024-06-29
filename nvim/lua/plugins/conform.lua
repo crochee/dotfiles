@@ -11,7 +11,8 @@ function M.config()
     },
     formatters_by_ft = {
       go = { "golines" },
-      sql = { "sqlfmt" }
+      sql = { "sqlfmt" },
+      python = { "ruff_format" },
     }
   })
 end

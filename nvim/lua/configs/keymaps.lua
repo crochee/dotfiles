@@ -34,8 +34,13 @@ map("v", "<", "<gv", dopts("indent left"))
 map("v", ">", ">gv", dopts("indent right"))
 
 -- 上下移动选中文本
-map("v", "J", ":m '>+1<CR>gv=gv", dopts("move down with selection"))
-map("v", "K", ":m '<-2<CR>gv=gv", dopts("move up with selection"))
+-- Move Lines
+map("n", "<A-j>", "<cmd>m .+1<cr>==", dopts("Move Down"))
+map("n", "<A-k>", "<cmd>m .-2<cr>==", dopts("Move Up"))
+map("i", "<A-j>", "<esc><cmd>m .+1<cr>==gi", dopts("Move Down"))
+map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", dopts("Move Up"))
+map("v", "<A-j>", ":m '>+1<cr>gv=gv", dopts("move down with selection"))
+map("v", "<A-k>", ":m '<-2<cr>gv=gv", dopts("move up with selection"))
 
 -- 插件快捷键
 local pluginKeys = {}
@@ -166,11 +171,23 @@ end
 
 --------------------- floating terminal -----------------------------
 -- toggleTerm & Lazygit
-map('n', '<leader>tg', '<CMD>lua _LAZYGIT_TOGGLE()<CR>', dopts("toggle lazygit tirminal"))
+map('n', '<leader>tg', '<CMD>lua _LAZYGIT_OPEN()<CR>', dopts("toggle lazygit tirminal"))
+map("n", "<leader>tF", function()
+  local git_path = vim.api.nvim_buf_get_name(0)
+  _LAZYGIT_OPEN({ args = { "-f", vim.trim(git_path) } })
+end, dopts("Lazygit Current File History"))
+map("n", "<leader>tL", function()
+  _LAZYGIT_OPEN({ args = { "log" } })
+end, dopts("Lazygit Log (cwd)"))
+
 map('n', '<leader>th', '<CMD>ToggleTerm direction=horizontal<CR>', opts)
 map('n', '<leader>tv', '<CMD>ToggleTerm direction=vertical<CR>', opts)
 map('n', '<leader>ta', '<CMD>ToggleTerm direction=tab<CR>', opts)
 map('n', '<leader>tf', '<CMD>ToggleTerm direction=float<CR>', opts)
+
+-- git history for select
+map({ 'n', 'v' }, '<leader>gl', "<Cmd>lua require'git-log'.check_log()<CR>", dopts("git log history for select"))
+
 ----------------------dap debug ------------------------------------
 -- Begin
 map("n", "<leader>dc", ":lua require('dap').continue()<CR>", opts)
@@ -201,9 +218,6 @@ map("n", "<leader>dh", ":lua require'dapui'.eval()<CR>", opts)
 map("n", "<leader>dgt", ":lua require('dap-go').debug_test()<CR>", opts)
 map("n", "<leader>dgl", ":lua require('dap-go').debug_last_test()<CR>", opts)
 
------------------------------git --------------------------------
--- git history for select
-map({ 'n', 'v' }, '<leader>gl', "<Cmd>lua require'git-log'.check_log()<CR>", dopts("git log history for select"))
 
 ------------------------gotests golang单元测试自动生成-----------------------
 map("n", "<leader>ge", ":GoTests<CR>", opts)
