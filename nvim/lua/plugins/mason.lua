@@ -19,10 +19,13 @@ local M = {
     -------- dap
     'nvim-telescope/telescope-dap.nvim',
     'jayp0521/mason-nvim-dap.nvim',
-    'mfussenegger/nvim-dap',
+    "mfussenegger/nvim-dap",
     "rcarriga/nvim-dap-ui",
+    {
+      "rcarriga/nvim-dap-ui",
+      dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" }
+    },
     "theHamsta/nvim-dap-virtual-text",
-    "nvim-neotest/nvim-nio",
     'leoluz/nvim-dap-go',
     {
       'mrcjkb/rustaceanvim',
@@ -153,5 +156,4 @@ function M.config()
     automatic_installation = true,
   })
 end
-
 return M
