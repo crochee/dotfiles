@@ -1,84 +1,81 @@
 local M = {
-  'hrsh7th/nvim-cmp',
-  dependencies = {
-    'onsails/lspkind-nvim',
-    'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-buffer',
-    'hrsh7th/cmp-path',
-    'hrsh7th/cmp-cmdline',
-    'hrsh7th/vim-vsnip'
-  }
+	"hrsh7th/nvim-cmp",
+	event = "InsertEnter",
+	dependencies = {
+		"hrsh7th/cmp-nvim-lsp",
+		"hrsh7th/cmp-buffer",
+		"hrsh7th/cmp-path",
+		"hrsh7th/cmp-cmdline",
+		-- 补全源
+		"hrsh7th/cmp-vsnip",
+		"hrsh7th/vim-vsnip",
+	},
 }
 
 function M.config()
-  local lspkind = require('lspkind')
-  local cmp = require 'cmp'
+	local cmp = require("cmp")
+	local kind_icons = {
+		Text = "󰉿",
+		Method = "󰆧",
+		Function = "󰊕",
+		Constructor = "",
+		Field = " ",
+		Variable = "󰀫",
+		Class = "󰠱",
+		Interface = "",
+		Module = "",
+		Property = "󰜢",
+		Unit = "󰑭",
+		Value = "󰎠",
+		Enum = "",
+		Keyword = "󰌋",
+		Snippet = "",
+		Color = "󰏘",
+		File = "󰈙",
+		Reference = "",
+		Folder = "󰉋",
+		EnumMember = "",
+		Constant = "󰏿",
+		Struct = "",
+		Event = "",
+		Operator = "󰆕",
+		TypeParameter = " ",
+		Misc = " ",
+	}
 
-  cmp.setup {
-    -- 指定 snippet 引擎
-    snippet = {
-      expand = function(args)
-        -- For `vsnip` users.
-        vim.fn["vsnip#anonymous"](args.body)
+	cmp.setup({
+		-- 指定 snippet 引擎
+		snippet = {
+			expand = function(args)
+				-- For `vsnip` users.
+				vim.fn["vsnip#anonymous"](args.body)
+			end,
+		},
+		-- 来源
+		sources = {
+			{ name = "nvim_lsp" },
+			{ name = "vsnip" },
+			{ name = "buffer" },
+			{ name = "path" },
+		},
 
-        -- For `luasnip` users.
-        -- require('luasnip').lsp_expand(args.body)
-
-        -- For `ultisnips` users.
-        -- vim.fn["UltiSnips#Anon"](args.body)
-
-        -- For `snippy` users.
-        -- require'snippy'.expand_snippet(args.body)
-      end,
-    },
-    -- 来源
-    sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
-        -- For vsnip users.
-        { name = 'vsnip' },
-        -- For luasnip users.
-        -- { name = 'luasnip' },
-        --For ultisnips users.
-        -- { name = 'ultisnips' },
-        -- -- For snippy users.
-        -- { name = 'snippy' },
-      },
-      {
-        { name = 'buffer' },
-        { name = 'path' }
-      }),
-
-    -- 快捷键
-    mapping = require 'configs.keymaps'.cmp(cmp),
-    -- 使用lspkind-nvim显示类型图标
-    formatting = {
-      format = lspkind.cmp_format({
-        with_text = true,         -- do not show text alongside icons
-        maxwidth = 50,            -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-        before = function(entry, vim_item)
-          -- Source 显示提示来源
-          vim_item.menu = "[" .. string.upper(entry.source.name) .. "]"
-          return vim_item
-        end
-      })
-    },
-  }
-
-  -- Use buffer source for `/`.
-  cmp.setup.cmdline('/', {
-    sources = {
-      { name = 'buffer' }
-    }
-  })
-
-  -- Use cmdline & path source for ':'.
-  cmp.setup.cmdline(':', {
-    sources = cmp.config.sources({
-      { name = 'path' }
-    }, {
-      { name = 'cmdline' }
-    })
-  })
+		-- 快捷键
+		mapping = require("configs.keymaps").cmp(cmp),
+		formatting = {
+			fields = { "kind", "abbr", "menu" },
+			format = function(entry, vim_item)
+				-- Kind icons
+				vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
+				vim_item.menu = ({
+					nvim_lsp = "[LSP]",
+					vsnip = "[Snippet]",
+					buffer = "[Buffer]",
+					path = "[Path]",
+				})[entry.source.name]
+				return vim_item
+			end,
+		},
+	})
 end
 
 return M
