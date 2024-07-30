@@ -67,7 +67,7 @@ function M.config()
 				-- Kind icons
 				vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
 				vim_item.menu = ({
-					nvim_lsp = "[LSP]",
+					nvim_lsp = "[Lsp]",
 					vsnip = "[Snippet]",
 					buffer = "[Buffer]",
 					path = "[Path]",
@@ -75,6 +75,25 @@ function M.config()
 				return vim_item
 			end,
 		},
+	})
+
+	-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+	cmp.setup.cmdline({ "/", "?" }, {
+		mapping = cmp.mapping.preset.cmdline(),
+		sources = {
+			{ name = "buffer" },
+		},
+	})
+
+	-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+	cmp.setup.cmdline(":", {
+		mapping = cmp.mapping.preset.cmdline(),
+		sources = cmp.config.sources({
+			{ name = "path" },
+		}, {
+			{ name = "cmdline" },
+		}),
+		matching = { disallow_symbol_nonprefix_matching = false },
 	})
 end
 

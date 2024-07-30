@@ -152,19 +152,29 @@ pluginKeys.cmp = function(cmp)
 	return {
 		["<Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
-				cmp.select_next_item()
+				if #cmp.get_entries() == 1 then
+					cmp.confirm({ select = true })
+				else
+					cmp.select_next_item()
+				end
 			else
 				fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
 			end
 		end, { "i", "s" }),
 		["<S-Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
-				cmp.select_prev_item()
+				if #cmp.get_entries() == 1 then
+					cmp.confirm({ select = true })
+				else
+					cmp.select_prev_item()
+				end
 			else
 				fallback()
 			end
 		end, { "i", "s" }),
-		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
+		["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
+		["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
 		["<C-e>"] = cmp.mapping({
 			i = cmp.mapping.abort(),
 			c = cmp.mapping.close(),
@@ -178,7 +188,7 @@ pluginKeys.cmp = function(cmp)
 			then
 				fallback()
 			else
-				cmp.confirm({ select = true })
+				cmp.confirm({ select = false })
 			end
 		end,
 	}
