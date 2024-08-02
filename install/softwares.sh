@@ -174,6 +174,16 @@ install_tools() {
 			cargo install ripgrep
 			echo "install ripgrep done."
 		fi
+		if ! has_cmd "zoxide"; then
+			echo "install zoxide..."
+			cargo install zoxide
+            echo "install zoxide done."
+		fi
+        if ! has_cmd "mcfly"; then
+			echo "install mcfly..."
+			cargo install mcfly
+            echo "install mcfly done."
+		fi
 	fi
 }
 
