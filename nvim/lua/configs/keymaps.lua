@@ -197,6 +197,7 @@ end
 --------------------- floating terminal -----------------------------
 -- toggleTerm & Lazygit
 map("n", "<leader>tg", "<CMD>lua _LAZYGIT_OPEN()<CR>", dopts("toggle lazygit tirminal"))
+
 map("n", "<leader>tF", function()
 	local git_path = vim.api.nvim_buf_get_name(0)
 	_LAZYGIT_OPEN({ args = { "-f", vim.trim(git_path) } })
@@ -205,38 +206,43 @@ map("n", "<leader>tL", function()
 	_LAZYGIT_OPEN({ args = { "log" } })
 end, dopts("Lazygit Log (cwd)"))
 
+-- toggleterm
 map("n", "<leader>th", "<CMD>ToggleTerm direction=horizontal<CR>", opts)
 map("n", "<leader>tv", "<CMD>ToggleTerm direction=vertical<CR>", opts)
 map("n", "<leader>ta", "<CMD>ToggleTerm direction=tab<CR>", opts)
 map("n", "<leader>tf", "<CMD>ToggleTerm direction=float<CR>", opts)
 
 -- git history for select
-map({ "n", "v" }, "<leader>gl", "<Cmd>lua require'git-log'.check_log()<CR>", dopts("git log history for select"))
+map({ "n", "v", "x" }, "<leader>gl", "<Cmd>lua require'git-log'.check_log()<CR>", dopts("git log history for select"))
 
-map({ "n", "v" }, "<leader>tH", function()
-	local file_name = vim.api.nvim_buf_get_name(0)
-	local range = function()
-		if vim.fn.mode() == "n" then
-			local pos = vim.api.nvim_win_get_cursor(0)
-			return {
-				pos[1],
-				pos[1],
-			}
-		end
+-- map({ "n", "v" }, "<leader>tH", function()
+-- 	local file_name = vim.api.nvim_buf_get_name(0)
+-- 	local range = function()
+-- 		if vim.fn.mode() == "n" then
+-- 			local pos = vim.api.nvim_win_get_cursor(0)
+-- 			return {
+-- 				pos[1],
+-- 				pos[1],
+-- 			}
+-- 		end
+--
+-- 		return {
+-- 			vim.fn.getpos("v")[2],
+-- 			vim.fn.getpos(".")[2],
+-- 		}
+-- 	end
+-- 	local line_range = range()
+-- 	local cmd = string.format("git log  -L %s,%s:%s", line_range[1], line_range[2], file_name)
+-- 	require("toggleterm").exec(cmd, 1001)
+-- end, dopts("git log history for select"))
 
-		return {
-			vim.fn.getpos("v")[2],
-			vim.fn.getpos(".")[2],
-		}
+map({ "n", "v", "x" }, "<leader>lt", function()
+	if vim.fn.mode() == "n" then
+		require("toggleterm").send_lines_to_terminal("single_line", true, { args = vim.v.count })
+		return
 	end
-	local line_range = range()
-	local cmd = string.format("git log  -L %s,%s:%s", line_range[1], line_range[2], file_name)
-	require("toggleterm").exec(cmd, 1001)
-end, dopts("git log history for select"))
-
-map({ "v", "x" }, "<leader>lt", function()
 	require("toggleterm").send_lines_to_terminal("visual_selection", true, { args = vim.v.count })
-end, dopts("send selected lines to terminal"))
+end, dopts("send to terminal"))
 
 ----------------------dap debug ------------------------------------
 -- Begin
