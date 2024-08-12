@@ -23,7 +23,7 @@ local function dopts(desc)
 end
 
 -- save 插入模式下保存并退出到正常模式
-map({ "i", "x", "n", "s" }, "<C-l>", "<cmd>w<cr><esc>", dopts("save and exit"))
+map({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", dopts("save and exit"))
 
 -- Clean search (highlight)取消高亮
 map("n", "<leader><space>", ":noh<CR>", dopts("clean highlight"))
@@ -139,7 +139,7 @@ pluginKeys.maplsp = function(mapbuf)
 end
 
 map("n", "<leader>tc", ':lua require("treesitter-context").go_to_context()<CR>', opts)
--- close lspinlayHit
+-- switch lspinlayHit
 map(
 	"n",
 	"<leader>ie",
@@ -202,9 +202,6 @@ map("n", "<leader>tF", function()
 	local git_path = vim.api.nvim_buf_get_name(0)
 	_LAZYGIT_OPEN({ args = { "-f", vim.trim(git_path) } })
 end, dopts("Lazygit Current File History"))
-map("n", "<leader>tL", function()
-	_LAZYGIT_OPEN({ args = { "log" } })
-end, dopts("Lazygit Log (cwd)"))
 
 -- toggleterm
 map("n", "<leader>th", "<CMD>ToggleTerm direction=horizontal<CR>", opts)
@@ -214,27 +211,6 @@ map("n", "<leader>tf", "<CMD>ToggleTerm direction=float<CR>", opts)
 
 -- git history for select
 map({ "n", "v", "x" }, "<leader>gl", "<Cmd>lua require'git-log'.check_log()<CR>", dopts("git log history for select"))
-
--- map({ "n", "v" }, "<leader>tH", function()
--- 	local file_name = vim.api.nvim_buf_get_name(0)
--- 	local range = function()
--- 		if vim.fn.mode() == "n" then
--- 			local pos = vim.api.nvim_win_get_cursor(0)
--- 			return {
--- 				pos[1],
--- 				pos[1],
--- 			}
--- 		end
---
--- 		return {
--- 			vim.fn.getpos("v")[2],
--- 			vim.fn.getpos(".")[2],
--- 		}
--- 	end
--- 	local line_range = range()
--- 	local cmd = string.format("git log  -L %s,%s:%s", line_range[1], line_range[2], file_name)
--- 	require("toggleterm").exec(cmd, 1001)
--- end, dopts("git log history for select"))
 
 map({ "n", "v", "x" }, "<leader>lt", function()
 	if vim.fn.mode() == "n" then
