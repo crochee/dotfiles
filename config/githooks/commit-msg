@@ -8,7 +8,7 @@ LC_ALL=C
 # [optional body]
 #
 # [optional footer(s)]
-commit_msg=`cat $1`
+commit_msg=$(cat "$1")
 
 echo "feat – a new feature is introduced with the changes 增加了一个新功能
 fix – a bug fix has occurred 修复错误
