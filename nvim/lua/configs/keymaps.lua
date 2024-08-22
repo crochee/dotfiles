@@ -319,4 +319,31 @@ map({ "n", "x", "o" }, "<leader>v", function()
 	require("flash").treesitter_search()
 end, dopts("Treesitter Search"))
 
+----------------------gitsigns----------------------------------
+pluginKeys.gitsigns = function(mapbuf)
+	local gitsigns = require("gitsigns")
+	-- Navigation
+	mapbuf("n", "]c", function()
+		if vim.wo.diff then
+			vim.cmd.normal({ "]c", bang = true })
+		else
+			gitsigns.nav_hunk("next")
+		end
+	end, dopts("Next Hunk"))
+	mapbuf("n", "[c", function()
+		if vim.wo.diff then
+			vim.cmd.normal({ "[c", bang = true })
+		else
+			gitsigns.nav_hunk("prev")
+		end
+	end, dopts("Prev Hunk"))
+
+	-- Actions
+	mapbuf("n", "<leader>hp", gitsigns.preview_hunk, dopts("Preview Hunk"))
+	mapbuf("n", "<leader>td", gitsigns.toggle_deleted, dopts("Toggle Deleted"))
+
+	-- Text object
+	map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
+end
+
 return pluginKeys
