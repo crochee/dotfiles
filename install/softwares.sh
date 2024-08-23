@@ -3,18 +3,18 @@
 set -e
 
 # change cwd to scripts directory
-SCRIPT_PATH=$(dirname $(dirname "$BASH_SOURCE"))
+SCRIPT_PATH=$(dirname "$(dirname "${BASH_SOURCE[0]}")")
 echo "change cwd to $SCRIPT_PATH"
-cd $SCRIPT_PATH
+cd "$SCRIPT_PATH"
 
 has_cmd() {
-	echo -n "$*"
-	if type $* >/dev/null 2>&1; then
-		echo " √"
-	else
-		echo " ✘"
-		return 1
-	fi
+    echo -n "$*"
+    if type "$*" >/dev/null 2>&1; then
+        echo " √"
+    else
+        echo " ✘"
+        return 1
+    fi
 }
 
 install_clipboard() {
@@ -196,29 +196,29 @@ install_mycli() {
 }
 
 install() {
-	for command in $*; do
-		eval "install_$command"
-	done
+    for command in "$@"; do
+        eval "install_$command"
+    done
 }
 
 show_menu() {
-	sudo apt update
-	sudo apt upgrade
-	sudo apt -y install curl wget gcc g++
-	mkdir -p ~/Downloads
-	mkdir -p ~/.local/bin
-	echo "================INSTALL================="
-	echo "please select ohmybash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, mycli, wezterm, tools or quit:"
-	echo -n "select: "
-	read num
-	install $num
+    sudo apt update
+    sudo apt upgrade
+    sudo apt -y install curl wget gcc g++
+    mkdir -p ~/Downloads
+    mkdir -p ~/.local/bin
+    echo "================INSTALL================="
+    echo "please select ohmybash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, mycli, wezterm, tools or quit:"
+    echo -n "select: "
+    read -r num
+    install "$num"
 }
 
 if [ "$#" -eq 0 ]; then
 	show_menu
 else
 	mkdir -p ~/Downloads
-	install $*
+	install "$@"
 fi
 
 unset SCRIPT_PATH

@@ -43,3 +43,10 @@ function gph {
     command git push origin "HEAD:$*"
   fi
 }
+
+function gphf {
+  if (($# == 1)); then
+    command git push origin "HEAD:$*" -f
+  fi
+}
+
