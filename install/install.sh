@@ -179,6 +179,27 @@ install_zk() {
     msg "install zk done!\n"
 }
 
+install_fonts() {
+    msg "install fonts...\n"
+    local path_to_fonts="${HOME}/.local/share"
+    msg "check ${path_to_fonts}"
+    if [ -e "$path_to_fonts" ]; then
+        msg " √\n"
+    else
+        msg " ✘\n"
+        msg "mkdir directory ${path_to_fonts}"
+        if mkdir -p "${path_to_fonts}" >/dev/null 2>&1; then
+            msg " √\n"
+        else
+            msg " ✘\n"
+            exit 1
+        fi
+    fi
+    mk_symlink "${TARGET}/fonts" "${path_to_fonts}/fonts"
+    fc-cache -fv
+    msg "install fonts done!\n"
+}
+
 init_bashrc() {
     FILE_PATH="$HOME/.bashrc"
     if [ ! -f "$FILE_PATH" ]; then
@@ -200,6 +221,7 @@ install() {
     3) check_repo && install_dotfiles && install_config ;;
     4) check_repo && install_zk ;;
     5) check_repo && install_cargo ;;
+    6) check_repo && install_fonts ;;
     *) msg "your option is invalid! Goodbye!" ;;
     esac
 }
@@ -209,8 +231,9 @@ show_menu() {
     echo "1) install config"
     echo "2) install dotfiles"
     echo "3) install dotfiles and config"
-    echo "4) install zk"
+    echo "4) install zk config"
     echo "5) install cargo config"
+    echo "6) install fonts config"
     echo -n "select: "
     read -r num
     install "$num"
