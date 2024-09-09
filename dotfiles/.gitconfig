@@ -7,7 +7,7 @@
 
 [core]
 	editor = nvim
-    hooksPath = ~/.dotfiles/config/githooks
+    hooksPath = ~/.dotfiles/src/githooks
     ; pager = less -FRSX
     ; pager = delta
 
@@ -31,7 +31,7 @@
 	autocorrect = 1
 
 [commit]
-    template = ~/.dotfiles/config/gitcommit
+    template = ~/.dotfiles/src/gitcommit
 
 [difftool]
     prompt = true

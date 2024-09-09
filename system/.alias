@@ -1,6 +1,7 @@
 # Shortcuts
 alias rl="exec bash"
 
+alias c='clear'                             # c:            Clear terminal display
 alias rr="rm -rf"
 alias v="nvim"
 
@@ -11,7 +12,7 @@ alias dot="cd $DOTFILES_DIR"
 
 # Set LSCOLORS
 if [ -x /usr/bin/dircolors ]; then
-  eval "$(dircolors -b "$DOTFILES_DIR"/config/dir_colors)"
+  eval "$(dircolors -b "$DOTFILES_DIR"/src/dir_colors)"
   alias grep='grep --color=auto'
   alias fgrep='fgrep --color=auto'
   alias egrep='egrep --color=auto'
@@ -49,4 +50,3 @@ function gphf {
     command git push origin "HEAD:$*" -f
   fi
 }
-
