@@ -58,12 +58,6 @@ install_neovim() {
 	fi
 }
 
-install_ohmybash() {
-	echo "install setup oh_my_bash..."
-	bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
-	echo "install setup oh_my_bash done."
-}
-
 install_nodejs() {
 	if ! has_cmd "node"; then
 		echo "install nodejs done."
@@ -208,7 +202,7 @@ show_menu() {
     mkdir -p ~/Downloads
     mkdir -p ~/.local/bin
     echo "================INSTALL================="
-    echo "please select ohmybash, go, rust, python3, clipboard, nodejs, neovim, nerdfonts, mycli, wezterm, tools or quit:"
+    echo "please select go, rust, python3, clipboard, nodejs, neovim, nerdfonts, mycli, wezterm, tools or quit:"
     echo -n "select: "
     read -r num
     install "$num"
