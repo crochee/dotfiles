@@ -112,7 +112,7 @@ function M.config()
 		cssls = require("lsp.cssls"),
 		html = require("lsp.html"),
 		eslint = require("lsp.eslint"),
-		tsserver = require("lsp.tsserver"),
+		ts_ls = require("lsp.tsserver"),
 		taplo = require("lsp.taplo"),
 		sqlls = require("lsp.sqlls"),
 		yamlls = require("lsp.yamlls"),
