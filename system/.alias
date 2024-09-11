@@ -29,15 +29,14 @@ if [ -x /usr/bin/dircolors ]; then
   unset LS_COLORS LS_TIMESTYLEISO LS_GROUPDIRSFIRST
 fi
 
-
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 
-
-# custom
-alias dcs="cd $WORKSPACE/project/dcs"
+# git
+alias gl="git pull"
+alias gst="git status"
 
 function gph {
   if (($# == 1)); then
@@ -50,3 +49,7 @@ function gphf {
     command git push origin "HEAD:$*" -f
   fi
 }
+
+# custom
+alias dcs="cd $WORKSPACE/project/dcs"
+

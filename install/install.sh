@@ -134,27 +134,6 @@ install_config() {
   done
 }
 
-install_cargo() {
-  source "$HOME/.bashrc"
-  msg "install cargo...\n"
-  local path_to_cargo="${CARGO_HOME}"
-  msg "check ${path_to_cargo}"
-  if [ -e "$path_to_cargo" ]; then
-    msg " √\n"
-  else
-    msg " ✘\n"
-    msg "mkdir directory ${path_to_cargo}"
-    if mkdir -p "${path_to_cargo}" >/dev/null 2>&1; then
-      msg " √\n"
-    else
-      msg " ✘\n"
-      exit 1
-    fi
-  fi
-  mk_symlink "${TARGET}/cargo/config.toml" "${path_to_cargo}/config.toml"
-  msg "install cargo done!\n"
-}
-
 install_zk() {
   msg "installing zk...\n"
   local path_to_notes="${HOME}/.config/notes"
@@ -216,23 +195,21 @@ install() {
   2) check_repo && install_dotfiles ;;
   3) check_repo && install_dotfiles && install_config ;;
   4) check_repo && install_zk ;;
-  5) check_repo && install_cargo ;;
-  6) check_repo && install_fonts ;;
+  5) check_repo && install_fonts ;;
   *) msg "your option is invalid! Goodbye!" ;;
   esac
 }
 
 show_menu() {
-  msg_title "INSTALL"
-  echo "1) install config"
-  echo "2) install dotfiles"
-  echo "3) install dotfiles and config"
-  echo "4) install zk config"
-  echo "5) install cargo config"
-  echo "6) install fonts config"
-  echo -n "select: "
-  read -r num
-  install "$num"
+    msg_title "INSTALL"
+    echo "1) install config"
+    echo "2) install dotfiles"
+    echo "3) install dotfiles and config"
+    echo "4) install zk config"
+    echo "5) install fonts config"
+    echo -n "select: "
+    read -r num
+    install "$num"
 }
 
 init_bashrc
