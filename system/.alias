@@ -4,6 +4,7 @@ alias rl="exec bash"
 alias c='clear'                             # c:            Clear terminal display
 alias rr="rm -rf"
 alias v="nvim"
+alias xclip='xclip -selection c'
 
 alias wk="cd $WORKSPACE"
 alias notes="cd $HOME/.config/notes"

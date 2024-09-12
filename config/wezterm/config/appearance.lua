@@ -1,6 +1,8 @@
 local gpu_adapters = require("utils.gpu_adapter")
 
 return {
+	use_ime = true,
+	xim_im_name = "fcitx",
 	animation_fps = 60,
 	max_fps = 60,
 	front_end = "WebGpu",

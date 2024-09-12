@@ -12,3 +12,6 @@ prepend-path "$HOME/.local/share/nvim/mason/bin"
 prepend-path "$HOME/.local/bin"
 
 prepend-path "$HOME/.local/bin/nvim-linux64/bin"
+
+prepend-path "$CARGO_HOME/bin"
+

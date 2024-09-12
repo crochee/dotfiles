@@ -129,9 +129,36 @@ install_config() {
       exit 1
     fi
   fi
-  find "$TARGET/config" -maxdepth 1 -type d ! -wholename "$TARGET/config" | while read -r file; do
-    mk_symlink "${file}" "${path_to_config}/$(basename "$file")"
+  find "$TARGET/config" -maxdepth 1 ! -wholename "$TARGET/config" -printf '%f\n' | while read -r file; do
+    if [ "${file}" == "cargo" ]; then
+      mkdir -p "${path_to_config}/${file}"
+      mk_symlink "$TARGET/config/${file}/config.toml" "${path_to_config}/${file}/config.toml"
+      continue
+    fi
+    mk_symlink "$TARGET/config/${file}" "${path_to_config}/${file}"
   done
+}
+
+install_share() {
+  msg "installing share...\n"
+  local path_to_config="${HOME}/.local/share"
+  msg "check ${path_to_config}"
+  if [ -e "$path_to_config" ]; then
+    msg " √\n"
+  else
+    msg " ✘\n"
+    msg "mkdir directory ${path_to_config}"
+    if mkdir -p "${path_to_config}" >/dev/null 2>&1; then
+      msg " √\n"
+    else
+      msg " ✘\n"
+      exit 1
+    fi
+  fi
+  find "$TARGET/share" -maxdepth 1 ! -wholename "$TARGET/share" -printf '%f\n' | while read -r file; do
+    mk_symlink "$TARGET/share/${file}" "${path_to_config}/${file}"
+  done
+  fc-cache -fv
 }
 
 install_zk() {
@@ -154,27 +181,6 @@ install_zk() {
   msg "install zk done!\n"
 }
 
-install_fonts() {
-  msg "install fonts...\n"
-  local path_to_fonts="${HOME}/.local/share"
-  msg "check ${path_to_fonts}"
-  if [ -e "$path_to_fonts" ]; then
-    msg " √\n"
-  else
-    msg " ✘\n"
-    msg "mkdir directory ${path_to_fonts}"
-    if mkdir -p "${path_to_fonts}" >/dev/null 2>&1; then
-      msg " √\n"
-    else
-      msg " ✘\n"
-      exit 1
-    fi
-  fi
-  mk_symlink "${TARGET}/fonts" "${path_to_fonts}/fonts"
-  fc-cache -fv
-  msg "install fonts done!\n"
-}
-
 init_bashrc() {
   FILE_PATH="$HOME/.bashrc"
   if [ ! -f "$FILE_PATH" ]; then
@@ -195,21 +201,21 @@ install() {
   2) check_repo && install_dotfiles ;;
   3) check_repo && install_dotfiles && install_config ;;
   4) check_repo && install_zk ;;
-  5) check_repo && install_fonts ;;
+  5) check_repo && install_share ;;
   *) msg "your option is invalid! Goodbye!" ;;
   esac
 }
 
 show_menu() {
-    msg_title "INSTALL"
-    echo "1) install config"
-    echo "2) install dotfiles"
-    echo "3) install dotfiles and config"
-    echo "4) install zk config"
-    echo "5) install fonts config"
-    echo -n "select: "
-    read -r num
-    install "$num"
+  msg_title "INSTALL"
+  echo "1) install config"
+  echo "2) install dotfiles"
+  echo "3) install dotfiles and config"
+  echo "4) install zk config"
+  echo "5) install share config"
+  echo -n "select: "
+  read -r num
+  install "$num"
 }
 
 init_bashrc
