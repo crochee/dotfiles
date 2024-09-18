@@ -15,9 +15,9 @@ if platform.is_win then
 	end
 	options.launch_menu = {
 		{ label = "wsl", args = { "wsl", "~" } },
-		{ label = "PowerShell Core", args = { "pwsh" } },
-		{ label = "PowerShell Desktop", args = { "powershell" } },
-		{ label = "Command Prompt", args = { "cmd" } },
+		-- { label = "PowerShell Core", args = { "pwsh" } },
+		-- { label = "PowerShell Desktop", args = { "powershell" } },
+		-- { label = "Command Prompt", args = { "cmd" } },
 		{ label = "admin powershell", args = { "powershell", "-command", "Start-Process powershell -Verb RunAs" } },
 	}
 elseif platform.is_mac or platform.is_linux then
