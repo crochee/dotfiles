@@ -1,5 +1,3 @@
-local gpu_adapters = require("utils.gpu_adapter")
-
 return {
 	use_ime = true,
 	xim_im_name = "fcitx",
@@ -7,7 +5,7 @@ return {
 	max_fps = 60,
 	front_end = "WebGpu",
 	webgpu_power_preference = "HighPerformance",
-	webgpu_preferred_adapter = gpu_adapters:pick_best(),
+	webgpu_preferred_adapter = require("utils.gpu_adapter"):pick_best(),
 	-- enable_wayland = true,
 
 	-- background

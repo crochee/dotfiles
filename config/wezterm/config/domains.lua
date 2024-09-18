@@ -1,8 +1,5 @@
 local wezterm = require("wezterm")
 local ssh_domains = wezterm.default_ssh_domains()
-for _, dom in ipairs(ssh_domains) do
-	dom.assume_shell = "bash"
-end
 
 return {
 	-- ref: https://wezfurlong.org/wezterm/config/lua/SshDomain.html
