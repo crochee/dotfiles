@@ -201,6 +201,12 @@ install_fcitx() {
     echo "install fcitx5 done."
 }
 
+install_vpn() {
+    echo "install vpn..."
+    sudo apt install openvpn
+    echo "install vpn done."
+}
+
 install() {
     for command in "$@"; do
         eval "install_$command"
