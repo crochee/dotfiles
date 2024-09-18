@@ -133,5 +133,12 @@ return {
 		M.split_nav("resize", M.mod, "RightArrow", "Left"),
 		M.split_nav("resize", M.mod, "UpArrow", "Up"),
 		M.split_nav("resize", M.mod, "DownArrow", "Down"),
+		{
+			key = "F6",
+			mods = "NONE",
+			action = wezterm.action.SendString(
+				"kubectl exec -it -n openstack  $(kubectl get pods -n openstack | grep mariadb| grep server | grep Running | awk '{print $1}') -- mysql --defaults-file=/etc/mysql/admin_user.cnf"
+			),
+		},
 	},
 }
