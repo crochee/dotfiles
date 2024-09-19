@@ -1,27 +1,19 @@
 local M = {
-  -- 'ellisonleao/gruvbox.nvim',
-  'sainnhe/everforest',
-  -- 'navarasu/onedark.nvim',
-  -- "folke/tokyonight.nvim",
+	"sainnhe/everforest",
 }
 
 function M.config()
-  -- 主题配置（皮肤）
+	vim.cmd([[
+    if has('termguicolors')
+      set termguicolors
+    endif
 
-  -- 皮肤设置
-  vim.cmd [[
-  if has('termguicolors')
-    set termguicolors
-  endif
-
-  set background=dark
+    set background=dark
   " set background=light
-  ]]
-
-  -- require("colorschemes.gruvbox")
-  require("colorschemes.everforest")
-  -- require("colorschemes.onedark")
-  -- require("colorschemes.tokyonight")
+    let g:everforest_background = 'hard'
+    let g:everforest_better_performace = 1
+    colorscheme everforest
+  ]])
 end
 
 return M
