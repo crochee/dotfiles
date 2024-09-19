@@ -6,7 +6,7 @@ return {
 	front_end = "WebGpu",
 	webgpu_power_preference = "HighPerformance",
 	webgpu_preferred_adapter = require("utils.gpu_adapter"):pick_best(),
-	-- enable_wayland = true,
+	enable_wayland = os.getenv("XDG_SESSION_TYPE") == "wayland",
 
 	-- background
 	window_background_opacity = 1.0,
