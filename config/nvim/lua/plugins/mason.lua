@@ -117,6 +117,7 @@ function M.config()
 		sqlls = require("lsp.sqlls"),
 		yamlls = require("lsp.yamlls"),
 		zk = require("lsp.zk"),
+		clangd = nil,
 	}
 
 	local lsp_ensure_installed = { type = "list" }
