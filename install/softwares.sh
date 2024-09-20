@@ -207,6 +207,12 @@ install_vpn() {
     echo "install vpn done."
 }
 
+install_rsync() {
+    echo "install rsync..."
+    sudo apt install rsync
+    echo "install rsync done."
+}
+
 install() {
     for command in "$@"; do
         eval "install_$command"
