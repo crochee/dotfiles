@@ -52,5 +52,5 @@ function gphf {
 }
 
 # custom
-alias dcs="cd $WORKSPACE/project/dcs"
+alias dcs="cd $WORKSPACE/dcs"
 

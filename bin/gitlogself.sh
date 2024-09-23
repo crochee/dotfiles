@@ -5,7 +5,7 @@ set -e
 
 PWD=$(pwd)
 
-PROJECT=~/workspace/project/dcs
+PROJECT=~/workspace/dcs
 
 function git_checkout() {
     cur_branch=$(git branch --show-current)
