@@ -9,3 +9,10 @@ fi
 if type mcfly >/dev/null 2>&1; then
     eval "$(mcfly init bash)"
 fi
+
+# if [ -d ~/.pyvenv ]; then
+    # shellcheck disable=SC1090
+    # source ~/.pyvenv/bin/activate
+# else
+    # python3 -m venv ~/.pyvenv
+# fi

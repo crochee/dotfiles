@@ -4,7 +4,7 @@ alias rl="exec bash"
 alias c='clear'                             # c:            Clear terminal display
 alias rr="rm -rf"
 alias v="nvim"
-alias xclip='xclip -selection c'
+alias xclip='xclip -selection clipboard'
 
 alias wk="cd $WORKSPACE"
 alias notes="cd $HOME/.config/notes"
@@ -53,6 +53,11 @@ function gphf {
   fi
 }
 
+# python
+alias py="python3"
+alias pip="python3 -m pip"
+
 # custom
 alias dcs="cd $WORKSPACE/dcs"
+
 

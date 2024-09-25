@@ -125,12 +125,12 @@ install_go() {
 }
 
 install_python3() {
-  if ! has_cmd "python3"; then
-    echo "install python3..."
-    sudo apt-get install -y python3-full python3-pip
-    echo "install python3 done."
-    source "$HOME/.bashrc"
-  fi
+    if ! has_cmd "python3"; then
+        echo "install python3..."
+        sudo apt-get install -y python3 python3.11-venv python3-pip
+        echo "install python3 done."
+        source "$HOME/.bashrc"
+    fi
 }
 
 install_wezterm() {
@@ -188,11 +188,11 @@ install_tools() {
 }
 
 install_mycli() {
-  if has_cmd "pip3" && ! has_cmd "mycli"; then
-    echo "install mycli..."
-    sudo pip3 install mycli
-    echo "install mycli done."
-  fi
+    if has_cmd "pip" && ! has_cmd "mycli"; then
+        echo "install mycli..."
+        sudo pip install mycli
+        echo "install mycli done."
+    fi
 }
 
 install_fcitx() {
