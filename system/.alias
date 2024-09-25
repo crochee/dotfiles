@@ -38,6 +38,8 @@ alias .....="cd ../../../.."
 # git
 alias gl="git pull"
 alias gst="git status"
+alias gcl="git clone --recursive"
+alias gco="git checkout"
 
 function gph {
   if (($# == 1)); then
