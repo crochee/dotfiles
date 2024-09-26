@@ -1,64 +1,38 @@
 ## Prompt
-_bash_prompt_config() {
 
+bash_prompt_command() {
     local USER_SYMBOL="\u"
     local HOST_SYMBOL="\h"
     local ESC_OPEN="\["
     local ESC_CLOSE="\]"
-
+    local RESET=""
     if tput setaf >/dev/null 2>&1; then
         _setaf() { tput setaf "$1"; }
-        local RESET="${ESC_OPEN}$({ tput sgr0 || tput me; } 2>/dev/null)${ESC_CLOSE}"
-        local BOLD="$({ tput bold || tput md; } 2>/dev/null)"
+        RESET="${ESC_OPEN}$({ tput sgr0 || tput me; } 2>/dev/null)${ESC_CLOSE}"
     else
         # Fallback
         _setaf() { printf "\033[0;%sm" $(($1 + 30)); }
-        local RESET="\033[m"
-        local BOLD=""
+        RESET="\033[m"
         ESC_OPEN=""
         ESC_CLOSE=""
     fi
 
     # Normal colors
-    local BLACK="${ESC_OPEN}$(_setaf 0)${ESC_CLOSE}"
-    local RED="${ESC_OPEN}$(_setaf 1)${ESC_CLOSE}"
-    local GREEN="${ESC_OPEN}$(_setaf 2)${ESC_CLOSE}"
-    local YELLOW="${ESC_OPEN}$(_setaf 3)${ESC_CLOSE}"
-    local BLUE="${ESC_OPEN}$(_setaf 4)${ESC_CLOSE}"
-    local VIOLET="${ESC_OPEN}$(_setaf 5)${ESC_CLOSE}"
-    local CYAN="${ESC_OPEN}$(_setaf 6)${ESC_CLOSE}"
-    local WHITE="${ESC_OPEN}$(_setaf 7)${ESC_CLOSE}"
+    RED="${ESC_OPEN}$(_setaf 1)${ESC_CLOSE}"
+    YELLOW="${ESC_OPEN}$(_setaf 3)${ESC_CLOSE}"
+    WHITE="${ESC_OPEN}$(_setaf 7)${ESC_CLOSE}"
 
     # Bright colors
-    local BRIGHT_GREEN="${ESC_OPEN}$(_setaf 10)${ESC_CLOSE}"
-    local BRIGHT_YELLOW="${ESC_OPEN}$(_setaf 11)${ESC_CLOSE}"
-    local BRIGHT_BLUE="${ESC_OPEN}$(_setaf 12)${ESC_CLOSE}"
-    local BRIGHT_VIOLET="${ESC_OPEN}$(_setaf 13)${ESC_CLOSE}"
-    local BRIGHT_CYAN="${ESC_OPEN}$(_setaf 14)${ESC_CLOSE}"
-    local BRIGHT_WHITE="${ESC_OPEN}$(_setaf 15)${ESC_CLOSE}"
-
-    # Bold colors
-    local BLACK_BOLD="${ESC_OPEN}${BOLD}$(_setaf 0)${ESC_CLOSE}"
-    local RED_BOLD="${ESC_OPEN}${BOLD}$(_setaf 1)${ESC_CLOSE}"
-    local GREEN_BOLD="${ESC_OPEN}${BOLD}$(_setaf 2)${ESC_CLOSE}"
-    local YELLOW_BOLD="${ESC_OPEN}${BOLD}$(_setaf 3)${ESC_CLOSE}"
-    local BLUE_BOLD="${ESC_OPEN}${BOLD}$(_setaf 4)${ESC_CLOSE}"
-    local VIOLET_BOLD="${ESC_OPEN}${BOLD}$(_setaf 5)${ESC_CLOSE}"
-    local CYAN_BOLD="${ESC_OPEN}${BOLD}$(_setaf 6)${ESC_CLOSE}"
-    local WHITE_BOLD="${ESC_OPEN}${BOLD}$(_setaf 7)${ESC_CLOSE}"
+    BRIGHT_GREEN="${ESC_OPEN}$(_setaf 10)${ESC_CLOSE}"
+    BRIGHT_VIOLET="${ESC_OPEN}$(_setaf 13)${ESC_CLOSE}"
 
     # Expose the variables we need in prompt command
     P_USER=${BRIGHT_VIOLET}${USER_SYMBOL}
     P_HOST=${BRIGHT_GREEN}${HOST_SYMBOL}
     P_WHITE=${WHITE}
-    P_GREEN=${BRIGHT_GREEN}
     P_YELLOW=${YELLOW}
     P_RED=${RED}
     P_RESET=${RESET}
-
-}
-
-bash_prompt_command() {
 
     local EXIT_CODE=$?
     local P_EXIT=""
@@ -93,7 +67,8 @@ bash_prompt_command() {
 
 parse_git() {
     # 获取 Git 分支名
-    local git_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+    local git_branch=""
+    git_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
     if [ "$git_branch" == "" ]; then
         return
     fi
@@ -104,11 +79,12 @@ parse_git() {
         git_dirty="${P_RED}*"
     fi
     # 获取与上游分支相差的 commit 数量
-    local upstream=$(git rev-parse --symbolic-full-name --abbrev-ref @{u} 2>/dev/null)
     local git_commit=""
-    if [[ -n $upstream ]]; then
-        local commits_behind=$(git rev-list --count HEAD..@{u} 2>/dev/null)
-        local commits_ahead=$(git rev-list --count @{u}..HEAD 2>/dev/null)
+    if [[ -n "$(git rev-parse --symbolic-full-name --abbrev-ref @{u} 2>/dev/null)" ]]; then
+        local commits_behind=""
+        local commits_ahead=""
+        commits_behind=$(git rev-list --count HEAD..@{u} 2>/dev/null)
+        commits_ahead=$(git rev-list --count @{u}..HEAD 2>/dev/null)
         if [[ $commits_behind -gt 0 ]]; then
             git_commit+="↓$commits_behind"
         fi
@@ -121,8 +97,5 @@ parse_git() {
     fi
     echo "${P_YELLOW}(${git_branch} ${git_commit}${git_dirty}${P_YELLOW})"
 }
-
-_bash_prompt_config
-unset _bash_prompt_config
 
 PROMPT_COMMAND=bash_prompt_command
