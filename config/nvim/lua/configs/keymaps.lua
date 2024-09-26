@@ -263,11 +263,6 @@ map("n", "<leader>gc0", "<Plug>(git-conflict-none)")
 map("n", "<leader>gcp", "<Plug>(git-conflict-prev-conflict)")
 map("n", "<leader>gcn", "<Plug>(git-conflict-next-conflict)")
 
--- --------------------markdown-preview-----------------------
-map("n", "<leader>mp", ":MarkdownPreview<CR>", opts)
-map("n", "<leader>ms", ":MarkdownPreviewStop<CR>", opts)
-map("n", "<leader>mt", ":MarkdownPreviewToggle<CR>", opts)
-
 -----------------------goimpl---------------------------------
 map(
 	"n",
@@ -275,21 +270,6 @@ map(
 	"<Cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>",
 	dopts("go struct implement interface")
 )
-
------------------------open file with browser-------------------
-function _SHOW_BROWSER_FILE_PATH()
-	local filePath = ""
-	if vim.fn.has("wsl") == 1 then
-		filePath = "file://wsl.localhost/Ubuntu-22.04" .. vim.fn.expand("%:p")
-	else
-		filePath = "file:/" .. vim.fn.expand("%:p")
-	end
-	vim.notify(filePath)
-	-- 将内容复制到寄存器
-	vim.fn.setreg("+", filePath)
-end
-
-vim.api.nvim_create_user_command("ShowBrowserFilePath", _SHOW_BROWSER_FILE_PATH, {})
 
 ----------------------zk-------------------------------------
 -- Create a new note after asking for its title.
