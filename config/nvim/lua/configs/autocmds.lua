@@ -85,8 +85,8 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   "FileType",
   {
-    pattern = { "ruby", "javascript", "typescript", "jsonc", "html", "css", "xml", "lua" },
-    command = [[set tabstop=2 shiftwidth=2 softtabstop=2 expandtab ai]]
+    pattern = {"sh", "ruby", "javascript", "typescript", "jsonc", "html", "css", "xml", "lua" },
+    command = [[set tabstop=4 shiftwidth=4 softtabstop=4 expandtab ai]]
   }
 )
 

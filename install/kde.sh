@@ -9,7 +9,8 @@ function install_kde {
     apt dolphin gwenview kate ksystemlog spectacle
 }
 
-### kde default components
+# display manager • sddm,lightdm
+# kde default components
 #window manager • kwin
 
 #### optional
@@ -19,4 +20,16 @@ function install_kde {
 # Launcher • Rofi,Tofi,krunner
 # File Manager • Ranger,Thunar,dolphin
 # screen cutting tool • spectacle,grim,slurp,gwenview
+# clipboard manager • cliphist
+
+#select
+
+# display manager:lightdm
+# window manager:hyprland
+# terminal:wezterm
+# notify daemon:dunst
+# panel:waybar
+# launcher:rofi
+# file manager:dolphin
+# screen cutting tool:grim,slurp,gwenview
 # clipboard manager • cliphist

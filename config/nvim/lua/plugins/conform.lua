@@ -7,22 +7,22 @@ local M = {
 }
 
 function M.config()
-	local prettier = { "prettierd", "prettier" }
+	local prettier = { "prettierd", "prettier", stop_after_first = true }
 	require("conform").setup({
 		formatters_by_ft = {
 			lua = { "stylua" },
 			go = { "golines", "gofmt" },
 			sql = { "sqlfmt" },
 			python = { "ruff_format" },
-			javascript = { prettier },
-			typescript = { prettier },
-			javascriptreact = { prettier },
-			typescriptreact = { prettier },
-			css = { prettier },
-			html = { prettier },
-			json = { prettier },
-			jsonc = { prettier },
-			yaml = { prettier },
+			javascript = prettier,
+			typescript = prettier,
+			javascriptreact = prettier,
+			typescriptreact = prettier,
+			css = prettier,
+			html = prettier,
+			json = prettier,
+			jsonc = prettier,
+			yaml = prettier,
 			sh = { "shfmt" },
 			markdown = { prettier, "injected" },
 			toml = { "taplo" },
@@ -103,12 +103,12 @@ function M.config()
 			})
 		end
 	end
-	vim.api.nvim_create_autocmd("BufWritePre", {
-		pattern = "*",
-		callback = diff_format,
-		group = vim.api.nvim_create_augroup("Conform", { clear = true }),
-		desc = "Auto format changed lines on save",
-	})
+	-- vim.api.nvim_create_autocmd("BufWritePre", {
+	-- 	pattern = "*",
+	-- 	callback = diff_format,
+	-- 	group = vim.api.nvim_create_augroup("Conform", { clear = true }),
+	-- 	desc = "Auto format changed lines on save",
+	-- })
 	vim.api.nvim_create_user_command("DiffFormat", diff_format, { desc = "Format changed lines" })
 end
 
