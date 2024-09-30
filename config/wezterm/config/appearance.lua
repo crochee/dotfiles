@@ -5,7 +5,7 @@ return {
 	max_fps = 60,
 	front_end = "WebGpu",
 	webgpu_power_preference = "HighPerformance",
-	webgpu_preferred_adapter = require("utils.gpu_adapter"):pick_best(),
+	webgpu_preferred_adapter = require("utils.gpu_adapter"):pick_manual("Vulkan", "Cpu"),
 	enable_wayland = os.getenv("XDG_SESSION_TYPE") == "wayland",
 
 	-- background
