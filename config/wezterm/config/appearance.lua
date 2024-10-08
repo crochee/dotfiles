@@ -17,13 +17,14 @@ return {
 
 	-- tab bar
 	enable_tab_bar = true,
-	hide_tab_bar_if_only_one_tab = true,
+	-- hide_tab_bar_if_only_one_tab = true,
 	use_fancy_tab_bar = false,
 	tab_max_width = 25,
 	show_tab_index_in_tab_bar = false,
 	switch_to_last_active_tab_when_closing_tab = true,
 
 	-- window
+    window_decorations = "INTEGRATED_BUTTONS|RESIZE",
 	default_cursor_style = "BlinkingBar",
 	window_padding = {
 		left = 5,
