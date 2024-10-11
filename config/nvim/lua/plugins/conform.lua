@@ -60,7 +60,13 @@ function M.config()
 			},
 		},
 	})
+
+	vim.g.diff_format = true
 	local diff_format = function()
+		if not vim.g.diff_format then
+			return
+		end
+
 		local buffer_readable = vim.fn.filereadable(vim.fn.bufname("%")) > 0
 		if not vim.fn.has("git") or not buffer_readable then
 			return
@@ -103,13 +109,18 @@ function M.config()
 			})
 		end
 	end
-	-- vim.api.nvim_create_autocmd("BufWritePre", {
-	-- 	pattern = "*",
-	-- 	callback = diff_format,
-	-- 	group = vim.api.nvim_create_augroup("Conform", { clear = true }),
-	-- 	desc = "Auto format changed lines on save",
-	-- })
+	vim.api.nvim_create_autocmd("BufWritePre", {
+		pattern = "*",
+		callback = diff_format,
+		group = vim.api.nvim_create_augroup("Conform", { clear = true }),
+		desc = "Auto format changed lines on save",
+	})
 	vim.api.nvim_create_user_command("DiffFormat", diff_format, { desc = "Format changed lines" })
+	vim.api.nvim_create_user_command("DiffFormatToggle", function()
+		vim.g.diff_format = not vim.g.diff_format
+		local format_string = vim.g.diff_format and "ON" or "OFF"
+		vim.notify("DiffFormat status " .. format_string)
+	end, { desc = "toggle DiffFormat" })
 end
 
 return M
