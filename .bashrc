@@ -22,7 +22,7 @@ export WORKSPACE=$HOME/workspace
 PATH="$DOTFILES_DIR/bin:$PATH"
 
 # Source the dotfiles (order matters)
-for DOTFILE in "$DOTFILES_DIR/system"/{.alias,.env,*.sh}; do
+for DOTFILE in "$DOTFILES_DIR/system"/{.alias,.env,*.sh,*.bash}; do
     # shellcheck disable=SC1090
     source "$DOTFILE"
 done
