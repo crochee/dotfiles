@@ -85,7 +85,7 @@ vim.o.showtabline = 2
 vim.o.showmode = false
 
 -- 配置剪切板的内来源为寄存器"*(主选择)和"+（剪切）
-vim.opt.clipboard = "unnamed,unnamedplus"
+vim.opt.clipboard = "unnamedplus"
 
 vim.g.python3_host_prog = "/usr/bin/python3"
 

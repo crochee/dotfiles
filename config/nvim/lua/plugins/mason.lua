@@ -114,7 +114,7 @@ function M.config()
 		eslint = require("lsp.eslint"),
 		ts_ls = require("lsp.tsserver"),
 		taplo = require("lsp.taplo"),
-		sqlls = require("lsp.sqlls"),
+		-- sqlls = require("lsp.sqlls"),
 		yamlls = require("lsp.yamlls"),
 		zk = require("lsp.zk"),
 		clangd = nil,

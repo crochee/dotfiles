@@ -41,6 +41,7 @@ function M.config()
 		Operator = "󰆕",
 		TypeParameter = " ",
 		Misc = " ",
+		Codeium = "",
 	}
 
 	cmp.setup({
@@ -53,6 +54,7 @@ function M.config()
 		},
 		-- 来源
 		sources = {
+			{ name = "codeium" },
 			{ name = "nvim_lsp" },
 			{ name = "vsnip" },
 			{ name = "buffer" },
@@ -71,12 +73,12 @@ function M.config()
 					vsnip = "[Snippet]",
 					buffer = "[Buffer]",
 					path = "[Path]",
+					codeium = "[codeium]",
 				})[entry.source.name]
 				return vim_item
 			end,
 		},
 	})
-
 	-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
 	cmp.setup.cmdline({ "/", "?" }, {
 		mapping = cmp.mapping.preset.cmdline(),
