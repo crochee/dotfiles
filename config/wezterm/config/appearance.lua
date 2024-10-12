@@ -5,7 +5,7 @@ return {
 	max_fps = 60,
 	front_end = "WebGpu",
 	webgpu_power_preference = "HighPerformance",
-	webgpu_preferred_adapter = require("utils.gpu_adapter"):pick_manual("Vulkan", "Cpu"),
+	webgpu_preferred_adapter = require("utils.gpu_adapter"):pick_best(),
 	enable_wayland = os.getenv("XDG_SESSION_TYPE") == "wayland",
 
 	-- background
@@ -24,7 +24,7 @@ return {
 	switch_to_last_active_tab_when_closing_tab = true,
 
 	-- window
-    window_decorations = "INTEGRATED_BUTTONS|RESIZE",
+	window_decorations = "INTEGRATED_BUTTONS|RESIZE",
 	default_cursor_style = "BlinkingBar",
 	window_padding = {
 		left = 5,

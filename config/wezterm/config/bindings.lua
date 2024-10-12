@@ -109,7 +109,7 @@ return {
 		},
 		M.smart_split(M.mod, "Enter"),
 		{
-			key = "b",
+			key = ";",
 			mods = M.mod,
 			action = wezterm.action.QuickSelectArgs({
 				label = "open url",
