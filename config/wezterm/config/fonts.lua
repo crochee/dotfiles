@@ -1,6 +1,7 @@
 local wezterm = require("wezterm")
 local platform = require("utils.platform")
 
+-- https://www.nerdfonts.com/font-downloads
 return {
 	-- color scheme
 	color_scheme = "Catppuccin Macchiato (Gogh)",
