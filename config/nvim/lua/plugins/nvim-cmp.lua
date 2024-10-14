@@ -54,7 +54,7 @@ function M.config()
 		},
 		-- 来源
 		sources = {
-			{ name = "codeium" },
+			-- { name = "codeium" },
 			{ name = "nvim_lsp" },
 			{ name = "vsnip" },
 			{ name = "buffer" },
@@ -73,7 +73,7 @@ function M.config()
 					vsnip = "[Snippet]",
 					buffer = "[Buffer]",
 					path = "[Path]",
-					codeium = "[codeium]",
+					-- codeium = "[codeium]",
 				})[entry.source.name]
 				return vim_item
 			end,

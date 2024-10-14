@@ -1,16 +1,11 @@
 local M = {
-    -- "aliaksandr-trush/codeium.nvim",
-	"Exafunction/codeium.nvim",
-    commit = "f74f999",
-	dependencies = {
-		"nvim-lua/plenary.nvim",
-		"hrsh7th/nvim-cmp",
-	},
+	"Exafunction/codeium.vim",
 	event = "BufEnter",
+	config = function()
+		vim.keymap.set("i", "<C-,>", function()
+			return vim.fn["codeium#Accept"]()
+		end, { expr = true, silent = true })
+	end,
 }
-
-function M.config()
-	require("codeium").setup({})
-end
 
 return M
