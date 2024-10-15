@@ -22,6 +22,4 @@ end
 
 local map = vim.keymap.set
 
--- map("n", "<leader>if", "<CMD>lua IFERR()<CR>", { noremap = true, silent = true })
-
-map({ "i", "n" }, "<C-k>", "<CMD>lua IFERR()<CR>", { noremap = true, silent = true })
+map({ "i", "n" }, "<S-l>", "<CMD>lua IFERR()<CR>", { noremap = true, silent = true })
