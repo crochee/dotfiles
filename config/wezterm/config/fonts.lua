@@ -9,7 +9,5 @@ return {
 	line_height = 1.2,
 	font = wezterm.font_with_fallback({
 		{ family = "FantasqueSansM Nerd Font Mono", weight = "Bold", italic = true },
-		"Material Design Icons",
-		"Material Design Icons Desktop",
 	}),
 }
