@@ -18,7 +18,7 @@ return {
 				footer = { "", "岂能尽如人意，但求无愧我心" },
 				shortcut = {
 					{
-						desc = " Update",
+						desc = "󰊳 Update",
 						group = "@property",
 						action = "Lazy update",
 						key = "u",
