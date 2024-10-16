@@ -210,7 +210,7 @@ map("n", "<leader>ta", "<CMD>ToggleTerm direction=tab<CR>", opts)
 map("n", "<leader>tf", "<CMD>ToggleTerm direction=float<CR>", opts)
 
 -- git history for select
-map({ "n", "v", "x" }, "<leader>gl", "<Cmd>lua require'git-log'.check_log()<CR>", dopts("git log history for select"))
+map({ "n", "v", "x" }, "<leader>gl", "<Cmd>lua _GIT_LOG()<CR>", dopts("git log history for select"))
 
 map({ "n", "v", "x" }, "<leader>lt", function()
 	if vim.fn.mode() == "n" then

@@ -24,7 +24,7 @@ function M.config()
 			jsonc = prettier,
 			yaml = prettier,
 			sh = { "shfmt" },
-			markdown = { prettier, "injected" },
+			markdown = { prettier, "injected", stop_after_first = true },
 			toml = { "taplo" },
 		},
 		formatters = {
