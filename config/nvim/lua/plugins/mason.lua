@@ -17,15 +17,18 @@ local M = {
 			},
 		},
 		-------- dap
-		"nvim-telescope/telescope-dap.nvim",
 		"jayp0521/mason-nvim-dap.nvim",
-		"mfussenegger/nvim-dap",
-		"rcarriga/nvim-dap-ui",
 		{
-			"rcarriga/nvim-dap-ui",
-			dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+			"mfussenegger/nvim-dap",
+			dependencies = {
+				{
+					"rcarriga/nvim-dap-ui",
+					dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+				},
+				"theHamsta/nvim-dap-virtual-text",
+			},
 		},
-		"theHamsta/nvim-dap-virtual-text",
+		"nvim-telescope/telescope-dap.nvim",
 		"leoluz/nvim-dap-go",
 		{
 			"mrcjkb/rustaceanvim",
@@ -117,7 +120,7 @@ function M.config()
 		-- sqlls = require("lsp.sqlls"),
 		yamlls = require("lsp.yamlls"),
 		zk = require("lsp.zk"),
-		clangd = nil,
+		clangd = require("lsp.clangd"),
 	}
 
 	local lsp_ensure_installed = { type = "list" }
