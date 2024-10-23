@@ -26,6 +26,9 @@ function M.config()
 			sh = { "shfmt" },
 			markdown = { prettier, "injected", stop_after_first = true },
 			toml = { "taplo" },
+			c = { "clang-format" },
+			cpp = { "clang-format" },
+			["c++"] = { "clang-format" },
 		},
 		formatters = {
 			-- Dealing with old version of prettierd that doesn't support range formatting

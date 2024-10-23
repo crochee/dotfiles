@@ -57,8 +57,15 @@ function M.config()
 
 		local file_name = vim.api.nvim_buf_get_name(0)
 		local line_range = range()
+
+		local gitdir = vim.fn.system(string.format("git -C %s rev-parse --show-toplevel", vim.fn.expand("%:p:h")))
+		if vim.fn.matchstr(gitdir, "^fatal:.*") ~= "" then
+			gitdir = vim.fn.expand(vim.trim(gitdir))
+		end
+		gitdir = vim.split(gitdir, "\n")[1]
 		-- 构建 git log 命令
-		local git_command = string.format("git log -L %s,%s:%s", line_range[1], line_range[2], file_name)
+		local git_command =
+			string.format("cd %s && git log -L %s,%s:%s", gitdir, line_range[1], line_range[2], file_name)
 		-- 执行 git 命令并捕获输出
 		local output = vim.trim(vim.fn.system(git_command))
 		-- 创建一个新的缓冲区

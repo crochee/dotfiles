@@ -26,11 +26,3 @@ require("lazy").setup({
 	-- import/override with your plugins
 	{ import = "plugins" },
 }, opts)
-
--- 每次保存 plugins.lua 自动安装插件
-vim.cmd([[
-augroup lazy_user_config
-autocmd!
-autocmd BufWritePost plugins.lua source <afile> | Lazy sync
-augroup end
-]])
