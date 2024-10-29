@@ -111,11 +111,6 @@ function M.config()
 			string.format("cd %s && git log -L %s,%s:%s", gitdir, line_range[1], line_range[2], file_name)
 		-- 执行 git 命令并捕获输出
 		local output = vim.trim(vim.fn.system(git_command))
-		-- 创建一个新的缓冲区
-		local buf = vim.api.nvim_create_buf(false, true)
-		vim.api.nvim_set_option_value("filetype", "git", {
-			buf = buf,
-		})
 		-- 设置缓冲区内容
 		local log = vim.split(output, "\n")
 		local new_list = {}
@@ -137,7 +132,18 @@ function M.config()
 			table.insert(new_log, log[i])
 		end
 		log = new_log
+		-- 创建一个新的缓冲区
+		local buf = vim.api.nvim_create_buf(false, true)
+		vim.api.nvim_set_option_value("modifiable", true, {
+			buf = buf,
+		})
+		vim.api.nvim_set_option_value("filetype", "git", {
+			buf = buf,
+		})
 		vim.api.nvim_buf_set_lines(buf, 0, -1, false, log)
+		vim.api.nvim_set_option_value("modifiable", false, {
+			buf = buf,
+		})
 		-- 创建一个浮动窗口来展示缓冲区内容
 		-- 设置浮动窗口的缓冲区
 		vim.api.nvim_win_set_buf(
