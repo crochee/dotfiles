@@ -84,7 +84,11 @@ vim.o.showtabline = 2
 -- 使用增强状态栏插件后不再需要 vim 的模式提示
 vim.o.showmode = false
 
--- 配置剪切板的内来源为寄存器"*(主选择)和"+（剪切）
+-- 开启拼写检查
+vim.opt.spelllang = { "en" }
+vim.opt.spelloptions:append("noplainbuffer")
+
+-- 设置剪切板的内来源为寄存器"*(主选择)和"+（剪切）
 vim.opt.clipboard = "unnamedplus"
 
 vim.g.python3_host_prog = "/usr/bin/python3"
