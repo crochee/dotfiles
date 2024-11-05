@@ -11,9 +11,9 @@ function M.config()
 	require("conform").setup({
 		formatters_by_ft = {
 			lua = { "stylua" },
-			go = { "golines", "gofmt" },
+			go = { "goimports", "goimports-reviser", "golines", "gofumpt" },
 			sql = { "sqlfmt" },
-			python = { "ruff_format" },
+			python = { "ruff_organize_imports", "ruff_format" },
 			javascript = prettier,
 			typescript = prettier,
 			javascriptreact = prettier,
