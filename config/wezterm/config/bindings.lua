@@ -55,6 +55,34 @@ function M.quick_select_with_prefix(mods, key)
 	}
 end
 
+function M.open_file_with_browser(mods, key)
+	local event = "OpenWithBrowser"
+	wezterm.on(event, function(window, pane)
+		window:perform_action(
+			wezterm.action.PromptInputLine({
+				action = wezterm.action_callback(function(_, _, line)
+					if not line then
+						return
+					end
+					if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+						line = "/wsl.localhost/Arch" .. line
+					end
+					line = "file:/" .. line
+					wezterm.log_info("opening: " .. line)
+					wezterm.open_with(line)
+				end),
+				description = "open with browser:",
+			}),
+			pane
+		)
+	end)
+	return {
+		key = key,
+		mods = mods,
+		action = wezterm.action.EmitEvent(event),
+	}
+end
+
 ---@param resize_or_move "resize" | "move"
 ---@param mods string
 ---@param key string
@@ -128,6 +156,7 @@ return {
 			}),
 		},
 		M.quick_select_with_prefix(M.mod, "/"),
+		M.open_file_with_browser(M.mod, "i"),
 		-- resize and move
 		M.split_nav("resize", M.mod, "LeftArrow", "Right"),
 		M.split_nav("resize", M.mod, "RightArrow", "Left"),
