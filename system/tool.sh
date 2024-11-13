@@ -10,6 +10,9 @@ if type mcfly >/dev/null 2>&1; then
     eval "$(mcfly init bash)"
 fi
 
+if type uv >/dev/null 2>&1; then
+    eval "$(uv generate-shell-completion bash)"
+fi
 # if [ -d ~/.pyvenv ]; then
 #     #shellcheck disable=SC1090
 #     source ~/.pyvenv/bin/activate
