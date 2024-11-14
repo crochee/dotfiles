@@ -1,11 +1,9 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
-- role: control-plane
-  extraPortMappings:
-  - containerPort: 30443
-    hostPort: 30443
-    listenAddress: 0.0.0.0
-    protocol: TCP
-
-# kind create cluster --config=kind-cluster-config.yaml
+  - role: control-plane
+  - role: worker
+    extraPortMappings:
+      - containerPort: 30050
+        hostPort: 30050
+  # kind create cluster --config=kind-cluster-config.yaml
