@@ -13,9 +13,10 @@ fi
 if type uv >/dev/null 2>&1; then
     eval "$(uv generate-shell-completion bash)"
 fi
-# if [ -d ~/.pyvenv ]; then
-#     #shellcheck disable=SC1090
-#     source ~/.pyvenv/bin/activate
-# else
-#     python3 -m venv ~/.pyvenv
-# fi
+
+if [ ! -d ~/.venv ]; then
+    #shellcheck disable=SC1090
+    # source ~/.venv/bin/activate
+    # else
+    python3 -m venv ~/.venv
+fi
