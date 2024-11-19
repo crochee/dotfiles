@@ -79,6 +79,10 @@ function M.config()
 			name = "chrome-debug-adapter",
 			alone = true,
 		},
+		{
+			name = "debugpy",
+			alone = true,
+		},
 	}
 
 	local dap_handlers = {}
