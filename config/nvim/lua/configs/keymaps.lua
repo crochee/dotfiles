@@ -244,7 +244,16 @@ map("n", "<leader>do", ":lua require'dap'.step_out()<CR>", opts)
 map("n", "<leader>di", ":lua require'dap'.step_into()<CR>", opts)
 map("n", "<leader>dl", ":lua require'dap'.run_last()<CR>", opts)
 -- Pop-ups
-map("n", "<leader>dh", ":lua require'dapui'.eval()<CR>", opts)
+map("n", "<leader>dh", function()
+	local exp = vim.fn.input("expression: ")
+	if exp == "" then
+		require("dapui").eval()
+	else
+		require("dapui").eval(exp)
+	end
+end, opts)
+-- map("n", "<leader>dh", ":lua require'dapui'.eval()<CR>", opts)
+map("n", "<leader>df", ":lua require'dapui'.float_element()<CR>", opts)
 
 -- golang debug test
 map("n", "<leader>dgt", ":lua require('dap-go').debug_test()<CR>", opts)
