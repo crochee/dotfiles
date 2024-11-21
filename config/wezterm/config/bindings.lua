@@ -156,7 +156,7 @@ return {
 			}),
 		},
 		M.quick_select_with_prefix(M.mod, "/"),
-		M.open_file_with_browser(M.mod, "i"),
+		M.open_file_with_browser(M.mod, "'"),
 		-- resize and move
 		M.split_nav("resize", M.mod, "LeftArrow", "Right"),
 		M.split_nav("resize", M.mod, "RightArrow", "Left"),
