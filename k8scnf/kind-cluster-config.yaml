@@ -2,8 +2,32 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
+    extraMounts:
+      - containerPath: /etc/docker/daemon.json
+        hostPath: /etc/docker/daemon.json
+        readOnly: true
   - role: worker
     extraPortMappings:
       - containerPort: 30050
         hostPort: 30050
+    extraMounts:
+      - containerPath: /etc/docker/daemon.json
+        hostPath: /etc/docker/daemon.json
+        readOnly: true
+  - role: worker
+    extraPortMappings:
+      - containerPort: 30051
+        hostPort: 30051
+    extraMounts:
+      - containerPath: /etc/docker/daemon.json
+        hostPath: /etc/docker/daemon.json
+        readOnly: true
+  - role: worker
+    extraPortMappings:
+      - containerPort: 30052
+        hostPort: 30052
+    extraMounts:
+      - containerPath: /etc/docker/daemon.json
+        hostPath: /etc/docker/daemon.json
+        readOnly: true
   # kind create cluster --config=kind-cluster-config.yaml
