@@ -12,6 +12,7 @@ local opts = {
 		"requirements.txt",
 		"Pipfile",
 		"manage.py",
+		"pyrightconfig.json",
 		".git"
 	),
 	single_file_support = true,
