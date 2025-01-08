@@ -118,6 +118,7 @@ function M.config()
 		zk = require("lsp.zk"),
 		clangd = require("lsp.clangd"),
 		jdtls = require("lsp.jdtls"),
+		kotlin_language_server = require("lsp.kotlin_language_server"),
 	}
 
 	local lsp_ensure_installed = { type = "list" }
