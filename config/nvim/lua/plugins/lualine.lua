@@ -14,7 +14,7 @@ function M.config()
     if next(clients) == nil then
       return 'No Active Lsp'
     end
-    return require('lsp-status').status()
+    return require('lsp-status').status():gsub("%%", "")
   end
   local codeium = function()
     return vim.api.nvim_call_function("codeium#GetStatusString", {})
