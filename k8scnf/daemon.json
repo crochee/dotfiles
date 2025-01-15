@@ -5,5 +5,8 @@
     "https://docker.m.daocloud.io",
     "https://dockerhub.icu",
     "https://docker.mirrors.ustc.edu.cn"
-  ]
+  ],
+  "features": {
+    "buildkit": true
+  }
 }
