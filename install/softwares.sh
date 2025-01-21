@@ -189,6 +189,11 @@ install_tools() {
             cargo install mcfly
             echo "install mcfly done."
         fi
+        if ! has_cmd "uv"; then
+            echo "install uv..."
+            cargo install --git https://github.com/astral-sh/uv uv
+            echo "install uv done."
+        fi
     fi
 }
 
