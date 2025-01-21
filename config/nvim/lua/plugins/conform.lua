@@ -23,43 +23,28 @@ function M.config()
 			json = prettier,
 			jsonc = prettier,
 			yaml = prettier,
-			sh = { "shfmt" },
+			sh = { "shfmt", "shellcheck" },
 			markdown = { prettier, "injected", stop_after_first = true },
 			toml = { "taplo" },
 			c = { "clang-format" },
 			cpp = { "clang-format" },
 			["c++"] = { "clang-format" },
+			["*"] = { "codespell" },
+			-- Use the "_" filetype to run formatters on filetypes that don't
+			-- have other formatters configured.
+			["_"] = { "trim_whitespace", "trim_newlines" },
 		},
 		formatters = {
-			-- Dealing with old version of prettierd that doesn't support range formatting
 			injected = {
-				options = {
-					-- Set to true to ignore errors
-					ignore_errors = false,
-					-- Map of treesitter language to file extension
-					-- A temporary file name with this extension will be generated during formatting
-					-- because some formatters care about the filename.
-					lang_to_ext = {
-						bash = "sh",
-						c_sharp = "cs",
-						elixir = "exs",
-						javascript = "js",
-						julia = "jl",
-						latex = "tex",
-						markdown = "md",
-						python = "py",
-						ruby = "rb",
-						rust = "rs",
-						teal = "tl",
-						typescript = "ts",
-					},
-					-- Map of treesitter language to formatters to use
-					-- (defaults to the value from formatters_by_ft)
-					lang_to_formatters = {},
-				},
-			},
-			prettierd = {
-				range_args = false,
+				condition = function(self, ctx)
+					local ft = vim.bo[ctx.buf].filetype
+					if ft == "checkhealth" then
+						return true
+					end
+					local buf_lang = vim.treesitter.language.get_lang(ft)
+					local ok = pcall(vim.treesitter.get_string_parser, "", buf_lang)
+					return ok
+				end,
 			},
 		},
 	})

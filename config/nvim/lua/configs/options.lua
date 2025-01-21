@@ -91,8 +91,7 @@ vim.opt.spelloptions:append("noplainbuffer")
 -- 设置剪切板的内来源为寄存器"*(主选择)和"+（剪切）
 vim.opt.clipboard = "unnamedplus"
 
-vim.g.python3_host_prog = "/usr/bin/python3"
-
+vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_node_provider = 0
