@@ -14,9 +14,9 @@ if type uv >/dev/null 2>&1; then
     eval "$(uv generate-shell-completion bash)"
 fi
 
-if [ ! -d "$HOME/.venv" ] && type uv >/dev/null 2>&1; then
-    uv venv "$HOME/.venv"
-else
-    #shellcheck disable=SC1090
-    source "$HOME/.venv/bin/activate"
-fi
+# if [ ! -d "$HOME/.venv" ] && type uv >/dev/null 2>&1; then
+#     uv venv "$HOME/.venv"
+# else
+#     #shellcheck disable=SC1090
+#     source "$HOME/.venv/bin/activate"
+# fi

@@ -116,7 +116,7 @@ pluginKeys.maplsp = function(mapbuf)
 	-- rename
 	mapbuf("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 	-- code action
-	mapbuf("n", "<leader>a", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+	mapbuf("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 	-- go xx
 	mapbuf("n", "<leader>gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
 	mapbuf("n", "<leader>gh", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
@@ -307,5 +307,15 @@ end, dopts("remote Flash"))
 map({ "n", "x", "o" }, "<leader>v", function()
 	require("flash").treesitter_search()
 end, dopts("Treesitter Search"))
+
+-----------------------llm ai-------------------------------------
+map("n", "<leader>ac", "<cmd>LLMSessionToggle<cr>", dopts("llm session toggle"))
+map("x", "<leader>atw", "<cmd>LLMAppHandler WordTranslate<cr>", dopts("llm WordTranslate"))
+map("v", "<leader>ae", "<cmd>LLMAppHandler CodeExplain<cr>", dopts("llm CodeExplain"))
+map("n", "<leader>atl", "<cmd>LLMAppHandler Translate<cr>", dopts("llm Translate"))
+map("x", "<leader>atc", "<cmd>LLMAppHandler TestCode<cr>", dopts("llm TestCode"))
+map("x", "<leader>ao", "<cmd>LLMAppHandler OptimCompare<cr>", dopts("llm OptimCompare"))
+map("n", "<leader>ag", "<cmd>LLMAppHandler CommitMsg<cr>", dopts("llm CommitMsg"))
+map("x", "<leader>ad", "<cmd>LLMAppHandler DocString<cr>", dopts("llm DocString"))
 
 return pluginKeys

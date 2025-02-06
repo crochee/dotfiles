@@ -55,5 +55,4 @@ function gphf {
 
 # custom
 alias dcs="cd $WORKSPACE/dcs"
-
-
+alias mycli="$HOME/.venv/bin/mycli"
