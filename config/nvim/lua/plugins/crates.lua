@@ -1,15 +1,10 @@
 local M = {
-  'Saecki/crates.nvim',
-  dependencies = { "nvim-lua/plenary.nvim" },
-  event = { "BufRead Cargo.toml" },
+	"Saecki/crates.nvim",
+	event = { "BufRead Cargo.toml" },
 }
 
 function M.config()
-  require("crates").setup({
-    src = {
-      cmp = { enabled = true },
-    },
-  })
+	require("crates").setup()
 end
 
 return M

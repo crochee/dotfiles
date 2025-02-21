@@ -6,8 +6,9 @@ t = "test"
 r = "run"
 rm = "remove"
 rr = "run --release"
-recursive_example = "rr --example recursions"
-space_example = ["run", "--release", "--", "\"command list\""]
+rp = "rr -p"
+re = "rr --example"
+rc = "rr --"
 
 [source.crates-io]
 registry = "https://github.com/rust-lang/crates.io-index"
