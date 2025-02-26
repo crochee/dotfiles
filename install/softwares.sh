@@ -161,6 +161,11 @@ install_tools() {
             go install go.senan.xyz/cliphist@latest
             echo "install cliphist done."
         fi
+        if ! has_cmd "kind"; then
+            echo "install kind..."
+            go install sigs.k8s.io/kind@latest
+            echo "install kind done."
+        fi
     fi
     if has_cmd "cargo"; then
         if ! has_cmd "bat"; then
