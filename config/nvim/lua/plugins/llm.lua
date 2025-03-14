@@ -11,7 +11,10 @@ return {
 				user = { text = "😃 ", hl = "Title" },
 				assistant = { text = "⚡ ", hl = "Added" },
 			},
-
+			keys = {
+				["Session:Toggle"] = { mode = "n", key = "<leader>all" },
+				["Session:Close"] = { mode = "n", key = { "<esc>", "Q" } },
+			},
 			-- [[ kimi ]]
 			url = "https://api.moonshot.cn/v1/chat/completions",
 			model = "moonshot-v1-32k", -- "moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"
@@ -21,57 +24,6 @@ return {
 			temperature = 0.3,
 			top_p = 0.7,
 			app_handler = {
-				TestCode = {
-					handler = tools.side_by_side_handler,
-					prompt = [[ Write some test cases for the following code, only return the test cases.
-            Give the code content directly, do not use code blocks or other tags to wrap it. ]],
-					opts = {
-						right = {
-							title = " Test Cases ",
-						},
-					},
-				},
-				OptimCompare = {
-					handler = tools.action_handler,
-				},
-				Translate = {
-					handler = tools.qa_handler,
-					opts = {
-						component_width = "60%",
-						component_height = "50%",
-						query = {
-							title = " 󰊿 Trans ",
-							hl = { link = "Define" },
-						},
-						input_box_opts = {
-							size = "15%",
-							win_options = {
-								winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
-							},
-						},
-						preview_box_opts = {
-							size = "85%",
-							win_options = {
-								winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
-							},
-						},
-					},
-				},
-				WordTranslate = {
-					handler = tools.flexi_handler,
-					prompt = "Translate the following text to Chinese, please only return the translation",
-					opts = {
-						exit_on_move = true,
-						enter_flexible_window = false,
-					},
-				},
-				CodeExplain = {
-					handler = tools.flexi_handler,
-					prompt = "Explain the following code, please only return the explanation, and answer in Chinese",
-					opts = {
-						enter_flexible_window = true,
-					},
-				},
 				CommitMsg = {
 					handler = tools.flexi_handler,
 					prompt = function()

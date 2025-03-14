@@ -309,13 +309,7 @@ map({ "n", "x", "o" }, "<leader>v", function()
 end, dopts("Treesitter Search"))
 
 -----------------------llm ai-------------------------------------
-map("n", "<leader>ac", "<cmd>LLMSessionToggle<cr>", dopts("llm session toggle"))
-map("x", "<leader>atw", "<cmd>LLMAppHandler WordTranslate<cr>", dopts("llm WordTranslate"))
-map("v", "<leader>ae", "<cmd>LLMAppHandler CodeExplain<cr>", dopts("llm CodeExplain"))
-map("n", "<leader>atl", "<cmd>LLMAppHandler Translate<cr>", dopts("llm Translate"))
-map("x", "<leader>atc", "<cmd>LLMAppHandler TestCode<cr>", dopts("llm TestCode"))
-map("x", "<leader>ao", "<cmd>LLMAppHandler OptimCompare<cr>", dopts("llm OptimCompare"))
-map("n", "<leader>ag", "<cmd>LLMAppHandler CommitMsg<cr>", dopts("llm CommitMsg"))
-map("x", "<leader>ad", "<cmd>LLMAppHandler DocString<cr>", dopts("llm DocString"))
+map("n", "<leader>alg", "<cmd>LLMAppHandler CommitMsg<cr>", dopts("llm CommitMsg"))
+map("x", "<leader>ald", "<cmd>LLMAppHandler DocString<cr>", dopts("llm DocString"))
 
 return pluginKeys
