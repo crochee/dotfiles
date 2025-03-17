@@ -309,6 +309,9 @@ map({ "n", "x", "o" }, "<leader>v", function()
 end, dopts("Treesitter Search"))
 
 -----------------------llm ai-------------------------------------
-map("n", "<leader>ag", "<cmd>lua _COMMIT_MSG()<cr>", dopts("llm CommitMsg"))
+map("n", "<leader>ag", "<cmd>lua _COMMIT_MSG()<cr>", dopts("avante generate commit msg"))
+map("i", "<C-Space>", function()
+	require("avante").suggest()
+end, dopts("avante suggest"))
 
 return pluginKeys
