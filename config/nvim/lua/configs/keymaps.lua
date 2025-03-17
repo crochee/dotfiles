@@ -309,7 +309,6 @@ map({ "n", "x", "o" }, "<leader>v", function()
 end, dopts("Treesitter Search"))
 
 -----------------------llm ai-------------------------------------
-map("n", "<leader>alg", "<cmd>LLMAppHandler CommitMsg<cr>", dopts("llm CommitMsg"))
-map("x", "<leader>ald", "<cmd>LLMAppHandler DocString<cr>", dopts("llm DocString"))
+map("n", "<leader>ag", "<cmd>lua _COMMIT_MSG()<cr>", dopts("llm CommitMsg"))
 
 return pluginKeys
