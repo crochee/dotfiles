@@ -129,14 +129,23 @@ pluginKeys.maplsp = function(mapbuf)
 	mapbuf("n", "<leader>gn", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
 	mapbuf("n", "<leader>gq", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
 
-	mapbuf("n", "<leader>fm", '<cmd>lua require("conform").format{ async = true,lsp_fallback = true }<CR>', opts)
-	mapbuf("n", "<leader>=", "<cmd>DiffFormat<CR>", opts)
 	mapbuf("n", "<leader>gs", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 	-- mapbuf('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opt)
 	-- mapbuf('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opt)
 	-- mapbuf('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opt)
 	mapbuf("n", "<space>gtd", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
 end
+
+map({ "n", "v", "x" }, "<leader>fm", function()
+	require("conform").format({ async = true, lsp_fallback = true }, function(err)
+		if not err then
+			if vim.fn.mode() ~="n" then
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+			end
+		end
+	end)
+end, dopts("format code"))
+map("n", "<leader>=", "<cmd>DiffFormat<CR>", opts)
 
 map("n", "<leader>tc", ':lua require("treesitter-context").go_to_context()<CR>', opts)
 -- switch lspinlayHit
