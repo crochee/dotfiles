@@ -9,7 +9,6 @@ local M = {
 		"nvim-lua/plenary.nvim",
 		"MunifTanjim/nui.nvim",
 		"nvim-telescope/telescope.nvim", -- Optional: for file_selector provider telescope
-		"hrsh7th/nvim-cmp", -- Optional: autocompletion for avante commands and mentions
 		"nvim-tree/nvim-web-devicons", -- Optional: or echasnovski/mini.icons
 		{
 			"HakonHarnes/img-clip.nvim", -- Optional: support for image pasting
