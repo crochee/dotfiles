@@ -120,6 +120,63 @@ function M.is_nvim(pane)
 	return pane:get_user_vars().IS_NVIM == "true" or pane:get_foreground_process_name():find("n?vim")
 end
 
+function M.fill_password(mods, key)
+	-- 定义 WSL 执行函数（适配 crochee 用户）
+	local function wsl_crochee_command(command)
+		-- 基础命令
+		local args = {
+			"wsl.exe",
+			"-d",
+			"ArchLinux", -- 指定发行版
+			"-u",
+			"crochee", -- 指定用户
+			"--cd",
+			"~", -- 启动目录
+			"--", -- 分隔参数
+		}
+
+		-- 添加目标命令
+		for _, arg in ipairs(command) do
+			table.insert(args, arg)
+		end
+
+		-- 执行并返回结果
+		return wezterm.run_child_process(args)
+	end
+	-- 安全获取密码的函数（通过 WSL 中的 bw CLI）
+	local function get_bw_password(item_name)
+		-- 在 WSL 的 crochee 用户下执行命令
+		local success, stdout, stderr = wsl_crochee_command({
+			"bw",
+			"--raw",
+			"get",
+			"password",
+			item_name,
+		})
+
+		if success then
+			return stdout:gsub("%s+", "") -- 去除换行符
+		else
+			wezterm.show_error_dialog("Bitwarden 错误", "请检查 CLI 配置", stderr)
+			return nil
+		end
+	end
+	local event = "fill-password-crochee"
+	wezterm.on(event, function(window, pane)
+		local name = window:active_key_table()
+		local password = get_bw_password(name)
+		if password then
+			pane:send_text(password)
+			pane:send_text("\n") -- 可选：自动提交
+		end
+	end)
+	return {
+		key = key,
+		mods = mods,
+		action = wezterm.action.EmitEvent(event),
+	}
+end
+
 return {
 	keys = {
 		-- misc/useful --
@@ -162,6 +219,7 @@ return {
 		M.split_nav("resize", M.mod, "RightArrow", "Left"),
 		M.split_nav("resize", M.mod, "UpArrow", "Up"),
 		M.split_nav("resize", M.mod, "DownArrow", "Down"),
+        M.fill_password(M.mod, "p"),
 		{
 			key = "F6",
 			mods = "NONE",
