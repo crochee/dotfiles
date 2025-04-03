@@ -150,7 +150,7 @@ function M.fill_password(mods, key)
 			"bw",
 			"--raw",
 			"get",
-			"password",
+			"item",
 			item_name,
 		})
 
@@ -163,8 +163,8 @@ function M.fill_password(mods, key)
 	end
 	local event = "fill-password-crochee"
 	wezterm.on(event, function(window, pane)
-		local name = window:active_key_table()
-		local password = get_bw_password(name)
+		local host = pane:get_lines_as_text():match("connect to %S+@(%S+)")
+		local password = get_bw_password(host)
 		if password then
 			pane:send_text(password)
 			pane:send_text("\n") -- 可选：自动提交
