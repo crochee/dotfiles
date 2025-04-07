@@ -120,14 +120,14 @@ function M.is_nvim(pane)
 	return pane:get_user_vars().IS_NVIM == "true" or pane:get_foreground_process_name():find("n?vim")
 end
 
+local BW_SESSION = ""
+
 function M.fill_password(mods, key)
 	-- 定义 WSL 执行函数（适配 crochee 用户）
 	local function wsl_crochee_command(command)
 		-- 基础命令
 		local args = {
-			"wsl.exe",
-			"-d",
-			"ArchLinux", -- 指定发行版
+			"wsl",
 			"-u",
 			"crochee", -- 指定用户
 			"--cd",
@@ -146,29 +146,51 @@ function M.fill_password(mods, key)
 	-- 安全获取密码的函数（通过 WSL 中的 bw CLI）
 	local function get_bw_password(item_name)
 		-- 在 WSL 的 crochee 用户下执行命令
+		if BW_SESSION == "" then
+			local success, stdout, _ = wsl_crochee_command({
+				"~/.local/bin/bw",
+				"unlock",
+				"--passwordfile",
+				"~/.mp.txt",
+				"--raw",
+			})
+			if success then
+				BW_SESSION = stdout:gsub("%s+", "") -- 去除换行符
+			end
+		end
 		local success, stdout, stderr = wsl_crochee_command({
-			"bw",
+			"~/.local/bin/bw",
 			"--raw",
+			"--session",
+			BW_SESSION,
 			"get",
-			"item",
+			"password",
 			item_name,
 		})
-
 		if success then
 			return stdout:gsub("%s+", "") -- 去除换行符
 		else
-			wezterm.show_error_dialog("Bitwarden 错误", "请检查 CLI 配置", stderr)
+			wezterm.log_error("Bitwarden 错误,请检查 CLI 配置" .. stderr)
 			return nil
 		end
 	end
-	local event = "fill-password-crochee"
+	local event = "fill-password"
 	wezterm.on(event, function(window, pane)
-		local host = pane:get_lines_as_text():match("connect to %S+@(%S+)")
-		local password = get_bw_password(host)
-		if password then
-			pane:send_text(password)
-			pane:send_text("\n") -- 可选：自动提交
-		end
+		window:perform_action(
+			wezterm.action.PromptInputLine({
+				action = wezterm.action_callback(function(_, _, line)
+					if line then
+						local password = get_bw_password(line)
+						if password then
+							pane:send_text(password)
+							pane:send_text("\n") -- 可选：自动提交
+						end
+					end
+				end),
+				description = "bw get password:",
+			}),
+			pane
+		)
 	end)
 	return {
 		key = key,
@@ -219,7 +241,7 @@ return {
 		M.split_nav("resize", M.mod, "RightArrow", "Left"),
 		M.split_nav("resize", M.mod, "UpArrow", "Up"),
 		M.split_nav("resize", M.mod, "DownArrow", "Down"),
-        M.fill_password(M.mod, "p"),
+		M.fill_password(M.mod, "p"),
 		{
 			key = "F6",
 			mods = "NONE",

@@ -3,4 +3,4 @@ docker run -d --name vaultwarden -v ~/store/vaultwarden/data/:/data/ --restart u
 
 bw config server http://localhost:80
 
-bw login --apikey
+bw login
