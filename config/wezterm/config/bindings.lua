@@ -120,7 +120,7 @@ function M.is_nvim(pane)
 	return pane:get_user_vars().IS_NVIM == "true" or pane:get_foreground_process_name():find("n?vim")
 end
 
-local BW_CACHE = {}
+local BW_CACHE
 
 function M.fill_password(mods, key)
 	-- 定义 WSL 执行函数（适配 crochee 用户）
@@ -142,11 +142,9 @@ function M.fill_password(mods, key)
 		return wezterm.run_child_process(args)
 	end
 	-- 安全获取密码的函数（通过 WSL 中的 bw CLI）
-	local function get_bw_items(item_name)
-		for _, item in pairs(BW_CACHE) do
-			if item.name == item_name then
-				return item.value
-			end
+	local function get_bw_items()
+		if BW_CACHE then
+			return BW_CACHE
 		end
 		local success, stdout, stderr = wsl_crochee_command({
 			"~/.local/bin/bw",
@@ -158,75 +156,48 @@ function M.fill_password(mods, key)
 		if not success then
 			return nil, stderr
 		end
-		if item_name then
-			success, stdout, stderr = wsl_crochee_command({
-				"~/.local/bin/bw",
-				"--raw",
-				"--session",
-				stdout:gsub("%s+", ""),
-				"list",
-				"items",
-				"--search",
-				item_name,
-			})
-		else
-			success, stdout, stderr = wsl_crochee_command({
-				"~/.local/bin/bw",
-				"--raw",
-				"--session",
-				stdout:gsub("%s+", ""),
-				"list",
-				"items",
-			})
-		end
+		success, stdout, stderr = wsl_crochee_command({
+			"~/.local/bin/bw",
+			"--raw",
+			"--session",
+			stdout:gsub("%s+", ""),
+			"list",
+			"items",
+		})
 		if success then
-			local value = wezterm.json_parse(stdout)
-			table.insert(BW_CACHE, { name = item_name, value = value })
-			return value
+			BW_CACHE = wezterm.json_parse(stdout)
+			return BW_CACHE
 		else
 			return nil, stderr
 		end
 	end
 	local event = "fill-password"
 	wezterm.on(event, function(window, pane)
-		window:perform_action(
-			wezterm.action.PromptInputLine({
-				action = wezterm.action_callback(function(_, _, line)
-					local items, err = get_bw_items(line)
-					if items then
-						local choices = {}
-						for _, item in pairs(items) do
-							table.insert(choices, { label = item.name, id = item.login.password })
+		local items, err = get_bw_items()
+		if items then
+			local choices = {}
+			for _, item in pairs(items) do
+				table.insert(choices, { label = item.name, id = item.login.password })
+			end
+			window:perform_action(
+				wezterm.action.InputSelector({
+					title = "Select password",
+					fuzzy = true,
+					fuzzy_description = "Fuzzy search:",
+					choices = choices,
+					action = wezterm.action_callback(function(_, _, id, label)
+						wezterm.log_info("selected" .. label .. " password: " .. id)
+						if id then
+							pane:send_text(id)
+							pane:send_text("\n") -- 可选：自动提交
 						end
-						window:perform_action(
-							wezterm.action.InputSelector({
-								title = "Select password",
-								fuzzy = true,
-								fuzzy_description = "Fuzzy search:",
-								choices = choices,
-								action = wezterm.action_callback(function(_, _, id, label)
-									wezterm.log_info("selected" .. label .. " password: " .. id)
-									if id then
-										pane:send_text(id)
-										pane:send_text("\n") -- 可选：自动提交
-									end
-								end),
-							}),
-							pane
-						)
-					else
-						window:toast_notification(
-							"bitwarden",
-							"Failed to get password.\n\n" .. wezterm.to_string(err),
-							nil,
-							4000
-						)
-					end
-				end),
-				description = "bitwarden get password for item:",
-			}),
-			pane
-		)
+					end),
+				}),
+				pane
+			)
+		else
+			window:toast_notification("bitwarden", "Failed to get password.\n\n" .. wezterm.to_string(err), nil, 4000)
+		end
 	end)
 	return {
 		key = key,
