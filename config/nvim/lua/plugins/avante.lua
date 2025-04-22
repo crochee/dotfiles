@@ -37,16 +37,14 @@ local M = {
 --- Configure Avante
 function M.config()
 	require("avante").setup({
-		provider = "kimi",
+		provider = "ollama",
 		vendors = {
-			kimi = {
+			ollama = {
 				__inherited_from = "openai",
-				endpoint = "https://api.moonshot.cn/v1/",
-				model = "moonshot-v1-32k", -- Choose model: "moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"
-				api_key_name = "LLM_KEY",
-				max_tokens = 4096,
-				timeout = 30000,
-				disable_tools = false,
+				api_key_name = "",
+				endpoint = "http://127.0.0.1:11434/v1",
+				model = "qwen2.5-coder:1.5b",
+				disable_tools = true, -- Open-source models often do not support tools.
 			},
 		},
 		file_selector = {
