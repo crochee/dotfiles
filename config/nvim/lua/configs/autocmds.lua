@@ -15,7 +15,7 @@ vim.api.nvim_create_autocmd({
 -- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
 	pattern = "*",
-	command = "silent! lua vim.highlight.on_yank()",
+	command = "silent! lua vim.hl.on_yank()",
 	group = augroup("highlight_yank"),
 })
 

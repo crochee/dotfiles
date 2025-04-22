@@ -317,7 +317,4 @@ map({ "n", "x", "o" }, "<leader>v", function()
 	require("flash").treesitter_search()
 end, dopts("Treesitter Search"))
 
------------------------llm ai-------------------------------------
-map("n", "<leader>ag", "<cmd>lua _COMMIT_MSG()<cr>", dopts("avante generate commit msg"))
-
 return pluginKeys
