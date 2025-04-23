@@ -10,11 +10,6 @@ local M = {
 		{
 			"mickael-menu/zk-nvim",
 			main = "zk",
-			dependencies = {
-				"plasticboy/vim-markdown",
-				branch = "master",
-				dependencies = { "godlygeek/tabular" },
-			},
 		},
 		-------- dap
 		"jayp0521/mason-nvim-dap.nvim",
