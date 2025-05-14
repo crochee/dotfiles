@@ -11,7 +11,7 @@ function M.config()
 	require("conform").setup({
 		formatters_by_ft = {
 			lua = { "stylua" },
-			go = { "goimports", "gofumpt", "goimports-reviser", "golines" },
+			go = { "gofumpt", "goimports-reviser" },
 			sql = { "sqlfmt" },
 			python = { "ruff_format", "ruff_organize_imports" },
 			javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -29,7 +29,7 @@ function M.config()
 			c = { "clang-format" },
 			cpp = { "clang-format" },
 			["c++"] = { "clang-format" },
-			["*"] = { "codespell" },
+			-- ["*"] = { "codespell" },
 			["_"] = { "trim_whitespace", "trim_newlines" },
 		},
 		formatters = {
@@ -43,6 +43,45 @@ function M.config()
 					local ok = pcall(vim.treesitter.get_string_parser, "", buf_lang)
 					return ok
 				end,
+			},
+			["goimports-reviser"] = {
+				args = function()
+					local args = { "-rm-unused" }
+					local handle = io.popen("git rev-parse --show-toplevel")
+					if handle then
+						-- 构建 go.mod 路径
+						local git_root = handle:read("*a"):gsub("\n", "")
+						handle:close()
+						if git_root:match("dcs") then -- NOTE: 仅针对 dcs 项目
+							local go_mod_path = git_root .. "/go.mod"
+							-- 解析依赖包
+							local relies = {}
+							local f = io.open(go_mod_path, "r")
+							if f then
+								for line in f:lines() do
+									-- 匹配替换语句（支持带版本号和不带版本号的情况）
+									if line:match("%s*=>%s*") then
+										-- 提取 => 左侧的完整模块路径
+										local module_path = line:match("^%s*([^%s]+)")
+										if module_path then
+											table.insert(relies, module_path)
+										end
+									end
+								end
+								f:close()
+							end
+							-- 构建 company-prefixes 参数
+							if #relies > 0 then
+								table.insert(args, "-company-prefixes")
+								table.insert(args, table.concat(relies, ","))
+							end
+						end
+					end
+					table.insert(args, "-format")
+					table.insert(args, "$FILENAME")
+					return args
+				end,
+				stdin = false,
 			},
 		},
 	})
