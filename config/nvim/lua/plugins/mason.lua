@@ -1,5 +1,5 @@
 local M = {
-	"williamboman/mason.nvim",
+	"mason-org/mason.nvim",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"b0o/schemastore.nvim",

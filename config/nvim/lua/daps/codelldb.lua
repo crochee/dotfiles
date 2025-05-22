@@ -11,9 +11,8 @@ if not ok then
   vim.notify("not found mason-registry")
 end
 
-local codelldb = mason_registry.get_package("codelldb")
-local extension_path = codelldb:get_install_path() .. "/extension/"
-local codelldb_path = extension_path .. "adapter/codelldb"
+local extension_path = vim.fn.expand("$MASON/packages/codelldb/extension")
+local codelldb_path = extension_path .. "/adapter/codelldb"
 local liblldb_path = ""
 if vim.loop.os_uname().sysname:find("Windows") then
   liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
