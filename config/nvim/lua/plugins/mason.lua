@@ -27,7 +27,7 @@ local M = {
 		"leoluz/nvim-dap-go",
 		{
 			"mrcjkb/rustaceanvim",
-			version = "^4", -- Recommended
+			version = "^6", -- Recommended
 			ft = { "rust" },
 		},
 		----------linter

@@ -12,6 +12,7 @@ function M.config()
 		formatters_by_ft = {
 			lua = { "stylua" },
 			go = { "gofumpt", "goimports-reviser" },
+			rust = { "rustfmt" },
 			sql = { "sqlfmt" },
 			python = { "ruff_format", "ruff_organize_imports" },
 			javascript = { "prettierd", "prettier", stop_after_first = true },
