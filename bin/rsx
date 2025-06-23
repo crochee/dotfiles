@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+
+# 原始rsync命令路径
+RSYNC_CMD="/mnt/c/Users/crochee/.local/bin/rsync/bin/rsync.exe"
+
+# 获取所有参数
+args=("$@")
+
+# 查找需要转换的本地路径参数
+local_path_index=-1
+for i in "${!args[@]}"; do
+    # 跳过以 - 开头的选项参数
+    if [[ "${args[i]}" != -* ]]; then
+        # 检查是否是有效的文件/目录路径
+        if [[ -e "${args[i]}" ]]; then
+            local_path_index=$i
+            break
+        fi
+    fi
+done
+
+# 检查是否找到有效的本地路径
+if [ ! "$local_path_index" -eq -1 ]; then
+    # 获取并处理本地路径
+    local_path="${args[$local_path_index]}"
+    if [ ! -e "$local_path" ]; then
+        echo "错误: 路径 '$local_path' 不存在"
+        exit 1
+    fi
+
+    # 转换为绝对路径并添加WSL前缀
+    abs_path=$(realpath "$local_path")
+    wsl_path="//wsl.localhost/Arch$abs_path"
+
+    # 替换参数数组中的路径
+    args[$local_path_index]="$wsl_path"
+fi
+
+# 执行rsync命令
+$RSYNC_CMD "${args[@]}"
