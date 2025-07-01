@@ -23,7 +23,7 @@ nodes:
         readOnly: true
 networking:
   # the default CNI will not be installed
-  disableDefaultCNI: true
+  # disableDefaultCNI: true
   ipFamily: dual
   kubeProxyMode: "nftables"
   podSubnet: 192.168.0.0/16 # set to Calico's default subnet
