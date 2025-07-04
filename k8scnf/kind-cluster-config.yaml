@@ -33,3 +33,7 @@ networking:
   # podSubnet: 192.168.0.0/16 # set to Calico's default subnet
 # kind create cluster --config=kind-cluster-config.yaml
 # kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/calico.yaml
+
+## https://github.com/kubernetes-sigs/cloud-provider-kind
+# docker run -itd --network kind -v /var/run/docker.sock:/var/run/docker.sock cloud-provider-kind.slim -enable-lb-port-mapping
+# docker run --rm --network kind -v /var/run/docker.sock:/var/run/docker.sock cloud-provider-kind.slim
