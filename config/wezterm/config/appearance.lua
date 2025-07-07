@@ -14,6 +14,7 @@ return {
 
 	-- scrollbar
 	enable_scroll_bar = true,
+    scrollback_lines = 3500,
 
 	-- tab bar
 	enable_tab_bar = true,
@@ -32,7 +33,18 @@ return {
 		top = 12,
 		bottom = 7,
 	},
-	window_close_confirmation = "NeverPrompt",
+	skip_close_confirmation_for_processes_named = {
+		"bash",
+		"sh",
+		"zsh",
+		"fish",
+		"tmux",
+		"nu",
+		"cmd.exe",
+		"pwsh.exe",
+		"powershell.exe",
+	},
+	window_close_confirmation = "AlwaysPrompt",
 	window_frame = {
 		active_titlebar_bg = "#090909",
 	},

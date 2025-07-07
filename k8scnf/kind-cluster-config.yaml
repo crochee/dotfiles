@@ -29,7 +29,7 @@ networking:
   # the default CNI will not be installed
   # disableDefaultCNI: true
   ipFamily: dual
-  kubeProxyMode: "nftables"
+  kubeProxyMode: "ipvs"
   # podSubnet: 192.168.0.0/16 # set to Calico's default subnet
 # kind create cluster --config=kind-cluster-config.yaml
 # kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/calico.yaml
