@@ -146,20 +146,10 @@ install_wezterm() {
 
 install_tools() {
     if has_cmd "go"; then
-        if ! has_cmd "mockgen"; then
-            echo "install mockgen..."
-            go install go.uber.org/mock/mockgen@latest
-            echo "install mockgen done."
-        fi
         if ! has_cmd "lazygit"; then
             echo "install lazygit..."
             go install github.com/jesseduffield/lazygit@latest
             echo "install lazygit done."
-        fi
-        if ! has_cmd "cliphist"; then
-            echo "install cliphist..."
-            go install go.senan.xyz/cliphist@latest
-            echo "install cliphist done."
         fi
         if ! has_cmd "kind"; then
             echo "install kind..."
@@ -202,26 +192,6 @@ install_tools() {
     fi
 }
 
-install_mycli() {
-    if has_cmd "pip" && ! has_cmd "mycli"; then
-        echo "install mycli..."
-        sudo pip install mycli
-        echo "install mycli done."
-    fi
-}
-
-install_fcitx() {
-    echo "install fcitx5..."
-    sudo apt install fcitx5 fcitx5-chinese-addons
-    echo "install fcitx5 done."
-}
-
-install_vpn() {
-    echo "install vpn..."
-    sudo apt install openvpn
-    echo "install vpn done."
-}
-
 install_rsync() {
     echo "install rsync..."
     sudo apt install rsync
@@ -241,7 +211,7 @@ show_menu() {
     mkdir -p ~/Downloads
     mkdir -p ~/.local/bin
     echo "================INSTALL================="
-    echo "please select go, rust, python3, clipboard, nodejs, neovim, mycli, wezterm, tools or quit:"
+    echo "please select go, rust, python3, clipboard, nodejs, neovim, wezterm, rsync, tools or quit:"
     echo -n "select: "
     read -r num
     install "$num"

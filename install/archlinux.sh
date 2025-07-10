@@ -73,11 +73,6 @@ install_java() {
 
 install_tools() {
     if has_cmd "go"; then
-        if ! has_cmd "mockgen"; then
-            echo "install mockgen..."
-            go install go.uber.org/mock/mockgen@latest
-            echo "install mockgen done."
-        fi
         if ! has_cmd "lazygit"; then
             echo "install lazygit..."
             go install github.com/jesseduffield/lazygit@latest
