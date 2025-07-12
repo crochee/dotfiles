@@ -31,7 +31,7 @@ networking:
   ipFamily: dual
   kubeProxyMode: "ipvs"
   # podSubnet: 192.168.0.0/16 # set to Calico's default subnet
-# kind create cluster --config=kind-cluster-config.yaml
+# kind create cluster --config=/home/crochee/.dotfiles/k8scnf/kind-cluster-config.yaml
 # kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/calico.yaml
 
 ## https://github.com/kubernetes-sigs/cloud-provider-kind

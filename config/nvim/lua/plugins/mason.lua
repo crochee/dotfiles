@@ -6,11 +6,7 @@ local M = {
 		------ lsp
 		"williamboman/mason-lspconfig.nvim",
 		"neovim/nvim-lspconfig",
-		"nanotee/sqls.nvim",
-		{
-			"mickael-menu/zk-nvim",
-			main = "zk",
-		},
+		"zk-org/zk-nvim",
 		-------- dap
 		"jayp0521/mason-nvim-dap.nvim",
 		{
@@ -54,6 +50,7 @@ function M.config()
 				package_uninstalled = "✗",
 			},
 		},
+		pip = { use_uv = true },
 		-- ~/.local/share/nvim/mason
 		install_root_dir = vim.fn.stdpath("data") .. "/mason",
 	})
@@ -108,7 +105,6 @@ function M.config()
 		eslint = require("lsp.eslint"),
 		ts_ls = require("lsp.tsserver"),
 		taplo = require("lsp.taplo"),
-		-- sqlls = require("lsp.sqlls"),
 		yamlls = require("lsp.yamlls"),
 		zk = require("lsp.zk"),
 		clangd = require("lsp.clangd"),
@@ -133,7 +129,7 @@ function M.config()
 	-- linters
 	require("mason-lspconfig").setup({
 		ensure_installed = lsp_ensure_installed,
-		automatic_installation = true,
+		automatic_enable = true,
 	})
 
 	-------------------- Linter Install List

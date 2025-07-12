@@ -29,7 +29,7 @@ install_rust() {
 install_go() {
     if ! has_cmd "go" && [ -n "$GOROOT" ] && test -d "$GOROOT"; then
         echo "install go..."
-        local GO_VERSION="1.22.7"
+        local GO_VERSION="1.24.5"
         cd ~/Downloads/
         wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
         tar -C "${GOROOT}" -xzf go${GO_VERSION}.linux-amd64.tar.gz
@@ -77,6 +77,11 @@ install_tools() {
             echo "install lazygit..."
             go install github.com/jesseduffield/lazygit@latest
             echo "install lazygit done."
+        fi
+        if ! has_cmd "kind"; then
+            echo "install kind..."
+            go install sigs.k8s.io/kind@latest
+            echo "install kind done."
         fi
     fi
     if has_cmd "cargo"; then
@@ -127,7 +132,7 @@ install() {
 }
 
 show_menu() {
-    sudo pacman -S base-devel curl wget unzip gcc g++
+    sudo pacman -S base-devel curl wget unzip gcc
     mkdir -p ~/Downloads
     mkdir -p ~/.local/bin
     echo "================INSTALL================="
