@@ -83,6 +83,11 @@ install_tools() {
             go install sigs.k8s.io/kind@latest
             echo "install kind done."
         fi
+        if ! has_cmd "kubebuilder"; then
+            echo "install kubebuilder..."
+            go install sigs.k8s.io/kubebuilder/v4@latest
+            echo "install kubebuilder done."
+        fi
     fi
     if has_cmd "cargo"; then
         if ! has_cmd "bat"; then
