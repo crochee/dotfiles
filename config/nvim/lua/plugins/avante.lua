@@ -20,6 +20,10 @@ return {
 		selector = {
 			exclude_auto_select = { "NvimTree" },
 		},
+        behaviour = {
+			-- auto_apply_diff_after_generation = true,
+			enable_cursor_planning_mode = true, -- Enable Cursor Planning Mode
+		},
 	},
 	-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
 	build = "make",
@@ -31,7 +35,7 @@ return {
 		"MunifTanjim/nui.nvim",
 		--- The below dependencies are optional,
 		"nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-		"hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+        "hrsh7th/nvim-cmp", -- Optional: autocompletion for avante commands and mentions
 		"nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
 		{
 			-- support for image pasting
@@ -57,47 +61,6 @@ return {
 				file_types = { "markdown", "Avante" },
 			},
 			ft = { "markdown", "Avante" },
-		},
-	},
-	windows = {
-		input = {
-			prefix = "> ",
-			height = 10,
-		},
-	},
-	custom_tools = {
-		{
-			name = "run_go_tests", -- Unique name for the tool
-			description = "Run Go unit tests and return results", -- Description shown to AI
-			command = "go test -v ./...", -- Shell command to execute
-			param = { -- Input parameters (optional)
-				type = "table",
-				fields = {
-					{
-						name = "target",
-						description = "Package or directory to test (e.g. './pkg/...' or './internal/pkg')",
-						type = "string",
-						optional = true,
-					},
-				},
-			},
-			returns = { -- Expected return values
-				{
-					name = "result",
-					description = "Result of the fetch",
-					type = "string",
-				},
-				{
-					name = "error",
-					description = "Error message if the fetch was not successful",
-					type = "string",
-					optional = true,
-				},
-			},
-			func = function(params, on_log, on_complete) -- Custom function to execute
-				local target = params.target or "./..."
-				return vim.fn.system(string.format("go test -v %s", target))
-			end,
 		},
 	},
 }

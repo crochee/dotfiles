@@ -139,7 +139,7 @@ end
 map({ "n", "v", "x" }, "<leader>fm", function()
 	require("conform").format({ async = true, lsp_fallback = true }, function(err)
 		if not err then
-			if vim.fn.mode() ~="n" then
+			if vim.fn.mode() ~= "n" then
 				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
 			end
 		end
@@ -316,5 +316,8 @@ end, dopts("remote Flash"))
 map({ "n", "x", "o" }, "<leader>v", function()
 	require("flash").treesitter_search()
 end, dopts("Treesitter Search"))
+
+-----------------------llm ai-------------------------------------
+map("n", "<leader>ag", "<cmd>lua _COMMIT_MSG()<cr>", dopts("avante generate commit msg"))
 
 return pluginKeys
