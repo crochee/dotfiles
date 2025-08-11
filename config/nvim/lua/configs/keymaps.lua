@@ -268,11 +268,6 @@ map("n", "<leader>df", ":lua require'dapui'.float_element()<CR>", opts)
 map("n", "<leader>dgt", ":lua require('dap-go').debug_test()<CR>", opts)
 map("n", "<leader>dgl", ":lua require('dap-go').debug_last_test()<CR>", opts)
 
-------------------------gotests golang单元测试自动生成-----------------------
-map("n", "<leader>ge", ":GoTests<CR>", opts)
-map("n", "<leader>gta", ":GoTestsAll<CR>", opts)
-map("n", "<leader>gte", ":GoTestsExported<CR>", opts)
-
 ----------------------git-conflict------------------------
 map("n", "<leader>gco", "<Plug>(git-conflict-ours)")
 map("n", "<leader>gct", "<Plug>(git-conflict-theirs)")
