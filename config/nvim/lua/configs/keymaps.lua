@@ -268,14 +268,6 @@ map("n", "<leader>df", ":lua require'dapui'.float_element()<CR>", opts)
 map("n", "<leader>dgt", ":lua require('dap-go').debug_test()<CR>", opts)
 map("n", "<leader>dgl", ":lua require('dap-go').debug_last_test()<CR>", opts)
 
-----------------------git-conflict------------------------
-map("n", "<leader>gco", "<Plug>(git-conflict-ours)")
-map("n", "<leader>gct", "<Plug>(git-conflict-theirs)")
-map("n", "<leader>gcb", "<Plug>(git-conflict-both)")
-map("n", "<leader>gc0", "<Plug>(git-conflict-none)")
-map("n", "<leader>gcp", "<Plug>(git-conflict-prev-conflict)")
-map("n", "<leader>gcn", "<Plug>(git-conflict-next-conflict)")
-
 -----------------------goimpl---------------------------------
 map(
 	"n",

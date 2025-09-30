@@ -4,7 +4,7 @@ local M = {
 		"nvim-lua/plenary.nvim",
 		"b0o/schemastore.nvim",
 		------ lsp
-		"williamboman/mason-lspconfig.nvim",
+		"mason-org/mason-lspconfig.nvim",
 		"neovim/nvim-lspconfig",
 		"zk-org/zk-nvim",
 		-------- dap
@@ -32,7 +32,7 @@ local M = {
 			event = { "BufReadPre", "BufNewFile" },
 			dependencies = {
 				"williamboman/mason.nvim",
-				"jose-elias-alvarez/null-ls.nvim",
+				"nvimtools/none-ls.nvim",
 			},
 			config = function() end,
 		},
@@ -122,7 +122,7 @@ function M.config()
 			})
 			config.setup(opts)
 		else
-			require("lspconfig")[name].setup(config)
+			vim.lsp.config(name, config)
 		end
 	end
 
@@ -133,19 +133,10 @@ function M.config()
 	})
 
 	-------------------- Linter Install List
-	local linters = {
-		shellcheck = require("linter.shellcheck"),
-		vacuum = {},
-		stylelint = {},
-	}
-	local linter_ensure_installed = { type = "list" }
-	for name, _ in pairs(linters) do
-		table.insert(linter_ensure_installed, name)
-	end
 
 	require("null-ls").setup()
 	require("mason-null-ls").setup({
-		ensure_installed = linter_ensure_installed,
+		ensure_installed = { "shellcheck", "vacuum", "jq", "stylua", "stylelint", "codespell" },
 		automatic_installation = true,
 	})
 
