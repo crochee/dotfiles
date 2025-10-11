@@ -21,11 +21,6 @@ local M = {
 		},
 		"nvim-telescope/telescope-dap.nvim",
 		"leoluz/nvim-dap-go",
-		{
-			"mrcjkb/rustaceanvim",
-			version = "^6", -- Recommended
-			ft = { "rust" },
-		},
 		----------linter
 		{
 			"jay-babu/mason-null-ls.nvim",
@@ -94,7 +89,6 @@ function M.config()
 	-- { key: lsp_name, value: lsp_config }
 	local lsp_servers = {
 		gopls = require("lsp.gopls"),
-		rust_analyzer = require("lsp.rust_analyzer"),
 		lua_ls = require("lsp.lua"),
 		bashls = require("lsp.bashls"),
 		jsonls = require("lsp.jsonls"),
@@ -129,7 +123,11 @@ function M.config()
 	-- linters
 	require("mason-lspconfig").setup({
 		ensure_installed = lsp_ensure_installed,
-		automatic_enable = true,
+		automatic_enable = {
+			exclude = {
+				"rust_analyzer",
+			},
+		},
 	})
 
 	-------------------- Linter Install List
