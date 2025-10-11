@@ -21,11 +21,6 @@ local M = {
 		},
 		"nvim-telescope/telescope-dap.nvim",
 		"leoluz/nvim-dap-go",
-		{
-			"mrcjkb/rustaceanvim",
-			version = "^6", -- Recommended
-			ft = { "rust" },
-		},
 		----------linter
 		{
 			"jay-babu/mason-null-ls.nvim",
@@ -94,7 +89,6 @@ function M.config()
 	-- { key: lsp_name, value: lsp_config }
 	local lsp_servers = {
 		gopls = require("lsp.gopls"),
-		rust_analyzer = require("lsp.rust_analyzer"),
 		lua_ls = require("lsp.lua"),
 		bashls = require("lsp.bashls"),
 		jsonls = require("lsp.jsonls"),
@@ -115,21 +109,17 @@ function M.config()
 	local lsp_ensure_installed = { type = "list" }
 	for name, config in pairs(lsp_servers) do
 		table.insert(lsp_ensure_installed, name)
-		if config.setup then
-			-- config删除setup元素
-			local opts = vim.tbl_deep_extend("force", config, {
-				setup = nil,
-			})
-			config.setup(opts)
-		else
-			vim.lsp.config(name, config)
-		end
+		vim.lsp.config(name, config)
 	end
-
+	vim.lsp.set_log_level("debug")
 	-- linters
 	require("mason-lspconfig").setup({
 		ensure_installed = lsp_ensure_installed,
-		automatic_enable = true,
+		automatic_enable = {
+			exclude = {
+				"rust_analyzer",
+			},
+		},
 	})
 
 	-------------------- Linter Install List
