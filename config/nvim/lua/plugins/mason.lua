@@ -4,7 +4,6 @@ local M = {
 		"nvim-lua/plenary.nvim",
 		"b0o/schemastore.nvim",
 		------ lsp
-		"mason-org/mason-lspconfig.nvim",
 		"neovim/nvim-lspconfig",
 		"zk-org/zk-nvim",
 		-------- dap
@@ -26,7 +25,7 @@ local M = {
 			"jay-babu/mason-null-ls.nvim",
 			event = { "BufReadPre", "BufNewFile" },
 			dependencies = {
-				"williamboman/mason.nvim",
+				"mason-org/mason.nvim",
 				"nvimtools/none-ls.nvim",
 			},
 			config = function() end,
@@ -109,18 +108,14 @@ function M.config()
 	local lsp_ensure_installed = { type = "list" }
 	for name, config in pairs(lsp_servers) do
 		table.insert(lsp_ensure_installed, name)
-		vim.lsp.config(name, config)
+		if config.setup then
+			local opts = vim.tbl_deep_extend("force", config, { setup = nil })
+			config.setup(opts)
+		else
+			vim.lsp.config(name, config)
+		end
 	end
-	vim.lsp.set_log_level("debug")
-	-- linters
-	require("mason-lspconfig").setup({
-		ensure_installed = lsp_ensure_installed,
-		automatic_enable = {
-			exclude = {
-				"rust_analyzer",
-			},
-		},
-	})
+	vim.lsp.enable(lsp_ensure_installed)
 
 	-------------------- Linter Install List
 
