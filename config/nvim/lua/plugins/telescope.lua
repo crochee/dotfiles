@@ -36,6 +36,7 @@ function M.config()
 
   telescope.load_extension("dap")
   telescope.load_extension("zk")
+  telescope.load_extension("noice")
 end
 
 return M
