@@ -1,0 +1,62 @@
+# ~/.codex/config.toml
+
+model = "deepseek-reasoner"
+model_provider = "deepseek"
+approval_policy = "untrusted"
+sandbox_mode = "workspace-write"
+model_reasoning_effort = "high"
+view_image_tool = true
+web_search_request = true
+
+[model_providers.openai]
+# model = "gpt-4o"
+# Name of the provider that will be displayed in the Codex UI.
+name = "OpenAI using Chat Completions"
+# The path `/chat/completions` will be amended to this URL to make the POST
+# request for the chat completions.
+base_url = "https://api.openai.com/v1"
+# If `env_key` is set, identifies an environment variable that must be set when
+# using Codex with this provider. The value of the environment variable must be
+# non-empty and will be used in the `Bearer TOKEN` HTTP header for the POST request.
+env_key = "OPENAI_API_KEY"
+
+[model_providers.deepseek]
+# model = "deepseek-coder"
+name = "deepseek"
+env_key = "DEEPSEEK_API_KEY"
+base_url = "https://api.deepseek.com"
+
+[model_providers.streamlake]
+# model = "ep-bmn3kd-1761271125825670473"
+name = "streamlake"
+env_key = "WQ_API_KEY"
+base_url = "https://wanqing.streamlakeapi.com/api/gateway/v1/endpoints"
+
+# Extra settings that only apply when `sandbox = "workspace-write"`.
+[sandbox_workspace_write]
+# By default, the cwd for the Codex session will be writable as well as $TMPDIR
+# (if set) and /tmp (if it exists). Setting the respective options to `true`
+# will override those defaults.
+exclude_tmpdir_env_var = false
+exclude_slash_tmp = false
+# Optional list of _additional_ writable roots beyond $TMPDIR and /tmp.
+writable_roots = ["README.md"]
+# Allow the command being run inside the sandbox to make outbound network
+# requests. Disabled by default.
+network_access = true
+
+[mcp_servers.figma]
+enabled = false
+url = "https://mcp.linear.app/mcp"
+# Optional environment variable containing a bearer token to use for auth
+bearer_token_env_var = "ENV_VAR"
+# Optional map of headers with hard-coded values.
+http_headers = { "HEADER_NAME" = "HEADER_VALUE" }
+# Optional map of headers whose values will be replaced with the environment variable.
+env_http_headers = { "HEADER_NAME" = "ENV_VAR" }
+
+# 可选：安全扫描集成
+[mcp_servers.snyk-security]
+enabled = false
+command = "npx"
+args = ["-y", "snyk@latest", "mcp", "-t", "stdio"]
