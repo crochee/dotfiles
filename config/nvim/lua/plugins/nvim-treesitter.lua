@@ -4,6 +4,7 @@ return {
 	-- syntax highlighting.
 	{
 		"nvim-treesitter/nvim-treesitter",
+		enabled = not vim.g.vscode,
 		build = function()
 			require("nvim-treesitter.install").update({ with_sync = true })()
 		end,
@@ -76,8 +77,8 @@ return {
 	-- Show context of the current function
 	{
 		"nvim-treesitter/nvim-treesitter-context",
+		enabled = not vim.g.vscode,
 		event = { "VeryLazy" },
-		enabled = true,
 		opts = { mode = "cursor", max_lines = 3 },
 	},
 }

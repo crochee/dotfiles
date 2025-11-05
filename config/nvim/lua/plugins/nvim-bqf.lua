@@ -1,10 +1,8 @@
-local M = {
+return {
 	"kevinhwang91/nvim-bqf",
+	enabled = not vim.g.vscode,
 	ft = "qf",
+	config = function()
+		require("bqf").setup()
+	end,
 }
-
-function M.config()
-	require("bqf").setup()
-end
-
-return M

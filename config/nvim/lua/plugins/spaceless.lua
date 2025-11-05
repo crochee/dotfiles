@@ -1,9 +1,6 @@
-local M = {
-  'lewis6991/spaceless.nvim'
+return {
+	"lewis6991/spaceless.nvim",
+	config = function()
+		require("spaceless").setup()
+	end,
 }
-
-function M.config()
-  require("spaceless").setup()
-end
-
-return M

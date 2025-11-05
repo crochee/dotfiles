@@ -95,3 +95,11 @@ vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_node_provider = 0
+
+-- VSCode 特定优化
+if vim.g.vscode then
+    -- 性能优化
+    vim.o.syntax = "off"
+    vim.opt.foldmethod = "manual"
+    vim.opt.lazyredraw = true
+end

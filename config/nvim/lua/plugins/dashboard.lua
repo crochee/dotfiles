@@ -1,5 +1,6 @@
 return {
 	"nvimdev/dashboard-nvim",
+    enabled = not vim.g.vscode,
 	dependencies = { { "nvim-tree/nvim-web-devicons", "echasnovski/mini.icons" } },
 	config = function()
 		-- local home = os.getenv("HOME")

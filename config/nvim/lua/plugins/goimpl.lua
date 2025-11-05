@@ -1,16 +1,13 @@
-local M = {
-  'edolphin-ydf/goimpl.nvim',
-  dependencies = {
-    'nvim-lua/plenary.nvim',
-    'nvim-lua/popup.nvim',
-    'nvim-telescope/telescope.nvim',
-    'nvim-treesitter/nvim-treesitter',
-  },
-  ft = 'go',
+return {
+	"edolphin-ydf/goimpl.nvim",
+	dependencies = {
+		"nvim-lua/plenary.nvim",
+		"nvim-lua/popup.nvim",
+		"nvim-telescope/telescope.nvim",
+		"nvim-treesitter/nvim-treesitter",
+	},
+	ft = "go",
+	config = function()
+		require("telescope").load_extension("goimpl")
+	end,
 }
-
-function M.config()
-  require('telescope').load_extension('goimpl')
-end
-
-return M

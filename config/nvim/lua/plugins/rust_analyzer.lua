@@ -1,6 +1,6 @@
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rust_analyzer
 
-local M = {
+return {
 	"mrcjkb/rustaceanvim",
 	version = "^6", -- Recommended
 	ft = { "rust" },
@@ -64,5 +64,3 @@ local M = {
 		end
 	end,
 }
-
-return M

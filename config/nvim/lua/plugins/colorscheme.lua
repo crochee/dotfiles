@@ -1,9 +1,7 @@
-local M = {
+return {
 	"sainnhe/everforest",
-}
-
-function M.config()
-	vim.cmd([[
+	config = function()
+		vim.cmd([[
     if has('termguicolors')
       set termguicolors
     endif
@@ -14,6 +12,5 @@ function M.config()
     let g:everforest_better_performace = 1
     colorscheme everforest
   ]])
-end
-
-return M
+	end,
+}

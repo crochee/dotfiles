@@ -1,5 +1,4 @@
-local M = {
+return {
 	"Exafunction/codeium.vim",
 	event = "BufEnter",
 }
-return M

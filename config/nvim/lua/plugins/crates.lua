@@ -1,10 +1,7 @@
-local M = {
+return {
 	"Saecki/crates.nvim",
 	event = { "BufRead Cargo.toml" },
+	config = function()
+		require("crates").setup()
+	end,
 }
-
-function M.config()
-	require("crates").setup()
-end
-
-return M

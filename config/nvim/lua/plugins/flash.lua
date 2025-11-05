@@ -1,16 +1,13 @@
-local M = {
-  'folke/flash.nvim',
-  event = 'VeryLazy',
+return {
+	"folke/flash.nvim",
+	event = "VeryLazy",
+	config = function()
+		require("flash").setup({
+			modes = {
+				char = {
+					enabled = false,
+				},
+			},
+		})
+	end,
 }
-
-function M.config()
-  require('flash').setup({
-    modes = {
-      char = {
-        enabled = false,
-      }
-    }
-  })
-end
-
-return M
