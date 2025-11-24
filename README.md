@@ -6,4 +6,4 @@ bash -c "$(curl -fsSl https://raw.githubusercontent.com/crochee/dotfiles/master/
 ```
 
 ## suport language
-golang,rust,ts/js,python3,shell
+golang,rust,ts/js,python3,shell,java

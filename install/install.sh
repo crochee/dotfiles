@@ -207,11 +207,13 @@ install_dotfiles() {
 
 # 安装配置文件
 install_config() {
+    mkdir -p "$HOME/.config"
     install_files "$TARGET/config" "$HOME/.config" "配置文件"
 }
 
 # 安装共享文件
 install_share() {
+    mkdir -p "$HOME/.local/share"
     install_files "$TARGET/share" "$HOME/.local/share" "共享文件"
 
     # 更新字体缓存
@@ -231,17 +233,6 @@ install_zk() {
     fi
 
     create_symlink "$TARGET/zk" "$zk_dir/.zk" || return 1
-    log "SUCCESS" "zk 配置安装完成"
-}
-
-install_codex() {
-    local codex_dir="$HOME/.codex"
-
-    if [ ! -d "$codex_dir" ]; then
-        log "INFO" "创建新的 codex 目录"
-        mkdir -p "$codex_dir"
-    fi
-    create_symlink "$TARGET/codex/config.toml" "$codex_dir/config.toml" || return 1
     log "SUCCESS" "zk 配置安装完成"
 }
 
@@ -292,7 +283,6 @@ show_install_menu() {
     3) run_install install_dotfiles install_config ;;
     4) run_install install_zk ;;
     5) run_install install_share ;;
-    6) run_install install_codex ;;
     *) log "ERROR" "无效选项: $choice" && return 1 ;;
     esac
 }

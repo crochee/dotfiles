@@ -9,12 +9,12 @@ return {
 		providers = {
 			streamlake = {
 				__inherited_from = "openai",
-				-- api_key_name = "DEEPSEEK_API_KEY",
-				api_key_name = "WQ_API_KEY",
-				-- endpoint = "https://api.deepseek.com",
-				endpoint = "https://wanqing.streamlakeapi.com/api/gateway/v1/endpoints",
-				-- model = "deepseek-coder",
-				model = "ep-bmn3kd-1761271125825670473",
+				api_key_name = "DEEPSEEK_API_KEY",
+				-- api_key_name = "WQ_API_KEY",
+				endpoint = "https://api.deepseek.com",
+				-- endpoint = "https://wanqing.streamlakeapi.com/api/gateway/v1/endpoints",
+				model = "deepseek-coder",
+				-- model = "ep-bmn3kd-1761271125825670473",
 			},
 		},
 		auto_suggestions_provider = "streamlake",
