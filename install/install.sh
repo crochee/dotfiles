@@ -61,20 +61,6 @@ check_commands() {
     return 0
 }
 
-# 创建备份目录
-create_backup_dir() {
-    local backup_dir="$1"
-
-    log "INFO" "创建备份目录: $backup_dir"
-    if mkdir -p "$backup_dir" >/dev/null 2>&1; then
-        log "SUCCESS" "备份目录创建成功"
-        return 0
-    else
-        log "ERROR" "备份目录创建失败"
-        return 1
-    fi
-}
-
 # 创建符号链接
 create_symlink() {
     local source="$1"
