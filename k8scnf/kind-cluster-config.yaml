@@ -1,32 +1,65 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
+  # ------------------------
+  # Registry Mirrors Configuration
+  # ------------------------
   - |-
     [plugins."io.containerd.grpc.v1.cri".registry]
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+        # Docker Hub mirrors
         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
           endpoint = [
             "https://dockerpull.com",
             "https://dockerproxy.1panel.live",
             "https://docker.m.daocloud.io",
-            "https://registry-1.docker.io",
             "https://dockerhub.icu",
             "https://docker.mirrors.ustc.edu.cn"
           ]
+        
+        # Google Container Registry mirrors
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
+          endpoint = [
+            "https://gcr.mirrors.ustc.edu.cn",
+            "https://registry.aliyuncs.com/google_containers",
+            "https://gcr.io"
+          ]
+        
+        # Quay.io mirrors
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
+          endpoint = [
+            "https://quay.mirrors.ustc.edu.cn",
+            "https://quay.io"
+          ]
 nodes:
   - role: control-plane
+    # Control plane high availability (uncomment to enable)
+    # replicas: 3
   - role: worker
   - role: worker
   - role: worker
-networking:
-  # the default CNI will not be installed
-  # disableDefaultCNI: true
-  ipFamily: dual
-  kubeProxyMode: "ipvs"
-  # podSubnet: 192.168.0.0/16 # set to Calico's default subnet
-# kind create cluster --config=/home/crochee/.dotfiles/k8scnf/kind-cluster-config.yaml
-# kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/calico.yaml
 
-## https://github.com/kubernetes-sigs/cloud-provider-kind
-# docker run -itd --network kind -v /var/run/docker.sock:/var/run/docker.sock cloud-provider-kind.slim -enable-lb-port-mapping
-# docker run --rm --network kind -v /var/run/docker.sock:/var/run/docker.sock cloud-provider-kind.slim
+networking:
+  # Use default CNI (Flannel) for simplicity and compatibility
+  disableDefaultCNI: false
+  
+  # Use IPVS for kube-proxy for better performance and scalability
+  kubeProxyMode: "ipvs"
+
+# =========================
+# Cluster Creation Commands
+# =========================
+
+# Create the cluster
+# kind create cluster --config=/home/crochee/.dotfiles/k8scnf/kind-cluster-config.yaml
+
+# Create cluster with specific Kubernetes version
+# kind create cluster --config=/home/crochee/.dotfiles/k8scnf/kind-cluster-config.yaml --image=kindest/node:v1.29.0
+
+# Verify cluster status
+# kubectl cluster-info
+# kubectl get nodes -o wide
+# kubectl get pods -A
+
+# Delete cluster when done
+# kind delete cluster
