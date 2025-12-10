@@ -57,5 +57,7 @@ function gphf {
 # custom
 alias dcs="cd $WORKSPACE/dcs"
 alias mycli="$HOME/.venv/bin/mycli"
+# docker aliases
 alias dive="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/wagoodman/dive:latest"
 alias slim="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock dslim/slim:latest"
+alias trivy="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest"
