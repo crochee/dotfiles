@@ -206,47 +206,6 @@ function M.fill_password(mods, key)
 	}
 end
 
-function M.close_tabs(dir, mods, key)
-	local event = "close_" .. dir .. "_tabs"
-	wezterm.on(event, function(window, pane)
-		local tabs = window:mux_window():tabs_with_info()
-		local active_tab_id = pane:tab():tab_id()
-		local active_tab_index
-		for _, item in ipairs(tabs) do
-			if item.is_active and item.tab:tab_id() == active_tab_id then
-				active_tab_index = item.index
-			end
-		end
-		for _, item in ipairs(tabs) do
-			wezterm.log_info(
-				"tab: " .. active_tab_id .. " " .. active_tab_index .. " " .. wezterm.to_string(item)
-			)
-			if
-				item.tab:tab_id() ~= active_tab_id
-				and (
-					(dir == "left" and item.index < active_tab_index)
-					or (dir == "right" and item.index > active_tab_index)
-				)
-			then
-				wezterm.log_info("close tab: " .. wezterm.to_string(item.tab))
-				window:perform_action(wezterm.action.CloseCurrentTab({ confirm = false }), item.tab:panes()[1])
-				-- window:perform_action(wezterm.action.CloseCurrentTab({ confirm = false }))
-				-- for _, pane in ipairs(item.tab:panes()) do
-				-- 	window:perform_action(wezterm.action.CloseCurrentPane({ confirm = false }), pane)
-				-- end
-				-- win:perform_action({ CloseTab = { confirm = true } }, item.tab)
-				-- win:perform_action({ ActivatePaneDirection = dir }, pane)
-				-- win:perform_action({ CloseCurrentTab = { confirm = false } }, item.tab)
-			end
-		end
-	end)
-	return {
-		key = key,
-		mods = mods,
-		action = wezterm.action.EmitEvent(event),
-	}
-end
-
 return {
 	keys = {
 		-- misc/useful --
@@ -289,9 +248,6 @@ return {
 		M.split_nav("resize", M.mod, "RightArrow", "Left"),
 		M.split_nav("resize", M.mod, "UpArrow", "Up"),
 		M.split_nav("resize", M.mod, "DownArrow", "Down"),
-		-- batch close tabs
-		M.close_tabs("left", M.re_mod, "F7"),
-		M.close_tabs("right", M.mod, "F7"),
 		-- custom
 		M.fill_password(M.mod, "p"),
 		{

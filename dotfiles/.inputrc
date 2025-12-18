@@ -1,11 +1,60 @@
 
-"\C-x\C-k" kill-whole-line
+# 基础配置
+set blink-matching-paren on           # 匹配括号闪烁
+set completion-ignore-case on         # 补全时忽略大小写
+set expand-tilde on                   # 扩展波浪号为用户主目录
+set mark-symlinked-directories on     # 标记符号链接目录
+set show-all-if-ambiguous on          # 模糊匹配时显示所有选项
+set visible-stats on                  # 补全时显示文件状态
 
-"\C-xf": dump-functions
-"\C-xv": dump-variables
-"\C-xm": dump-macros
+# 历史记录配置
+set history-preserve-point on         # 历史记录搜索时保持光标位置
 
-"\C-xl": "\C-e | less\C-m"
-"\C-x\'": "\'\'\C-b"
-"\C-x\"": "\"\"\C-b"
-"\C-,": "\e[Hsudo \e[F"
+# 补全配置
+set completion-prefix-display-length 2  # 补全前缀显示长度
+set completion-map-case on             # 补全时映射大小写
+set show-all-if-unmodified on          # 未修改时显示所有补全选项
+
+# 快捷键配置
+"\C-a": beginning-of-line            # Ctrl+a: 移动到行首
+"\C-e": end-of-line                  # Ctrl+e: 移动到行尾
+"\C-f": forward-char                # Ctrl+f: 向前移动一个字符
+"\C-b": backward-char               # Ctrl+b: 向后移动一个字符
+"\C-n": next-history                # Ctrl+n: 下一条历史记录
+"\C-p": previous-history            # Ctrl+p: 上一条历史记录
+"\C-k": kill-line                   # Ctrl+k: 从光标处删除到行尾
+"\C-u": unix-line-discard           # Ctrl+u: 从光标处删除到行首
+"\C-w": unix-word-rubout            # Ctrl+w: 删除上一个单词
+"\C-h": backward-delete-char        # Ctrl+h: 删除前一个字符
+"\C-d": delete-char                 # Ctrl+d: 删除当前字符
+"\C-t": transpose-chars             # Ctrl+t: 交换当前和前一个字符
+"\M-t": transpose-words             # Alt+t: 交换当前和前一个单词
+"\C-l": clear-screen                # Ctrl+l: 清屏
+
+# 补全快捷键
+"\C-i": complete                   # Ctrl+i: 补全（Tab键）
+
+# 自定义快捷命令
+"\C-x\'": "\'\'\C-b"              # Ctrl+x ': 添加单引号对
+"\C-x\"": "\"\"\C-b"            # Ctrl+x ": 添加双引号对
+
+# 命令行导航
+"\M-f": forward-word                # Alt+f: 向前移动一个单词
+"\M-b": backward-word               # Alt+b: 向后移动一个单词
+"\M-d": kill-word                   # Alt+d: 从光标处删除到单词末尾
+"\M-BS": backward-kill-word         # Alt+Backspace: 删除上一个单词
+
+# 历史记录扩展
+"\e[B": next-history                # 向下箭头: 下一条历史记录
+"\e[A": previous-history            # 向上箭头: 上一条历史记录
+
+
+# 补全样式配置
+set match-hidden-files on             # 匹配隐藏文件
+set skip-completed-text on           # 补全时跳过已完成的文本
+set show-mode-in-prompt on           # 在提示符中显示编辑模式
+
+# 提高命令行编辑效率的配置
+set horizontal-scroll-mode on        # 水平滚动模式
+set menu-complete-display-prefix on # 菜单补全时显示前缀
+set print-completions-horizontally on # 水平打印补全选项
