@@ -6,6 +6,9 @@
 
 set -euo pipefail # 严格错误处理
 
+# echo "Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/\$repo/os/\$arch" >> /etc/pacman.d/mirrorlist
+# echo "Server = https://mirrors.aliyun.com/archlinux/\$repo/os/\$arch" >> /etc/pacman.d/mirrorlist
+
 # 清理函数，用于脚本退出时执行
 cleanup() {
     local exit_code=$?
@@ -163,6 +166,22 @@ install_rsync() {
     fi
 }
 
+install_clipboard() {
+    if has_cmd "wl-copy"; then
+        log "INFO" "wl-copy 已安装"
+        return 0
+    fi
+
+    log "INFO" "开始安装 wl-copy..."
+    if sudo pacman -S --noconfirm --needed wl-clipboard >/dev/null 2>&1; then
+        log "SUCCESS" "wl-copy 安装完成"
+        return 0
+    else
+        log "ERROR" "wl-copy 安装失败"
+        return 1
+    fi
+}
+
 # 安装 Node.js
 install_nodejs() {
     if has_cmd "node"; then
@@ -171,7 +190,7 @@ install_nodejs() {
     fi
 
     log "INFO" "开始安装 Node.js..."
-    if sudo pacman -S --noconfirm --needed nodejs >/dev/null 2>&1; then
+    if sudo pacman -S --noconfirm --needed nodejs pnpm >/dev/null 2>&1; then
         log "SUCCESS" "Node.js 安装完成"
         return 0
     else
@@ -385,6 +404,9 @@ install() {
         "rsync")
             install_rsync
             ;;
+        "clipboard")
+            install_clipboard
+            ;;
         "nodejs")
             install_nodejs
             ;;
@@ -427,6 +449,7 @@ show_menu() {
         "nodejs Node.js 环境"
         "java Java 环境"
         "rsync rsync 工具"
+        "clipboard clipboard 工具"
         "docker Docker 环境"
         "tools 开发工具包"
         "base 基础开发依赖"
@@ -449,7 +472,7 @@ show_menu() {
         ;;
     "all" | "ALL" | "All")
         log "INFO" "选择安装所有组件"
-        install "go" "rust" "python" "nodejs" "java" "rsync" "docker" "tools"
+        install "go" "rust" "python" "nodejs" "java" "rsync" "clipboard" "docker" "tools"
         ;;
     *)
         if [ -n "$choice" ]; then

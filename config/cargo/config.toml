@@ -13,7 +13,7 @@ rc = "rr --"
 [source.crates-io]
 registry = "https://github.com/rust-lang/crates.io-index"
 # registry = "git://gtthub.com/rust-lang/crates.io-index.git"
-# replace-with = "rsproxy"
+replace-with = "tuna"
 
 # 中科大
 [source.ustc]

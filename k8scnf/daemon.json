@@ -1,10 +1,11 @@
 {
   "registry-mirrors": [
+    "https://docker.mirrors.ustc.edu.cn",
+    "https://hub-mirror.c.163.com",
     "https://dockerpull.com",
     "https://dockerproxy.1panel.live",
     "https://docker.m.daocloud.io",
-    "https://dockerhub.icu",
-    "https://docker.mirrors.ustc.edu.cn"
+    "https://dockerhub.icu"
   ],
   "features": {
     "buildkit": true
