@@ -200,6 +200,9 @@ bash_prompt_command() {
     PS1+="${P_YELLOW}➤  ${P_RESET}"
 }
 
-# 初始化颜色和提示符
-_setup_colors
-PROMPT_COMMAND=bash_prompt_command
+if [[ ! -n "$ZSH_VERSION" ]]; then
+    # 初始化颜色和提示符
+    _setup_colors
+    # Bash 环境
+    PROMPT_COMMAND=bash_prompt_command
+fi

@@ -197,18 +197,6 @@ install_config() {
     install_files "$TARGET/config" "$HOME/.config" "配置文件"
 }
 
-# 安装共享文件
-install_share() {
-    mkdir -p "$HOME/.local/share"
-    install_files "$TARGET/share" "$HOME/.local/share" "共享文件"
-
-    # 更新字体缓存
-    if command -v fc-cache >/dev/null 2>&1; then
-        log "INFO" "更新字体缓存..."
-        fc-cache -fv >/dev/null 2>&1 || log "WARN" "字体缓存更新失败"
-    fi
-}
-
 # 安装 zk 配置
 install_zk() {
     local zk_dir="$HOME/.config/notes"
@@ -258,17 +246,14 @@ show_install_menu() {
     echo "2) 安装 dotfiles"
     echo "3) 安装 dotfiles 和配置文件"
     echo "4) 安装 zk 配置"
-    echo "5) 安装共享文件"
-    echo "6) 安装 codex 配置"
     echo
-    read -r -p "请选择安装选项 [1-6]: " choice
+    read -r -p "请选择安装选项 [1-4]: " choice
 
     case "$choice" in
     1) run_install install_config ;;
     2) run_install install_dotfiles ;;
     3) run_install install_dotfiles install_config ;;
     4) run_install install_zk ;;
-    5) run_install install_share ;;
     *) log "ERROR" "无效选项: $choice" && return 1 ;;
     esac
 }
