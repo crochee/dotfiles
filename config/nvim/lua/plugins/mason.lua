@@ -1,6 +1,5 @@
 return {
 	"mason-org/mason.nvim",
-	enabled = not vim.g.vscode,
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"b0o/schemastore.nvim",

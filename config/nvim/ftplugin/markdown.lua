@@ -1,5 +1,5 @@
 -- Add the key mappings only for Markdown files in a zk notebook.
-if not vim.g.vscode and require("zk.util").notebook_root(vim.fn.expand("%:p")) ~= nil then
+if require("zk.util").notebook_root(vim.fn.expand("%:p")) ~= nil then
 	local function map(...)
 		vim.api.nvim_buf_set_keymap(0, ...)
 	end

@@ -1,8 +1,0 @@
-{
-    "extensions.experimental.affinity": {
-        "asvetliakov.vscode-neovim": 1
-    },
-    "vscode-neovim.useWSL": true,
-    "vscode-neovim.neovimExecutablePaths.linux": "~/.local/bin/nvim",
-    "editor.lineNumbers": "relative"
-}

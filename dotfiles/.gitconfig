@@ -44,3 +44,5 @@
 
 [merge]
     conflictstyle = diff3
+[safe]
+	directory = *

@@ -1,6 +1,5 @@
 return {
 	"hrsh7th/nvim-cmp",
-	enabled = not vim.g.vscode,
 	event = "InsertEnter",
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",

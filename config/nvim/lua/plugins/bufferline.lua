@@ -1,6 +1,5 @@
 return {
 	"akinsho/bufferline.nvim",
-	enabled = not vim.g.vscode,
 	-- 顶部状态栏
 	config = function()
 		vim.opt.termguicolors = true

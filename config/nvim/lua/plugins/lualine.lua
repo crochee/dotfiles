@@ -1,6 +1,5 @@
 return {
 	"nvim-lualine/lualine.nvim",
-	enabled = not vim.g.vscode,
 	-- 底部状态栏
 	config = function()
 		local spaces = function()

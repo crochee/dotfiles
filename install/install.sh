@@ -61,6 +61,31 @@ check_commands() {
     return 0
 }
 
+# 创建备份目录
+create_backup_dir() {
+    local backup_dir="$HOME/backup_$(date +%Y-%m-%d_%H-%M-%S)"
+    log "INFO" "创建备份目录: $backup_dir"
+    if ! mkdir -p "$backup_dir" >/dev/null 2>&1; then
+        log "ERROR" "备份目录创建失败"
+        return 1
+    fi
+    log "SUCCESS" "备份目录创建成功"
+    echo "$backup_dir"
+}
+
+# 备份文件
+backup_file() {
+    local file="$1"
+    local backup_dir="$2"
+    log "INFO" "备份现有文件: $file -> $backup_dir/"
+    if ! mv "$file" "$backup_dir/" >/dev/null 2>&1; then
+        log "ERROR" "文件备份失败"
+        return 1
+    fi
+    log "SUCCESS" "文件备份成功"
+    return 0
+}
+
 # 创建符号链接
 create_symlink() {
     local source="$1"
@@ -72,23 +97,14 @@ create_symlink() {
         return 1
     fi
 
-    # 如果目标已存在且是符号链接，先备份
-    if [ -L "$target" ]; then
-        local backup_dir="$HOME/backup_$(date +%Y-%m-%d_%H-%M-%S)"
-        log "INFO" "创建备份目录: $backup_dir"
-        if mkdir -p "$backup_dir" >/dev/null 2>&1; then
-            log "SUCCESS" "备份目录创建成功"
-            return 0
-        else
-            log "ERROR" "备份目录创建失败"
+    # 如果目标已存在，先备份
+    if [ -e "$target" ]; then
+        local backup_dir=$(create_backup_dir 2>&1 | tail -n 1)
+        if [ -z "$backup_dir" ]; then
+            log "ERROR" "无法获取备份目录"
             return 1
         fi
-
-        log "INFO" "备份现有文件: $target -> $backup_dir/"
-        if mv "$target" "$backup_dir/" >/dev/null 2>&1; then
-            log "SUCCESS" "文件备份成功"
-        else
-            log "ERROR" "文件备份失败"
+        if ! backup_file "$target" "$backup_dir"; then
             return 1
         fi
     fi
@@ -154,6 +170,96 @@ prepare_repository() {
     fi
 }
 
+# 处理特殊目录
+handle_special_dir() {
+    local dir="$1"
+    local target_dir="$2"
+    local dir_name=$(basename "$dir")
+
+    case "$dir_name" in
+    "cargo")
+        # 确保 cargo 目录存在
+        if ! mkdir -p "$target_dir/$dir_name" >/dev/null 2>&1; then
+            log "ERROR" "无法创建 cargo 目录: $target_dir/$dir_name"
+            return 1
+        fi
+        
+        # 检查 config.toml 文件是否存在
+        if [ -f "$dir/config.toml" ]; then
+            create_symlink "$dir/config.toml" "$target_dir/$dir_name/config.toml" || return 1
+        else
+            log "WARN" "跳过 cargo 目录，因为 config.toml 文件不存在: $dir"
+            return 0
+        fi
+        ;;
+    "starship")
+        # 检查 starship.toml 文件是否存在
+        if [ -f "$dir/starship.toml" ]; then
+            create_symlink "$dir/starship.toml" "$target_dir/starship.toml" || return 1
+        else
+            log "WARN" "跳过 starship 目录，因为 starship.toml 文件不存在: $dir"
+            return 0
+        fi
+        ;;
+    *)
+        # 其他目录直接创建符号链接
+        create_symlink "$dir" "$target_dir/$dir_name" || return 1
+        ;;
+    esac
+    return 0
+}
+
+# 验证安装结果
+verify_install() {
+    local source_dir="$1"
+    local target_dir="$2"
+    local description="$3"
+
+    log "INFO" "验证 $description 安装结果..."
+    local success_count=0
+    local total_count=0
+
+    # 验证目录
+    find "$source_dir" -maxdepth 1 -type d ! -name "$(basename "$source_dir")" | while read -r dir; do
+        local dir_name=$(basename "$dir")
+        total_count=$((total_count + 1))
+        
+        case "$dir_name" in
+        "starship")
+            # 验证 starship 配置文件
+            if [ -f "$target_dir/starship.toml" ]; then
+                success_count=$((success_count + 1))
+            else
+                log "WARN" "验证失败: $target_dir/starship.toml"
+            fi
+            ;;
+        *)
+            # 验证其他目录
+            if [ -L "$target_dir/$dir_name" ]; then
+                success_count=$((success_count + 1))
+            else
+                log "WARN" "验证失败: $target_dir/$dir_name"
+            fi
+            ;;
+        esac
+    done
+
+    # 验证文件
+    find "$source_dir" -maxdepth 1 -type f | while read -r file; do
+        local filename=$(basename "$file")
+        total_count=$((total_count + 1))
+        if [ -L "$target_dir/$filename" ]; then
+            success_count=$((success_count + 1))
+        else
+            log "WARN" "验证失败: $target_dir/$filename"
+        fi
+    done
+
+    if [ $total_count -gt 0 ]; then
+        log "INFO" "安装结果: $success_count/$total_count 个项目安装成功"
+    fi
+}
+
 # 通用安装函数
 install_files() {
     local source_dir="$1"
@@ -167,14 +273,20 @@ install_files() {
 
     log "INFO" "安装 $description..."
 
-    # 处理特殊目录（如 cargo）
+    # 确保目标目录存在
+    if ! mkdir -p "$target_dir" >/dev/null 2>&1; then
+        log "ERROR" "无法创建目标目录: $target_dir"
+        return 1
+    fi
+
+    # 处理目录
     find "$source_dir" -maxdepth 1 -type d ! -name "$(basename "$source_dir")" | while read -r dir; do
-        local dir_name=$(basename "$dir")
-        if [ "$dir_name" = "cargo" ]; then
-            create_symlink "$dir/config.toml" "$target_dir/$dir_name/config.toml" || continue
-        else
-            create_symlink "$dir" "$target_dir/$dir_name" || continue
+        # 检查目录是否为空
+        if [ -z "$(ls -A "$dir")" ]; then
+            log "WARN" "跳过空目录: $dir"
+            continue
         fi
+        handle_special_dir "$dir" "$target_dir" || continue
     done
 
     # 处理文件
@@ -182,6 +294,9 @@ install_files() {
         local filename=$(basename "$file")
         create_symlink "$file" "$target_dir/$filename" || continue
     done
+
+    # 验证安装结果
+    verify_install "$source_dir" "$target_dir" "$description"
 
     log "SUCCESS" "$description 安装完成"
 }
@@ -323,8 +438,21 @@ main() {
     "")
         show_install_menu
         ;;
+    1)
+        run_install install_config
+        ;;
+    2)
+        run_install install_dotfiles
+        ;;
+    3)
+        run_install install_dotfiles install_config
+        ;;
+    4)
+        run_install install_zk
+        ;;
     *)
-        run_install "$@"
+        log "ERROR" "无效选项: $1"
+        show_help
         ;;
     esac
 

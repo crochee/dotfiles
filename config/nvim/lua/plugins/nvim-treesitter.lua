@@ -4,7 +4,6 @@ return {
 	-- syntax highlighting.
 	{
 		"nvim-treesitter/nvim-treesitter",
-		enabled = not vim.g.vscode,
 		build = function()
 			require("nvim-treesitter.install").update({ with_sync = true })()
 		end,

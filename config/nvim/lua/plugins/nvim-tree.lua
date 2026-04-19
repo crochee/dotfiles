@@ -1,6 +1,5 @@
 return {
 	"nvim-tree/nvim-tree.lua",
-	enabled = not vim.g.vscode,
 	dependencies = { { "nvim-tree/nvim-web-devicons" } },
 	config = function()
 		-- htps://github.com/kyazdani42/nvim-tree.lua
@@ -50,9 +49,9 @@ return {
 			},
 			-- wsl install -g wsl-open
 			-- https://github.com/4U6U57/wsl-open/
-			system_open = {
-				cmd = "open",
-			},
+			-- system_open = {
+			-- 	cmd = "open",
+			-- },
 		})
 	end,
 }

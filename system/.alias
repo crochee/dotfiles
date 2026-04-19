@@ -1,46 +1,42 @@
-# Shortcuts
-alias rl="exec bash"
+# Aliases
 
 alias c='clear'                             # c:            Clear terminal display
-alias rr="rm -rf"
+
 alias v="nvim"
 alias cat="bat"
+alias wk="cd $HOME/workspace"
+alias dot="cd $HOME/.dotfiles"
 
-alias wk="cd $WORKSPACE"
-alias notes="cd $HOME/.config/notes"
-alias dot="cd $DOTFILES_DIR"
-# Directory listing/traversal
+# ls aliases
+alias ls="ls --color=auto"
+alias ll="ls -la"
+alias la="ls -A"
+alias l="ls -CF"
 
-# Set LSCOLORS
-if [ -x /usr/bin/dircolors ]; then
-  eval "$(dircolors -b "$DOTFILES_DIR"/src/dir_colors)"
-  alias grep='grep --color=auto'
-  alias fgrep='fgrep --color=auto'
-  alias egrep='egrep --color=auto'
-  LS_COLORS=$(is-supported "ls --color" --color -G)
-  LS_TIMESTYLEISO=$(is-supported "ls --time-style=long-iso" --time-style=long-iso)
-  LS_GROUPDIRSFIRST=$(is-supported "ls --group-directories-first" --group-directories-first)
+# grep aliases
+alias grep="rg --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+alias rg='rg --hidden --smart-case'
 
-  alias l="ls -lahA $LS_COLORS $LS_TIMESTYLEISO $LS_GROUPDIRSFIRST"
-  alias ll="ls -lA $LS_COLORS"
-  alias lt="ls -lhAtr $LS_COLORS $LS_TIMESTYLEISO $LS_GROUPDIRSFIRST"
-  alias ld="ls -ld $LS_COLORS */"
-  alias lp="stat -c '%a %n' *"
-
-  unset LS_COLORS LS_TIMESTYLEISO LS_GROUPDIRSFIRST
-fi
-
+# cd aliases
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
-alias .....="cd ../../../.."
+alias -- ~="cd $HOME"
+alias -- -="cd -"
 
-# git
-alias gl="git pull"
-alias gst="git status"
-alias gcl="git clone --recursive"
-alias gco="git checkout"
-alias gm="git commit"
+# df aliases
+alias df="df -h"
+alias du="du -h"
+
+# git aliases
+alias ga='git add'
+alias gm='git commit'
+alias gl='git pull'
+alias gs='git status'
+alias gc="git clone --recursive"
+alias gr="git rebase -i"
 
 function gph {
   if (($# == 1)); then
@@ -54,8 +50,37 @@ function gphf {
   fi
 }
 
+# file aliases
+alias mkdir="mkdir -p"
+alias cp="cp -i"
+alias mv="mv -i"
+alias rm="rm -i"
+alias rr="rm -rf"
+
+# Extract function
+extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.gz|*.tgz) tar zxvf "$1" ;;
+            *.tar.bz2|*.tbz) tar jxvf "$1" ;;
+            *.tar.xz|*.txz) tar Jxvf "$1" ;;
+            *.tar) tar xvf "$1" ;;
+            *.zip) unzip "$1" ;;
+            *.rar) unrar x "$1" ;;
+            *.7z) 7z x "$1" ;;
+            *) echo "Unknown archive type: $1" ;;
+        esac
+    else
+        echo "File not found: $1"
+    fi
+}
+
+# Create directory and cd into it
+mcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
 # custom
-alias dcs="cd $WORKSPACE/dcs"
 alias mycli="$HOME/.venv/bin/mycli"
 # docker aliases
 alias dive="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/wagoodman/dive:latest"

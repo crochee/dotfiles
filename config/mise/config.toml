@@ -1,0 +1,27 @@
+# mise 配置文件
+
+[settings]
+# 启用 lockfile
+lockfile = true
+env_file = '.env'
+experimental = true
+jobs = 8
+
+# 环境变量配置示例
+[env]
+
+# 工具配置示例
+[tools.node]
+version = "25.9"
+
+[tools.python]
+version = "3.11"
+
+[tools.rust]
+version = "1.95"
+
+[tools.go]
+version = "1.25"
+
+[tools.lazygit]
+version = "0.61"

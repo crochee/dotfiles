@@ -5,42 +5,67 @@
 ## 功能介绍
 
 ### 🎯 核心功能
-- **多语言支持**：Go、Rust、TypeScript/JavaScript、Python3、Shell、Java
-- **跨平台兼容**：支持 Arch Linux 等多种 Linux 发行版
+- **多 Shell 支持**：Bash、Zsh 配置
+- **现代化终端**：Wezterm 终端配置、Starship 提示符
+- **高效编辑器**：Neovim 完整配置（LSP、DAP、80+ 插件）
+- **工具版本管理**：mise 一站式管理 Go、Rust、Node.js、Python 等
+- **命令增强**：atuin 命令历史、zoxide 目录跳转、fzf 模糊搜索
 - **模块化设计**：按功能和应用程序分类管理配置文件
-- **自动化安装**：一键安装和更新配置
-- **安全可靠**：配置文件备份机制，防止数据丢失
+- **自动化安装**：一键安装和更新配置，符号链接方式便于版本控制
 
 ### 📦 包含的配置
 
-#### 开发环境
-- **Shell**：Bash 配置
-- **编辑器**：VS Code、Neovim 配置
-- **终端**：Wezterm终端模拟器配置
-- **版本控制**：Git 配置
+#### Shell 环境
+- **Bash**：`.bashrc` 及相关配置
+- **Zsh**：`.zshrc` 及相关配置（支持 oh-my-zsh）
+- **插件**：fzf、zsh-autosuggestions、zsh-syntax-highlighting
 
-#### 语言环境
-- **Go**：GOPATH、GOROOT 配置，常用工具安装
-- **Rust**：Cargo 配置，常用工具安装
-- **Node.js**：NPM/Yarn 配置，常用工具安装
-- **Python**：虚拟环境配置，常用工具安装
-- **Java**：JDK 配置，Maven/Gradle 配置
+#### 编辑器与终端
+- **Neovim**：完整配置，包含：
+  - LSP 支持（gopls、pyright、tsserver、rust-analyzer 等）
+  - DAP 支持（delve、codelldb）
+  - 插件：telescope、nvim-tree、lazy.nvim、conform、noice 等
+- **Wezterm**：终端模拟器配置
 
-#### 开发工具
-- **容器**：Docker 配置
-- **Kubernetes**：Kubectl 配置
-- **数据库**：MySQL、PostgreSQL 客户端配置
-- **文档**：Markdown 工具配置
-- **其他**：各种开发辅助工具配置
+#### 工具版本管理 (mise)
+- **Go**：版本管理
+- **Rust**：版本管理
+- **Node.js**：版本管理
+- **Python**：版本管理
+
+#### 开发工具配置
+- **Starship**：跨平台提示符
+- **Atuin**：命令历史管理
+- **Zoxide**：智能目录跳转
+- **FZF**：模糊搜索
+- **Direnv**：环境变量管理
+- **Git**：配置文件
+
+#### 其他配置
+- **Cargo**：Rust 包管理器配置
+- **UV**：Python 工具管理器配置
 
 ## 快速开始
 
 ### 安装前准备
 
-```bash
-sudo pacman -S openssh
+确保已安装以下基础依赖：
 
-ssh-keygen -t ed25519 -C "crochee@home"
+```bash
+# Arch Linux
+sudo pacman -S git curl zsh stow
+
+# Ubuntu/Debian
+sudo apt update && sudo apt install git curl zsh stow
+
+# 安装 mise（工具版本管理器）
+curl https://mise.run | sh
+
+# 安装 Starship（终端提示符）
+curl -sS https://starship.rs/install.sh | sh
+
+# 设置 zsh 为默认 shell
+chsh -s /bin/zsh
 ```
 
 ### 安装
@@ -53,19 +78,13 @@ bash -c "$(curl -fsSl https://raw.githubusercontent.com/crochee/dotfiles/master/
 #### 方式二：手动安装
 1. 克隆仓库
 ```shell
-git clone https://github.com/crochee/dotfiles.git ~/.dotfiles
+git clone git@github.com:crochee/dotfiles.git ~/.dotfiles
 ```
 
 2. 运行安装脚本
 ```shell
 cd ~/.dotfiles
 ./install/install.sh
-```
-
-### Arch Linux 特定安装
-```shell
-cd ~/.dotfiles
-./install/archlinux.sh
 ```
 
 ## 使用说明
@@ -75,14 +94,13 @@ cd ~/.dotfiles
 运行安装脚本后，会显示交互式菜单：
 
 ```
+======== INSTALL ========
 1) 安装配置文件
 2) 安装 dotfiles
 3) 安装 dotfiles 和配置文件
 4) 安装 zk 配置
-5) 安装共享文件
-6) 安装 codex 配置
 
-请选择安装选项 [1-6]: 
+请选择安装选项 [1-4]:
 ```
 
 ### 命令行安装
@@ -100,78 +118,70 @@ cd ~/.dotfiles
 ./install/install.sh --help
 ```
 
-### Arch Linux 安装选项
+### 配置说明
 
+#### Neovim 配置
+- 配置文件位于 `config/nvim/`
+- 使用 lazy.nvim 作为插件管理器
+- 首次启动自动安装插件
+- 依赖：git、curl、npm（用于 LSP）
+
+#### mise 工具管理
 ```shell
-# 安装特定组件
-./install/archlinux.sh go rust python
+# 激活 mise
+eval "$(mise activate bash)"  # 或 zsh
 
-# 安装所有组件
-./install/archlinux.sh all
+# 安装工具
+mise use -g go@latest
+mise use -g rust@latest
+mise use -g node@latest
 
-# 显示帮助信息
-./install/archlinux.sh --help
+# 查看已安装工具
+mise ls
 ```
 
-## 配置示例
-
-### Git 配置
-
+#### Starship 提示符
 ```shell
-# ~/.gitconfig 示例
-[user]
-    name = Your Name
-    email = your.email@example.com
-[alias]
-    co = checkout
-    br = branch
-    ci = commit
-    st = status
-    lg = log --oneline --graph --decorate --all
-```
-
-### Go 配置
-
-```shell
-# ~/.bashrc 中的 Go 配置
-export GOPATH=$HOME/.config/gopath
-export PATH=$PATH:$GOPATH/bin:$GOPATH/bin
-```
-
-### Rust 配置
-
-```shell
-# ~/.cargo/config.toml 示例
-[source.crates-io]
-registry = "https://github.com/rust-lang/crates.io-index"
-replace-with = 'tuna'
-
-[source.tuna]
-registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"
+# 添加到 shell 配置
+eval "$(starship init bash)"  # 或 zsh
 ```
 
 ## 目录结构
 
 ```
 dotfiles/
-├── .bashrc              # Bash 配置文件
-├── bin/                 # 可执行脚本
-├── config/              # 应用程序配置
-├── Dockerfile           # Docker 配置
-├── dotfiles/            # 用户目录配置文件
-├── install/             # 安装脚本
-│   ├── archlinux.sh     # Arch Linux 安装脚本
-│   ├── install.sh       # 主安装脚本
-│   └── softwares.sh     # 软件安装脚本
-├── k8scnf/              # Kubernetes 配置
-├── README.md            # 项目说明
-├── scripts/             # 辅助脚本
-├── setup_ubuntu.md      # Ubuntu 安装说明
-├── share/               # 共享文件
-├── src/                 # 源代码
-├── system/              # 系统配置
-├── test.ps1             # 测试脚本
-└── zk/                  # ZK 配置
+├── .bashrc                 # Bash 配置文件
+├── .zshrc                  # Zsh 配置文件
+├── bin/                    # 可执行脚本
+│   ├── checkin.sh          # 签到脚本
+│   ├── gitlogself.sh       # Git 日志脚本
+│   └── ...
+├── config/                 # 应用程序配置
+│   ├── atuin/              # Atuin 配置
+│   ├── cargo/              # Cargo 配置
+│   ├── mise/               # Mise 配置
+│   ├── nvim/               # Neovim 配置
+│   ├── starship/           # Starship 配置
+│   └── wezterm/            # Wezterm 配置
+├── dotfiles/                # 用户目录配置文件
+│   ├── .gitconfig          # Git 配置
+│   ├── .inputrc             # Readline 配置
+│   └── .myclirc            # MyCLI 配置
+├── install/                 # 安装脚本
+│   ├── install.sh          # 主安装脚本
+│   ├── install_tool.sh     # 工具安装脚本
+│   └── update.sh           # 更新脚本
+├── plugins/                 # 插件
+│   ├── fzf/                # FZF 插件
+│   ├── zsh-autosuggestions/# 自动建议插件
+│   └── zsh-syntax-highlighting/ # 语法高亮插件
+├── scripts/                 # 辅助脚本
+├── system/                  # 系统配置
+│   ├── alias.sh            # 别名配置
+│   ├── env.sh              # 环境变量配置
+│   └── ...
+├── zk/                      # ZK 笔记配置
+└── README.md               # 项目说明
 ```
 
 ## 配置管理
@@ -204,49 +214,19 @@ git push origin master
 
 ### 备份和恢复
 
-安装过程中，脚本会自动备份原有的配置文件到 `~/.dotfiles/backup_<timestamp>` 目录。
+安装过程中，脚本会自动备份原有的配置文件到 `~/backup_<timestamp>` 目录。
 
 如果需要恢复配置，可以：
 
 1. 查看备份目录
 ```shell
-ls -la ~/.dotfiles/backup_*
+ls -la ~/backup_*
 ```
 
 2. 手动恢复配置文件
 ```shell
-cp ~/.dotfiles/backup_2023-01-01_12-00-00/.bashrc ~/.bashrc
+cp ~/backup_2023-01-01_12-00-00/.bashrc ~/.bashrc
 ```
-
-## 开发指南
-
-### 贡献代码
-
-1. Fork 仓库
-2. 创建特性分支
-```shell
-git checkout -b feature/your-feature
-```
-
-3. 提交修改
-```shell
-git add .
-git commit -m "Add your feature"
-```
-
-4. 推送到远程仓库
-```shell
-git push origin feature/your-feature
-```
-
-5. 创建 Pull Request
-
-### 代码规范
-
-- Shell 脚本使用 ShellCheck 检查
-- 配置文件使用统一的格式
-- 代码注释清晰明了
-- 遵循项目现有的代码风格
 
 ## 常见问题
 
@@ -262,24 +242,24 @@ git push origin feature/your-feature
 2. 检查配置文件权限是否正确
 3. 重新加载配置文件
 ```shell
-source ~/.bashrc
+source ~/.bashrc    # Bash
+source ~/.zshrc     # Zsh
 ```
 
 4. 重启终端或系统
 
-### 如何添加新的配置文件？
+### Neovim 插件安装失败？
 
-1. 将配置文件放在对应的目录中
-2. 更新安装脚本，添加新配置文件的安装逻辑
-3. 测试安装过程
-4. 提交修改
+首次启动 Neovim 时，插件会自动安装。如遇问题：
+1. 检查网络连接
+2. 确保已安装 npm
+3. 运行 `:Lazy sync` 手动同步插件
 
 ## 支持的系统
 
 - **Arch Linux**
 - **Ubuntu**
 - **Debian**
-- **CentOS**
 
 ## 许可证
 
@@ -288,18 +268,7 @@ MIT License
 ## 联系方式
 
 - GitHub: https://github.com/crochee/dotfiles
-- 邮箱: your.email@example.com
-
-## 更新日志
-
-### v1.0.0 (2024-10-10)
-- 初始版本发布
-- 支持多种开发语言
-- 包含基础配置文件
-- 实现自动化安装
 
 ---
 
 **欢迎使用 dotfiles！** 🎉
-
-如果你觉得这个项目对你有帮助，请给个 ⭐ 支持一下！

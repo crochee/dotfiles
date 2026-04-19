@@ -11,8 +11,6 @@ return {
 			},
 		})
 		-- If you want insert `(` after select function or method item
-		if not vim.g.vscode then
-			require("cmp").event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
-		end
+		require("cmp").event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
 	end,
 }
