@@ -24,9 +24,9 @@ if command -v uv &> /dev/null; then
     eval "$(uv generate-shell-completion bash)"
 fi
 
-# Starship configuration
 if command -v starship &> /dev/null; then
     eval "$(starship init bash)"
+    starship_precmd
 fi
 
 # zoxide configuration
