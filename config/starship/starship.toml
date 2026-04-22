@@ -31,7 +31,6 @@ min_time = 10_000  # Show command duration over 10,000 milliseconds (=10 sec)
 format = " took [$duration]($style)"
 
 [directory]
-truncation_length = 5
 format = "[$path]($style)[$lock_symbol]($lock_style) "
 style = "bold #f57800"
 read_only = "🔒"
@@ -39,7 +38,6 @@ read_only_style= "bold white"
 
 [git_branch]
 format = " [$symbol$branch]($style) "
-symbol = "🍣 "
 style = "bold yellow"
 
 [git_commit]
@@ -67,11 +65,6 @@ trim_at = "-"
 style = "bold #ea00d9"
 disabled = true
 
-[julia]
-format = "[$symbol$version]($style) "
-symbol = "ஃ "
-style = "bold green"
-
 [memory_usage]
 format = "$symbol[${ram}( | ${swap})]($style) "
 threshold = 50
@@ -84,9 +77,7 @@ disabled = true
 [python]
 format = "[$symbol$version]($style) "
 style = "bold #f57800"
-symbol = "🐍"
 pyenv_version_name = true
-
 
 [time]
 disabled = false

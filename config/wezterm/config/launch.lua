@@ -16,7 +16,12 @@ if platform.is_win then
 	options.launch_menu = {
 		{ label = "admin powershell", args = { "powershell", "-command", "Start-Process powershell -Verb RunAs" } },
 	}
-elseif platform.is_mac or platform.is_linux then
+elseif platform.is_mac then
+	options.default_prog = { "zsh" }
+	options.launch_menu = {
+		{ label = "Zsh", args = { "zsh" } },
+	}
+elseif platform.is_linux then
 	options.default_prog = { "bash", "-l" }
 	options.launch_menu = {
 		{ label = "Bash", args = { "bash", "-l" } },
