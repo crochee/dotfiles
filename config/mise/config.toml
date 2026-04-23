@@ -15,7 +15,7 @@ jobs = 8
 version = "25.9"
 
 [tools.python]
-version = "3.11"
+version = "3.14"
 
 [tools.rust]
 version = "1.95"
@@ -25,3 +25,9 @@ version = "1.25"
 
 [tools.lazygit]
 version = "0.61"
+
+[tools.kind]
+version = "0.31"
+
+[tools.uv]
+version = "latest"

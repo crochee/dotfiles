@@ -1,23 +1,8 @@
 ---
-
 name: repo-wiki
-description: Generate a complete, professional multi-page project wiki for the current repository. Output language matches the user's query. Output goes to ./.open_docs.
-inputs:
-  - name: query
-    type: string
-    description: User's query string. Determines output language and page focus. Write in the language you want the wiki to be generated in.
-  - name: repo_context
-    type: directory
-    description: The current repository root. All technical content (module names, file paths, commands, config keys) must be sourced from here.
-outputs:
-  - name: wiki_pages
-    type: directory
-    description: Generated wiki under ./.open_docs/ — includes index.md and one .md file per page, fully written in the target language.
-  - name: scaffold
-    type: directory
-    description: When using the helper script only, produces skeleton files with nav lines and details blocks awaiting content.
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+description: >
+  Generate a complete, professional multi-page project wiki for the current repository. Output language matches the user's query, output goes to ./.open_docs. Use when documenting a new project, updating existing documentation, or creating a comprehensive wiki from codebase analysis.
+---
 
 # Repo Wiki
 
