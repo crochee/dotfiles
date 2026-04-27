@@ -33,6 +33,7 @@ Built-in template for generating a complete, professional project wiki grounded 
 - `pyproject.toml` / `package.json` / `Cargo.toml` — project name, version, description, keywords
 - Main entry point (`main.py`, `index.js`, `main.go`) — what the app does at runtime
 - Any existing docs or `docs/` directory
+- Data models (`models/`, `schemas/`, `dataclasses`) — understand the domain before describing capabilities
 
 **Section checklist:**
 
@@ -75,19 +76,19 @@ Built-in template for generating a complete, professional project wiki grounded 
 
 ## Installation
 
-\`\`\`bash
+```bash
 pip install .
-\`\`\`
+```
 
 ## Basic Usage
 
-\`\`\`bash
+```bash
 $ mycli --help
 usage: mycli [-h] [--config FILE] [--verbose] <command>
 
 $ mycli init
 Project initialized at ./myproject
-\`\`\`
+```
 ```
 
 ---
@@ -152,10 +153,10 @@ Initializes a new project configuration in the current directory.
 
 **Example:**
 
-\`\`\`bash
+```bash
 $ mycli init --template web
 Initialized web project at ./myproject
-\`\`\`
+```
 ```
 
 ---
@@ -469,6 +470,7 @@ classDiagram
 ```
 
 **Rules:**
+
 - Always use `flowchart`, `sequenceDiagram`, or `classDiagram` keyword on the first line — never bare `graph`
 - Node labels in brackets `[text]` for flowcharts
 - Arrow labels on the correct side of the arrow (`-->|label|`)
@@ -492,3 +494,82 @@ Every page must end with a `<details>` block listing real file paths. Place it a
 ```
 
 Replace the placeholder paths with actual files you referenced while writing the page. If no files were referenced (e.g. Troubleshooting drawing from GitHub issues only), use `None — based on user reports and documentation only.`
+
+---
+
+## `--input` JSON Schema
+
+The scaffold script accepts an optional `--input` JSON file for external wiki data integration (e.g. scraped from existing documentation systems).
+
+### Structure
+
+```json
+{
+  "wiki": {
+    "wikis": {
+      "en": {
+        "pages": [
+          {
+            "page_plan": {
+              "id": "1",
+              "title": "Overview"
+            }
+          },
+          {
+            "page_plan": {
+              "id": "1.1",
+              "title": "Quick Start"
+            }
+          }
+        ]
+      },
+      "zh": {
+        "pages": [
+          {
+            "page_plan": {
+              "id": "1",
+              "title": "概述"
+            }
+          },
+          {
+            "page_plan": {
+              "id": "1.1",
+              "title": "快速开始"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+### Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `wiki.wikis` | object | **Yes** | Language-keyed dictionary. Keys: `"en"`, `"zh"`, or any locale code. |
+| `wikis.<lang>.pages` | array | **Yes** | Ordered list of page entries for this language. |
+| `pages[].page_plan` | object | **Yes** | Page definition wrapper. |
+| `page_plan.id` | string | **Yes** | Page ID matching a `### {id}.` heading in `wiki-template.md`, e.g. `"1"`, `"2.1"`. |
+| `page_plan.title` | string | Yes | Human-readable page title, used in navigation and index. |
+
+### Usage
+
+```bash
+python3 scripts/scaffold_open_docs.py --input ./scraped_wiki.json --query "Chinese project"
+```
+
+If the JSON is missing, malformed, or contains unrecognized page IDs, the script falls back to the bundled template and prints a warning to stderr.
+
+---
+
+## Language Detection Notes
+
+The script detects **Chinese (zh)** and **English (en)** only. Detection uses the Unicode range `0x4E00-0x9FFF` (CJK Unified Ideographs).
+
+- Queries containing CJK characters are detected as `zh`.
+- All other queries default to `en`.
+- Japanese, Korean, Russian, and other languages fallback to English titles and UI strings.
+
+This is a deliberate design choice: the bundled template only provides full translations for en/zh. Adding more languages requires corresponding entries in `PAGE_TITLES` and `UI_TEXT`.

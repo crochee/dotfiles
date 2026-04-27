@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# Install skills from this repo into a target editor's skills directory.
+#
+# Usage:
+#   install-skills [-f] <editor-name>  → ~/.<editor-name>/skills
+#   install-skills <editor-name> [-f]  → ~/.<editor-name>/skills
+#
+# Options:
+#   -f    Force mode: clean target directory before copying all skills
+
+set -euo pipefail
+
+# Script directory (parent = dotfiles root)
+DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
+
+SOURCE_DIRS=(
+    "$DOTFILES/superpowers/skills"
+    "$DOTFILES/skills"
+)
+
+FORCE=0
+EDITOR_NAME=""
+
+usage() {
+    echo "Usage: install-skills [-f] <editor-name>"
+    echo "       install-skills <editor-name> [-f]"
+    echo "  -f    Force mode: clean target and copy all skills"
+    echo "  Target: ~/.<editor-name>/skills"
+    exit 1
+}
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -f) FORCE=1 ; shift ;;
+        -*) usage ;;
+        *)
+            if [ -n "$EDITOR_NAME" ]; then
+                usage
+            fi
+            EDITOR_NAME="$1"
+            shift
+            ;;
+    esac
+done
+
+if [ -z "$EDITOR_NAME" ]; then
+    usage
+fi
+
+# Resolve target directory: absolute/tilde paths used directly, otherwise ~/.<name>/skills
+case "$EDITOR_NAME" in
+    /*)  TARGET_DIR="$EDITOR_NAME" ;;
+    ~/*) TARGET_DIR="${EDITOR_NAME/#\~/$HOME}" ;;
+    *)   TARGET_DIR="$HOME/.$EDITOR_NAME/skills" ;;
+esac
+
+# Collect source skill directories
+declare -A SKILL_MAP
+for src in "${SOURCE_DIRS[@]}"; do
+    if [ ! -d "$src" ]; then
+        echo "Warning: source $src not found, skipping" >&2
+        continue
+    fi
+    for item in "$src"/*/; do
+        [ -d "$item" ] || continue
+        name="$(basename "$item")"
+        SKILL_MAP["$name"]="$item"
+    done
+done
+
+if [ ${#SKILL_MAP[@]} -eq 0 ]; then
+    echo "Error: no skill directories found" >&2
+    exit 1
+fi
+
+# Ensure target directory exists
+mkdir -p "$TARGET_DIR"
+
+# Clean target directory in force mode
+if [ "$FORCE" -eq 1 ]; then
+    if [ -d "$TARGET_DIR" ]; then
+        echo "Cleaning $TARGET_DIR (force mode) ..."
+        find "$TARGET_DIR" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+    fi
+fi
+
+# Sync skills
+echo "Installing ${#SKILL_MAP[@]} skills to $TARGET_DIR ..."
+for name in $(echo "${!SKILL_MAP[@]}" | tr ' ' '\n' | sort); do
+    src="${SKILL_MAP[$name]}"
+    target="$TARGET_DIR/$name"
+    if [ -d "$target" ]; then
+        echo "  $name (overwrite)"
+        rm -rf "$target"
+        cp -R "$src" "$target"
+    else
+        echo "  $name (new)"
+        cp -R "$src" "$target"
+    fi
+done
+
+echo "Done: ${#SKILL_MAP[@]} skills installed"

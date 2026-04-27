@@ -9,6 +9,8 @@ mkdir -p "$HOME/workspace"
 mkdir -p "$HOME/.local/bin"
 export WORKSPACE=$HOME/workspace
 
+PATH="/opt/homebrew/bin:$PATH"
+
 # Source environment variables
 if [ -f "$DOTFILES_DIR/system/env.zsh" ]; then
     source "$DOTFILES_DIR/system/env.zsh"
