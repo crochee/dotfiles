@@ -1,14 +1,13 @@
 ---
 name: git-workflow
-description: Git workflow patterns including branching strategies, commit conventions, merge vs rebase, conflict resolution, and collaborative development best practices for teams of all sizes.
-origin: ECC
+description: Use when branching, committing, resolving merge conflicts, or following collaborative git conventions in a team setting.
 ---
 
 # Git Workflow Patterns
 
 Best practices for Git version control, branching strategies, and collaborative development.
 
-## When to Activate
+## When to Use
 
 - Setting up Git workflow for a new project
 - Deciding on branching strategy (GitFlow, trunk-based, GitHub flow)

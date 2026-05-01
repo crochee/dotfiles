@@ -1,22 +1,18 @@
 ---
 name: frontend-patterns
-description: Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices.
-origin: ECC
+description: Use when building React components, working with Next.js, optimizing frontend performance, or implementing UI best practices.
 ---
 
 # Frontend Development Patterns
 
 Modern frontend patterns for React, Next.js, and performant user interfaces.
 
-## When to Activate
+## When to Use
 
-- Building React components (composition, props, rendering)
-- Managing state (useState, useReducer, Zustand, Context)
-- Implementing data fetching (SWR, React Query, server components)
-- Optimizing performance (memoization, virtualization, code splitting)
-- Working with forms (validation, controlled inputs, Zod schemas)
-- Handling client-side routing and navigation
-- Building accessible, responsive UI patterns
+- Building React components, managing state, or working with hooks
+- Working with Next.js (App Router, data fetching, SSR/SSG)
+- Optimizing frontend performance
+- User mentions: React, Next.js, useState, useReducer, hooks, frontend patterns
 
 ## Component Patterns
 

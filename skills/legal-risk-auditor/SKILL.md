@@ -1,14 +1,15 @@
 ---
 name: legal-risk-auditor
 description: >
-  中国法律风险审查专家。审查合同、协议中的法律风险，识别高危条款并提供修改建议。
-  Supports .docx/.md format conversion.
-  Use when user asks to review contracts, agreements, legal documents for risk, convert docx to markdown, or mentions contract risk analysis, word document review.
+  "中国法律风险审查专家。审查合同、协议中的法律风险，识别高危条款并提供修改建议。Supports .docx/.md format conversion. Use when user asks to review contracts, agreements, legal documents for risk, convert docx to markdown, or mentions contract risk analysis, word document review."
 license: Apache-2.0
-compatibility: >
-  Requires knowledge of Chinese Civil Code (民法典), relevant judicial interpretations,
-  and industry-specific regulations. Cross-border matters require explicit jurisdiction specification.
-  Document conversion requires uv (https://github.com/astral-sh/uv).
+metadata:
+  author: skills-team
+  version: "1.0"
+  compatibility: >
+    Requires knowledge of Chinese Civil Code (民法典), relevant judicial interpretations,
+    and industry-specific regulations. Cross-border matters require explicit jurisdiction specification.
+    Document conversion requires uv (https://github.com/astral-sh/uv).
 ---
 
 # Legal Risk Auditor - 法律风险审查官

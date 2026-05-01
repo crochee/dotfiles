@@ -1,7 +1,6 @@
 ---
 name: rust-patterns
-description: Idiomatic Rust patterns, ownership, error handling, traits, concurrency, and best practices for building safe, performant applications.
-origin: ECC
+description: Use when writing Rust code, handling ownership and lifetimes, implementing traits, or following idiomatic Rust conventions.
 ---
 
 # Rust Development Patterns
@@ -11,9 +10,8 @@ Idiomatic Rust patterns and best practices for building safe, performant, and ma
 ## When to Use
 
 - Writing new Rust code
-- Reviewing Rust code
-- Refactoring existing Rust code
-- Designing crate structure and module layout
+- Reviewing or refactoring existing Rust code
+- User mentions: Rust, ownership, lifetimes, traits, async Rust, cargo
 
 ## How It Works
 

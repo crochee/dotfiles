@@ -1,14 +1,12 @@
 ---
 name: repo-wiki
 description: >
-  Generate a complete, professional multi-page project wiki for the current repository.
-  Output language matches the user's query, output goes to ./.open_docs.
-  Use when documenting a new project, updating existing documentation, or creating a comprehensive wiki from codebase analysis.
+  Generate a complete, professional multi-page project wiki for the current repository. Output language matches the user's query, output goes to ./.open_docs. Use when documenting a new project, updating existing documentation, creating a comprehensive wiki from codebase analysis, or when user mentions wiki, project documentation, codebase docs, or generating docs.
 license: MIT
-compatibility: Requires Python 3.10+ for scaffold script
 metadata:
-  author: repo-wiki
+  author: skills-team
   version: "3.0"
+  compatibility: Requires Python 3.10+ for scaffold script
 ---
 
 # Repo Wiki

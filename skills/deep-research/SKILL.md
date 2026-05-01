@@ -1,14 +1,13 @@
 ---
 name: deep-research
-description: Multi-source deep research using firecrawl and exa MCPs. Searches the web, synthesizes findings, and delivers cited reports with source attribution. Use when the user wants thorough research on any topic with evidence and citations.
-origin: ECC
+description: Use when conducting multi-source research on a topic, synthesizing findings from web searches, or producing cited reports with source attribution.
 ---
 
 # Deep Research
 
 Produce thorough, cited research reports from multiple web sources using firecrawl and exa MCP tools.
 
-## When to Activate
+## When to Use
 
 - User asks to research any topic in depth
 - Competitive analysis, technology evaluation, or market sizing

@@ -1,19 +1,17 @@
 ---
 name: python-patterns
-description: Pythonic idioms, PEP 8 standards, type hints, and best practices for building robust, efficient, and maintainable Python applications.
-origin: ECC
+description: Use when writing Python code, applying PEP 8 conventions, adding type hints, or following idiomatic Python best practices.
 ---
 
 # Python Development Patterns
 
 Idiomatic Python patterns and best practices for building robust, efficient, and maintainable applications.
 
-## When to Activate
+## When to Use
 
 - Writing new Python code
-- Reviewing Python code
-- Refactoring existing Python code
-- Designing Python packages/modules
+- Reviewing or refactoring existing Python code
+- User mentions: Python, PEP 8, type hints, decorators, dataclasses, Pythonic
 
 ## Core Principles
 

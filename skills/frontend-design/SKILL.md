@@ -1,7 +1,6 @@
 ---
 name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use when the user asks to build web components, pages, or applications and the visual direction matters as much as the code quality.
-origin: ECC
+description: Use when building web components, pages, or visually distinctive interfaces where design quality matters as much as code quality.
 ---
 
 # Frontend Design
@@ -10,7 +9,7 @@ Use this when the task is not just "make it work" but "make it look designed."
 
 This skill is for product pages, dashboards, app shells, components, or visual systems that need a clear point of view instead of generic AI-looking UI.
 
-## When To Use
+## When to Use
 
 - building a landing page, dashboard, or app surface from scratch
 - upgrading a bland interface into something intentional and memorable
