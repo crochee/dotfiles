@@ -8,6 +8,8 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
+Note: After checking for applicable skills (Section 5), before responding with any solution:
+
 Before implementing:
 - State your assumptions explicitly. If uncertain, ask.
 - If multiple interpretations exist, present them - don't pick silently.
@@ -59,6 +61,33 @@ For multi-step tasks, state a brief plan:
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+## 5. Skills
+
+**If a skill might apply, you must use it. No negotiation.**
+
+- Subagent tasks: skip this rule
+- User instructions (CLAUDE.md, GEMINI.md, AGENTS.md) take highest priority
+- Otherwise, skill rules override default behavior
+
+**Execution order:** receive task → check skills → respond (including clarifications)
+
+1% rule: invoke skill to confirm if there's even 1% chance. Ignore if inapplicable; missing one cannot be recovered.
+
+**Red Flags (you're rationalizing):**
+
+| Thought | Reality |
+|---------|---------|
+| "Just a simple question" | Questions are tasks. Check skills. |
+| "Need more context first" | Skill check precedes clarifications. |
+| "Let me explore codebase first" | Skills tell you how to explore. |
+| "I know this skill" | Invoke it, don't rely on memory. |
+| "Just a small thing" | Check before doing anything. |
+| "Skill is overkill" | Simple things become complex. |
+
+**Priority:** Process skills (brainstorming, debugging) → Implementation skills
+
+**Types:** Rigid skills (debugging, TDD) follow exactly; flexible skills adapt principles to context.
 
 ---
 

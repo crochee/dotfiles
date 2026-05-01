@@ -1,145 +1,101 @@
 ---
 name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use when the user asks to build web components, pages, or applications and the visual direction matters as much as the code quality.
-origin: ECC
+description: Use when building web components, pages, or visually distinctive interfaces where design quality matters as much as code quality.
+metadata:
+  author: skills-team
 ---
 
 # Frontend Design
 
-Use this when the task is not just "make it work" but "make it look designed."
+Use when the task is "make it look designed," not just "make it work."
 
-This skill is for product pages, dashboards, app shells, components, or visual systems that need a clear point of view instead of generic AI-looking UI.
+For: landing pages, dashboards, app shells, components, visual systems, design systems.
 
-## When To Use
-
-- building a landing page, dashboard, or app surface from scratch
-- upgrading a bland interface into something intentional and memorable
-- translating a product concept into a concrete visual direction
-- implementing a frontend where typography, composition, and motion matter
-
-## Core Principle
-
-Pick a direction and commit to it.
-
-Safe-average UI is usually worse than a strong, coherent aesthetic with a few bold choices.
+**Core principle:** Pick a direction and commit to it. Safe-average UI is usually worse than a strong, coherent aesthetic with a few bold choices.
 
 ## Design Workflow
 
-### 1. Frame the interface first
+### 1. Frame the Interface
 
-Before coding, settle:
-
-- purpose
-- audience
-- emotional tone
-- visual direction
+Settle before coding:
+- purpose, audience, emotional tone, visual direction
 - one thing the user should remember
 
-Possible directions:
+Directions: brutal minimal, editorial, industrial, luxury, playful, geometric, retro-futurist, soft organic, maximalist
 
-- brutally minimal
-- editorial
-- industrial
-- luxury
-- playful
-- geometric
-- retro-futurist
-- soft and organic
-- maximalist
+**Do not mix directions.** Choose one and execute cleanly.
 
-Do not mix directions casually. Choose one and execute it cleanly.
-
-### 2. Build the visual system
+### 2. Build Visual System
 
 Define:
+- type hierarchy, color variables, spacing rhythm
+- layout logic, motion rules, surface/border/shadow treatment
 
-- type hierarchy
-- color variables
-- spacing rhythm
-- layout logic
-- motion rules
-- surface / border / shadow treatment
+Use CSS variables/token system for coherence.
 
-Use CSS variables or the project's token system so the interface stays coherent as it grows.
-
-### 3. Compose with intention
+### 3. Compose with Intention
 
 Prefer:
-
 - asymmetry when it sharpens hierarchy
 - overlap when it creates depth
 - strong whitespace when it clarifies focus
-- dense layouts only when the product benefits from density
 
-Avoid defaulting to a symmetrical card grid unless it is clearly the right fit.
+Avoid defaulting to symmetrical card grid unless clearly right.
 
-### 4. Make motion meaningful
+### 4. Make Motion Meaningful
 
-Use animation to:
+Use animation to reveal hierarchy, stage information, reinforce user action, create memorable moments.
 
-- reveal hierarchy
-- stage information
-- reinforce user action
-- create one or two memorable moments
-
-Do not scatter generic micro-interactions everywhere. One well-directed load sequence is usually stronger than twenty random hover effects.
+**One well-directed load sequence > twenty random hover effects.**
 
 ## Strong Defaults
 
-### Typography
+| Element | Guideline |
+|---------|-----------|
+| Typography | Fonts with character, distinctive display + readable body |
+| Color | One dominant field + selective accents (avoid generic purple gradients) |
+| Background | Atmosphere: gradients, meshes, textures, subtle noise |
+| Layout | Break grid when composition benefits, use diagonals/offsets |
 
-- pick fonts with character
-- pair a distinctive display face with a readable body face when appropriate
-- avoid generic defaults when the page is design-led
+**See [references/design-audit.md](references/design-audit.md) for 10-dimension scoring rubric.**
 
-### Color
+## Component Patterns
 
-- commit to a clear palette
-- one dominant field with selective accents usually works better than evenly weighted rainbow palettes
-- avoid cliché purple-gradient-on-white unless the product genuinely calls for it
+```typescript
+// Composition over inheritance
+function Card({ children, variant = 'default' }) {
+  return <div className={`card card-${variant}`}>{children}</div>
+}
 
-### Background
+// Custom hooks
+function useToggle(initialValue = false): [boolean, () => void] {
+  const [value, setValue] = useState(initialValue)
+  return [value, useCallback(() => setValue(v => !v), [])]
+}
+```
 
-Use atmosphere:
+**See [references/react-patterns.md](references/react-patterns.md) for compound components, performance, accessibility.**
 
-- gradients
-- meshes
-- textures
-- subtle noise
-- patterns
-- layered transparency
+## Design System Audit
 
-Flat empty backgrounds are rarely the best answer for a product-facing page.
+| Mode | Purpose | Output |
+|------|---------|--------|
+| **Generate** | Create cohesive design system | `DESIGN.md`, `design-tokens.json`, `design-preview.html` |
+| **Visual Audit** | Score UI across 10 dimensions | Score + fixes with file:line |
+| **AI Slop Detection** | Identify generic patterns | Flag: gradients, purple-blue, glass morphism |
 
-### Layout
-
-- break the grid when the composition benefits from it
-- use diagonals, offsets, and grouping intentionally
-- keep reading flow obvious even when the layout is unconventional
-
-## Anti-Patterns
-
-Never default to:
-
-- interchangeable SaaS hero sections
-- generic card piles with no hierarchy
-- random accent colors without a system
-- placeholder-feeling typography
-- motion that exists only because animation was easy to add
-
-## Execution Rules
-
-- preserve the established design system when working inside an existing product
-- match technical complexity to the visual idea
-- keep accessibility and responsiveness intact
-- frontends should feel deliberate on desktop and mobile
+**See [references/design-audit.md](references/design-audit.md) for full rubric.**
 
 ## Quality Gate
 
 Before delivering:
+- [ ] Clear visual point of view
+- [ ] Intentional typography and spacing
+- [ ] Color/motion support product (not random decoration)
+- [ ] Does not read like generic AI UI
+- [ ] Production-grade implementation
 
-- the interface has a clear visual point of view
-- typography and spacing feel intentional
-- color and motion support the product instead of decorating it randomly
-- the result does not read like generic AI UI
-- the implementation is production-grade, not just visually interesting
+## References
+
+- [references/react-patterns.md](references/react-patterns.md) - Compound components, hooks, memoization, virtualization
+- [references/design-audit.md](references/design-audit.md) - 10-dimension scoring, AI slop detection

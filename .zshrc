@@ -39,8 +39,8 @@ HISTFILE=~/.zsh_history
 autoload -U compinit
 compinit
 
-# Enable correction
-setopt correct_all
+# Disable correction
+unsetopt correct_all
 
 # Enable globbing
 setopt extended_glob

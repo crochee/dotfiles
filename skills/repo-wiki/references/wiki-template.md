@@ -39,7 +39,7 @@ Built-in template for generating a complete, professional project wiki grounded 
 
 - [ ] **Project Purpose** — one paragraph: what problem does this solve?
 - [ ] **Core Capabilities** — table with columns: Capability / Description / Location (module or file)
-- [ ] **System Architecture** — Mermaid `flowchart TD` or `graph TD` showing top-level components and their relationships. Only include modules/packages you can confirm exist.
+- [ ] **System Architecture** — Mermaid `flowchart TD` showing top-level components and their relationships. Only include modules/packages you can confirm exist.
 - [ ] **When to Use This Tool** — one paragraph on ideal use cases vs. alternatives
 
 **If content is very sparse:** Write a compact 2-paragraph Overview and move on. Do not pad with invented details.
@@ -471,7 +471,7 @@ classDiagram
 
 **Rules:**
 
-- Always use `flowchart`, `sequenceDiagram`, or `classDiagram` keyword on the first line — never bare `graph`
+- Always use `flowchart`, `sequenceDiagram`, or `classDiagram` keyword on the first line. `flowchart` is the recommended syntax for architecture diagrams.
 - Node labels in brackets `[text]` for flowcharts
 - Arrow labels on the correct side of the arrow (`-->|label|`)
 - Do not generate a diagram unless you understand the actual flow — if unsure, use a text description instead
@@ -570,6 +570,6 @@ The script detects **Chinese (zh)** and **English (en)** only. Detection uses th
 
 - Queries containing CJK characters are detected as `zh`.
 - All other queries default to `en`.
-- Japanese, Korean, Russian, and other languages fallback to English titles and UI strings.
+- For other languages (Japanese, Korean, Russian, etc.), use the `--lang` flag to explicitly specify the language code. UI strings and page titles fallback to English when no translation exists.
 
 This is a deliberate design choice: the bundled template only provides full translations for en/zh. Adding more languages requires corresponding entries in `PAGE_TITLES` and `UI_TEXT`.

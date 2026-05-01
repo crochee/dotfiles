@@ -141,7 +141,6 @@ def md_to_docx(md_path: Path, out_path: Path) -> None:
             continue
 
         if not line:
-            doc.add_paragraph("")
             i += 1
             continue
 

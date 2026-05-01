@@ -4,16 +4,16 @@
 
 ## 功能介绍
 
-### 🎯 核心功能
+### 核心功能
 - **多 Shell 支持**：Bash、Zsh 配置
 - **现代化终端**：Wezterm 终端配置、Starship 提示符
-- **高效编辑器**：Neovim 完整配置（LSP、DAP、80+ 插件）
+- **高效编辑器**：Neovim 完整配置（LSP、DAP、25+ 插件）
 - **工具版本管理**：mise 一站式管理 Go、Rust、Node.js、Python 等
 - **命令增强**：atuin 命令历史、zoxide 目录跳转、fzf 模糊搜索
 - **模块化设计**：按功能和应用程序分类管理配置文件
 - **自动化安装**：一键安装和更新配置，符号链接方式便于版本控制
 
-### 📦 包含的配置
+### 包含的配置
 
 #### Shell 环境
 - **Bash**：`.bashrc` 及相关配置
@@ -44,6 +44,28 @@
 #### 其他配置
 - **Cargo**：Rust 包管理器配置
 - **UV**：Python 工具管理器配置
+
+### Claude Code 插件
+
+本仓库包含 Claude Code 插件结构，用于为 Claude Code 提供结构化的开发工作流。
+
+**插件目录：** `.claude-plugin/`
+
+**安装方式：**
+
+```bash
+# 从本地路径安装
+/plugin install /path/to/dotfiles
+
+# 从 Git 安装
+/plugin install s --from git@github.com:crochee/dotfiles.git
+
+# 从市场安装
+/plugin marketplace add crochee git@github.com:crochee/dotfiles.git
+/plugin install s@crochee
+```
+
+安装后 Claude Code 会话启动时将自动加载工作流技能。
 
 ## 快速开始
 
@@ -149,39 +171,38 @@ eval "$(starship init bash)"  # 或 zsh
 ## 目录结构
 
 ```
-dotfiles/
-├── .bashrc                 # Bash 配置文件
-├── .zshrc                  # Zsh 配置文件
-├── bin/                    # 可执行脚本
-│   ├── checkin.sh          # 签到脚本
-│   ├── gitlogself.sh       # Git 日志脚本
-│   └── ...
-├── config/                 # 应用程序配置
-│   ├── atuin/              # Atuin 配置
-│   ├── cargo/              # Cargo 配置
-│   ├── mise/               # Mise 配置
-│   ├── nvim/               # Neovim 配置
-│   ├── starship/           # Starship 配置
-│   └── wezterm/            # Wezterm 配置
-├── dotfiles/                # 用户目录配置文件
-│   ├── .gitconfig          # Git 配置
-│   ├── .inputrc             # Readline 配置
-│   └── .myclirc            # MyCLI 配置
-├── install/                 # 安装脚本
-│   ├── install.sh          # 主安装脚本
-│   ├── install_tool.sh     # 工具安装脚本
-│   └── update.sh           # 更新脚本
-├── plugins/                 # 插件
-│   ├── fzf/                # FZF 插件
-│   ├── zsh-autosuggestions/# 自动建议插件
-│   └── zsh-syntax-highlighting/ # 语法高亮插件
-├── scripts/                 # 辅助脚本
-├── system/                  # 系统配置
-│   ├── alias.sh            # 别名配置
-│   ├── env.sh              # 环境变量配置
-│   └── ...
-├── zk/                      # ZK 笔记配置
-└── README.md               # 项目说明
+dotfiles/                      # 插件根目录
+├── .claude/                   # Claude Code 配置
+├── .claude-plugin/            # 插件清单
+├── .bashrc                    # Bash 配置
+├── .zshrc                     # Zsh 配置
+├── bin/                       # 可执行脚本
+├── config/                    # 应用程序配置
+│   ├── atuin/                # Atuin 配置
+│   ├── cargo/                # Cargo 配置
+│   ├── mise/                 # Mise 配置
+│   ├── nvim/                 # Neovim 配置
+│   ├── starship/             # Starship 配置
+│   └── wezterm/              # Wezterm 配置
+├── dotfiles/                  # 用户目录配置文件
+│   ├── .gitconfig            # Git 配置
+│   ├── .inputrc              # Readline 配置
+│   └── .myclirc              # MyCLI 配置
+├── hooks/                     # Session 钩子
+├── install/                   # 安装脚本
+├── plugins/                   # 插件 subtree
+│   ├── fzf/
+│   ├── zsh-autosuggestions/
+│   └── zsh-syntax-highlighting/
+├── skills/                    # 25 个技能
+├── agents/                    # 6 个子代理
+├── scripts/                   # 辅助脚本
+├── src/                       # 源码
+├── system/                    # 系统配置
+├── docs/                      # 文档
+├── openspec/                  # 规范文档
+├── zk/                        # ZK 笔记配置
+└── README.md                  # 项目说明
 ```
 
 ## 配置管理
@@ -268,7 +289,3 @@ MIT License
 ## 联系方式
 
 - GitHub: https://github.com/crochee/dotfiles
-
----
-
-**欢迎使用 dotfiles！** 🎉

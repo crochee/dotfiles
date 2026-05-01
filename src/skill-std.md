@@ -50,12 +50,6 @@ skill-name/               # 技能包根目录，名称应与 SKILL.md 中的 na
 ---
 name: pdf-processing
 description: Extract PDF text, fill forms, and merge files. Use when handling PDFs or when user mentions PDFs, forms, or document extraction.
-license: Apache-2.0
-compatibility: Requires Python 3.10+
-metadata:
-  author: your-name
-  version: "1.0"
-allowed-tools: Bash(git:*) Bash(python:*)
 ---
 
 # PDF Processing
@@ -79,25 +73,27 @@ To process a PDF, follow these steps:
 
 ### YAML Frontmatter 字段说明
 
-| 字段 | 类型 | 必需/可选 | 说明 |
-|------|------|-----------|------|
-| `name` | 字符串 | **必需** | 技能名称，必须与父目录名完全一致 |
-| `description` | 字符串 | **必需** | 技能描述，需包含"做什么"和"何时用" |
-| `license` | 字符串 | 可选 | 许可证类型，如 MIT、Apache-2.0、GPL 等 |
-| `compatibility` | 字符串 | 可选 | 兼容性说明，如依赖的工具或版本 |
-| `metadata` | 对象 | 可选 | 元数据，如 author、version 等 |
-| `allowed-tools` | 字符串 | 可选 | 声明可用的工具（实验性字段） |
+| 字段              | 类型  | 必需/可选  | 说明                           |
+| --------------- | --- | ------ | ---------------------------- |
+| `name`          | 字符串 | **必需** | 技能名称，必须与父目录名完全一致             |
+| `description`   | 字符串 | **必需** | 技能描述，需包含"做什么"和"何时用"          |
+| `license`       | 字符串 | 可选     | 许可证类型，如 MIT、Apache-2.0、GPL 等 |
+| `compatibility` | 字符串 | 可选     | 兼容性说明，如依赖的工具或版本              |
+| `metadata`      | 对象  | 可选     | 元数据，如 author、version 等       |
+| `allowed-tools` | 字符串 | 可选     | 声明可用的工具（实验性字段）               |
 
 ### Description 字段的重要性
 
 `description` 字段是 AI 决定何时触发 Skill 的唯一依据，必须包含具体的**功能关键词**和**场景关键词**。
 
-**❌ 不好的示例：
+\*\*❌ 不好的示例：
+
 ```yaml
 description: "处理 PDF 文件"
 ```
 
 **✅ 好的示例：**
+
 ```yaml
 description: "Extract PDF text, fill forms, and merge files. Use when handling PDFs or when user mentions PDFs, forms, or document extraction."
 ```
@@ -106,16 +102,11 @@ description: "Extract PDF text, fill forms, and merge files. Use when handling P
 
 为了让你的 Skill 更高效、更易维护、更具可移植性，这里总结了业界普遍推荐的最佳实践：
 
-1. **编写出色的 `description` 字段：这是 AI 决定何时触发 Skill 的唯一依据，必须包含具体的功能关键词和场景关键词。避免模糊的表述。
-
+1. \*\*编写出色的 `description` 字段：这是 AI 决定何时触发 Skill 的唯一依据，必须包含具体的功能关键词和场景关键词。避免模糊的表述，简洁有力token占用少。
 2. **利用“渐进式披露”原则**：将长篇大论的参考资料、API 文档等内容放入 `references/` 目录，只在主 `SKILL.md` 文件中通过链接引用。
-
 3. **清晰的命名与一致性**：Skill 的目录名应采用 **kebab-case**（全小写、单词间用连字符）命名。同时，目录名必须与 `SKILL.md` 内的 `name` 字段完全一致。
-
 4. **职责单一**：一个 Skill 应只解决一个具体问题，避免创建“万能 Skill”。
-
 5. **为人类也提供文档**：始终提供 `README.md` 对人友好的说明，不仅是 AI 的指令。
-
 6. **参考官方模板**：GitHub 上已有许多遵循此标准的 Skill 仓库，是很好的参考范例。
 
 ## 🎯 快速检查清单
@@ -130,18 +121,6 @@ description: "Extract PDF text, fill forms, and merge files. Use when handling P
 - [ ] 参考资料放入 `references/` 目录（如有）
 - [ ] 脚本放入 `scripts/` 目录（如有）
 - [ ] 资源放入 `assets/` 目录（如有）
-
-## 📚 本仓库的 Skill 示例
-
-本仓库已包含符合标准的 Skill 示例：
-
-- `dispatching-parallel-agents` - 并行代理调度
-- `workflow` - 薄编排工作流（OpenSpec + 技能执行）
-- `test-driven-development` - 测试驱动开发
-- `repo-wiki` - 仓库 Wiki 生成
-- `verification-before-completion` - 完成前验证
-
-这些 Skill 可以作为快速启动的骨架，参考它们的结构和格式。
 
 ## 🌟 为什么采用这个标准
 

@@ -133,8 +133,10 @@ def safe_filename(name: str, max_len: int = 120) -> str:
 
 def _resolve_dict(lang_key: str, primary: dict[str, dict], fallback: dict[str, str]) -> dict[str, str]:
     base = lang_key.split("-")[0]
-    result = primary.get(lang_key) or primary.get(base)
-    if not result:
+    result = primary.get(lang_key)
+    if result is None:
+        result = primary.get(base)
+    if result is None:
         return fallback
     return result
 
@@ -147,6 +149,21 @@ def _get_ui_text(lang: str) -> dict[str, str]:
     return _resolve_dict(lang, UI_TEXT, FALLBACK_UI)
 
 
+def _resolve_language_and_bundle(wikis: dict, lang: str) -> tuple[str, dict]:
+    """Resolve language key and corresponding bundle from wikis dict.
+
+    Returns (chosen_lang, bundle) where chosen_lang is the actual language
+    key used and bundle is the wikis[lang] content dict.
+    """
+    if lang in wikis:
+        return lang, wikis[lang]
+    base = lang.split("-")[0]
+    if base in wikis:
+        return base, wikis[base]
+    fallback_key = next(iter(wikis.keys()))
+    return fallback_key, wikis[fallback_key]
+
+
 def _load_page_plans_from_json(input_path: Path, lang: str, skill_dir: Path) -> tuple[str, list[PagePlan]]:
     valid_ids = set(load_page_ids_from_template(skill_dir))
     data = json.loads(input_path.read_text(encoding="utf-8"))
@@ -155,8 +172,7 @@ def _load_page_plans_from_json(input_path: Path, lang: str, skill_dir: Path) -> 
     if not isinstance(wikis, dict) or not wikis:
         raise ValueError("Invalid JSON: missing wiki.wikis")
 
-    bundle = wikis.get(lang) or wikis.get(lang.split("-")[0]) or next(iter(wikis.values()))
-    chosen_lang = lang if lang in wikis else (lang.split("-")[0] if lang.split("-")[0] in wikis else next(iter(wikis.keys())))
+    chosen_lang, bundle = _resolve_language_and_bundle(wikis, lang)
 
     pages_raw = bundle.get("pages") or []
     titles = _get_localized_titles(lang)

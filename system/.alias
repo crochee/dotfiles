@@ -2,8 +2,16 @@
 
 alias c='clear'                             # c:            Clear terminal display
 
-alias v="nvim"
-alias cat="bat"
+if command -v nvim &> /dev/null; then
+  alias v="nvim"
+else
+  alias v="$HOME/.local/bin/nvim-macos-arm64/bin/nvim"
+fi
+
+if command -v bat &> /dev/null; then
+  alias cat="bat"
+fi
+
 alias wk="cd $HOME/workspace"
 alias dot="cd $HOME/.dotfiles"
 
@@ -14,9 +22,6 @@ alias la="ls -A"
 alias l="ls -CF"
 
 # grep aliases
-alias grep="rg --color=auto"
-alias fgrep="fgrep --color=auto"
-alias egrep="egrep --color=auto"
 alias rg='rg --hidden --smart-case'
 
 # cd aliases
