@@ -1,0 +1,6 @@
+{
+  "name": "md-review",
+  "description": "Auto-open browser to render MD design docs for review",
+  "patterns": ["docs/**/*.md", "**/*-design.md", "**/*-spec.md"],
+  "cleanup_on_exit": true
+}

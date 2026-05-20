@@ -1,0 +1,24 @@
+{
+  "name": "s",
+  "version": "1.0.0",
+  "description": "Spec-driven development skills library for Claude Code",
+  "author": {
+    "name": "crochee"
+  },
+  "license": "MIT",
+  "keywords": ["spec-driven", "development", "workflow"],
+  "skills": [
+    "./skills/api-design",
+    "./skills/e2e-testing",
+    "./skills/frontend-design",
+    "./skills/golang-dev",
+    "./skills/md-review",
+    "./skills/legal-risk-auditor",
+    "./skills/python-dev",
+    "./skills/repo-wiki",
+    "./skills/rust-dev"
+  ],
+  "agents": [
+    "./agents/frontend.md"
+  ]
+}

@@ -1,0 +1,8 @@
+.DS_Store
+*lock.json
+tmux-*
+*.db
+.git
+*.db
+__pycache__/
+**.omc
