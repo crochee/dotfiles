@@ -1,0 +1,4 @@
+# ~/.config/atuin/config.toml
+max_history_length = 100000  # 限制总数
+sync_frequency = 60          # 同步间隔（秒）
+# filter = "host"  # 按主机隔离历史

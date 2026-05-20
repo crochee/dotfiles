@@ -1,0 +1,52 @@
+[user]
+	name = crochee
+	email = 13522570308@139.com
+
+[github]
+	user = crochee
+
+[core]
+	editor = nvim
+    hooksPath = ~/.dotfiles/src/githooks
+    ; pager = less -FRSX
+    ; pager = delta
+
+[pull]
+	rebase = true
+
+[init]
+	defaultBranch = master
+
+[push]
+	default = simple
+	followTags = true
+
+[fetch]
+	prune = true
+
+[grep]
+	lineNumber = true
+
+[help]
+	autocorrect = 1
+
+[commit]
+    template = ~/.dotfiles/src/gitcommit
+
+[difftool]
+    prompt = true
+
+[diff]
+    tool = nvimdiff
+
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+
+[merge]
+    tool = nvimdiff
+    conflictstyle = diff3
+
+[mergetool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\""
+[safe]
+	directory = *

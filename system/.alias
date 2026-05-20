@@ -1,0 +1,93 @@
+# Aliases
+
+alias c='clear'                             # c:            Clear terminal display
+
+if command -v nvim &> /dev/null; then
+  alias v="nvim"
+else
+  alias v="$HOME/.local/bin/nvim-macos-arm64/bin/nvim"
+fi
+
+if command -v bat &> /dev/null; then
+  alias cat="bat"
+fi
+
+alias wk="cd $HOME/workspace"
+alias dot="cd $HOME/.dotfiles"
+
+# ls aliases
+alias ls="ls --color=auto"
+alias ll="ls -la"
+alias la="ls -A"
+alias l="ls -CF"
+
+# grep aliases
+alias rg='rg --hidden --smart-case'
+
+# cd aliases
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias -- ~="cd $HOME"
+alias -- -="cd -"
+
+# df aliases
+alias df="df -h"
+alias du="du -h"
+
+# git aliases
+alias ga='git add'
+alias gm='git commit'
+alias gl='git pull'
+alias gs='git status'
+alias gc="git clone --recursive"
+alias gr="git rebase -i"
+
+function gph {
+  if (($# == 1)); then
+    command git push origin "HEAD:$*"
+  fi
+}
+
+function gphf {
+  if (($# == 1)); then
+    command git push origin "HEAD:$*" -f
+  fi
+}
+
+# file aliases
+alias mkdir="mkdir -p"
+alias cp="cp -i"
+alias mv="mv -i"
+alias rm="rm -i"
+alias rr="rm -rf"
+
+# Extract function
+extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.gz|*.tgz) tar zxvf "$1" ;;
+            *.tar.bz2|*.tbz) tar jxvf "$1" ;;
+            *.tar.xz|*.txz) tar Jxvf "$1" ;;
+            *.tar) tar xvf "$1" ;;
+            *.zip) unzip "$1" ;;
+            *.rar) unrar x "$1" ;;
+            *.7z) 7z x "$1" ;;
+            *) echo "Unknown archive type: $1" ;;
+        esac
+    else
+        echo "File not found: $1"
+    fi
+}
+
+# Create directory and cd into it
+mcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# custom
+alias mycli="$HOME/.venv/bin/mycli"
+# docker aliases
+alias dive="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/wagoodman/dive:latest"
+alias slim="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock dslim/slim:latest"
+alias trivy="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest"

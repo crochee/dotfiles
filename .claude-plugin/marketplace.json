@@ -1,0 +1,26 @@
+{
+  "name": "crochee",
+  "owner": {
+    "name": "crochee",
+    "email": "your-email@example.com"
+  },
+  "metadata": {
+    "description": "Spec-driven development skills library for Claude Code",
+    "version": "1.0.0",
+    "pluginRoot": "."
+  },
+  "plugins": [
+    {
+      "name": "s",
+      "source": "./",
+      "description": "Spec-driven development workflow: brainstorming, proposing, planning, implementation, and archival",
+      "version": "1.0.0",
+      "author": {
+        "name": "crochee"
+      },
+      "category": "development",
+      "keywords": ["spec-driven", "development", "workflow"],
+      "strict": true
+    }
+  ]
+}

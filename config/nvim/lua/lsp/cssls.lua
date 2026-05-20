@@ -1,0 +1,8 @@
+--Enable (broadcasting) snippet capability for completion
+local opts = {
+  single_file_support = true,
+  capabilities = require('lsp.utils').capabilities,
+  on_attach = require('lsp.utils').on_attach
+}
+
+return opts

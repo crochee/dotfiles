@@ -1,0 +1,3 @@
+- superpowers : git@github.com:obra/superpowers.git
+- OpenSpec : git@github.com:Fission-AI/OpenSpec.git
+- openspec-schemas : git@github.com:JiangWay/openspec-schemas.git
