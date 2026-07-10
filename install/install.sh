@@ -201,6 +201,21 @@ handle_special_dir() {
             return 0
         fi
         ;;
+    "opencode")
+        # opencode: 文件级软链接,运行时目录由 opencode 本地管理
+        local oc_target="$target_dir/$dir_name"
+        # 若存在整目录软链接,直接删除(指向仓库,无数据损失)
+        if [ -L "$oc_target" ]; then
+            rm "$oc_target"
+        fi
+        mkdir -p "$oc_target"
+        for f in oh-my-openagent.json opencode.jsonc; do
+            if [ -f "$dir/$f" ]; then
+                create_symlink "$dir/$f" "$oc_target/$f" || return 1
+            fi
+        done
+        log "INFO" "请确保 ~/.config/opencode/.env 配置了 OPENAI_BASE_URL / OPENAI_API_KEY / OMO_MODEL"
+        ;;
     *)
         # 其他目录直接创建符号链接
         create_symlink "$dir" "$target_dir/$dir_name" || return 1
@@ -231,6 +246,14 @@ verify_install() {
                 success_count=$((success_count + 1))
             else
                 log "WARN" "验证失败: $target_dir/starship.toml"
+            fi
+            ;;
+        "opencode"|"cargo")
+            # 这些目录是真实目录(非软链接),验证目录存在即可
+            if [ -d "$target_dir/$dir_name" ]; then
+                success_count=$((success_count + 1))
+            else
+                log "WARN" "验证失败: $target_dir/$dir_name"
             fi
             ;;
         *)

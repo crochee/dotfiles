@@ -10,27 +10,14 @@ jobs = 8
 # 环境变量配置示例
 [env]
 
-[tools.zoxide]
-version = "latest"
-
-# 工具配置示例
-[tools.node]
-version = "25.9"
-
-[tools.python]
-version = "3.14"
-
-[tools.rust]
-version = "1.95"
-
-[tools.go]
-version = "1.25"
-
-[tools.lazygit]
-version = "0.61"
-
-[tools.kind]
-version = "0.31"
-
-[tools.uv]
-version = "latest"
+[tools]
+opencode = "latest"
+bun = "latest"
+zoxide = "latest"
+node = "latest"
+python = "latest"
+rust = "latest"
+go = "latest"
+lazygit = "latest"
+kind = "latest"
+uv = "latest"
