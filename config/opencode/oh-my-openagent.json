@@ -1,0 +1,60 @@
+{
+  "agents": {
+    "hephaestus": {
+      "model": "openai/MiniMax-M3"
+    },
+    "oracle": {
+      "model": "openai/MiniMax-M3"
+    },
+    "librarian": {
+      "model": "openai/MiniMax-M3"
+    },
+    "explore": {
+      "model": "openai/MiniMax-M3"
+    },
+    "multimodal-looker": {
+      "model": "openai/MiniMax-M3"
+    },
+    "prometheus": {
+      "model": "openai/MiniMax-M3"
+    },
+    "metis": {
+      "model": "openai/MiniMax-M3"
+    },
+    "momus": {
+      "model": "openai/MiniMax-M3"
+    },
+    "atlas": {
+      "model": "openai/MiniMax-M3"
+    },
+    "sisyphus-junior": {
+      "model": "openai/MiniMax-M3"
+    }
+  },
+  "categories": {
+    "visual-engineering": {
+      "model": "openai/MiniMax-M3"
+    },
+    "ultrabrain": {
+      "model": "openai/MiniMax-M3"
+    },
+    "deep": {
+      "model": "openai/MiniMax-M3"
+    },
+    "artistry": {
+      "model": "openai/MiniMax-M3"
+    },
+    "quick": {
+      "model": "openai/MiniMax-M3"
+    },
+    "unspecified-low": {
+      "model": "openai/MiniMax-M3"
+    },
+    "unspecified-high": {
+      "model": "openai/MiniMax-M3"
+    },
+    "writing": {
+      "model": "openai/MiniMax-M3"
+    }
+  }
+}
