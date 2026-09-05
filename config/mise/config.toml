@@ -11,13 +11,21 @@ jobs = 8
 [env]
 
 [tools]
-opencode = "latest"
-bun = "latest"
-zoxide = "latest"
+# 一律 mise 管理；例外见 install/tools.sh（docker 守护进程随系统包管理器）
+# runtimes
 node = "latest"
 python = "latest"
 rust = "latest"
 go = "latest"
+bun = "latest"
+uv = "latest"
+# CLI（registry 默认走 aqua 预编译二进制）
 lazygit = "latest"
 kind = "latest"
-uv = "latest"
+zoxide = "latest"
+starship = "latest"
+fd = "latest"
+ripgrep = "latest"
+bat = "latest"
+neovim = "latest"
+"github:can1357/oh-my-pi" = "latest"

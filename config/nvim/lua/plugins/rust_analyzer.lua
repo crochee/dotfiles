@@ -2,16 +2,14 @@
 
 return {
 	"mrcjkb/rustaceanvim",
-	version = "^6", -- Recommended
+	version = "^9",
 	ft = { "rust" },
-	dependencies = { "mason-org/mason.nvim", "neovim/nvim-lspconfig" },
-	-- enabled = false,
 	init = function()
 		vim.g.rustaceanvim = function()
 			local extension_path = vim.fn.expand("$MASON/packages/codelldb/extension")
 			local codelldb_path = extension_path .. "/adapter/codelldb"
 			local liblldb_path = ""
-			if vim.loop.os_uname().sysname:find("Windows") then
+if vim.uv.os_uname().sysname:find("Windows") then
 				liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
 			elseif vim.fn.has("mac") == 1 then
 				liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"
@@ -42,8 +40,6 @@ return {
 							},
 						},
 					},
-					capabilities = require("lsp.utils").capabilities,
-					on_attach = require("lsp.utils").on_attach,
 				},
 				dap = {
 					adapter = require("rustaceanvim.config").get_codelldb_adapter(codelldb_path, liblldb_path),

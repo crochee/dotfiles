@@ -1,6 +1,20 @@
 return {
 	"stevearc/conform.nvim",
-	event = { "VeryLazy" },
+	keys = {
+		{
+			"<leader>fm",
+			function()
+				require("conform").format({ async = true, lsp_fallback = true }, function(err)
+					if err then
+						vim.notify("format error: " .. tostring(err), vim.log.levels.WARN)
+					end
+				end)
+			end,
+			mode = { "n", "v" },
+			desc = "Format code",
+		},
+		{ "<leader>=", "<cmd>DiffFormat<cr>", desc = "Format changed lines" },
+	},
 	init = function()
 		vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 	end,
@@ -13,22 +27,21 @@ return {
 				rust = { "rustfmt" },
 				sql = { "sqlfmt" },
 				python = { "ruff_format", "ruff_organize_imports" },
-				javascript = { "prettierd", "prettier", stop_after_first = true },
-				typescript = { "prettierd", "prettier", stop_after_first = true },
-				javascriptreact = { "prettierd", "prettier", stop_after_first = true },
-				typescriptreact = { "prettierd", "prettier", stop_after_first = true },
-				css = { "prettierd", "prettier", stop_after_first = true },
-				html = { "prettierd", "prettier", stop_after_first = true },
-				json = { "prettierd", "prettier", stop_after_first = true },
-				jsonc = { "prettierd", "prettier", stop_after_first = true },
-				yaml = { "prettierd", "prettier", stop_after_first = true },
+				javascript = { "prettierd", "prettier" },
+				typescript = { "prettierd", "prettier" },
+				javascriptreact = { "prettierd", "prettier" },
+				typescriptreact = { "prettierd", "prettier" },
+				css = { "prettierd", "prettier" },
+				html = { "prettierd", "prettier" },
+				json = { "prettierd", "prettier" },
+				jsonc = { "prettierd", "prettier" },
+				yaml = { "prettierd", "prettier" },
 				sh = { "shfmt", "shellcheck" },
 				markdown = { "prettierd", "prettier", "injected" },
 				toml = { "taplo" },
 				c = { "clang-format" },
 				cpp = { "clang-format" },
 				["c++"] = { "clang-format" },
-				-- ["*"] = { "codespell" },
 				["_"] = { "trim_whitespace", "trim_newlines" },
 			},
 			formatters = {

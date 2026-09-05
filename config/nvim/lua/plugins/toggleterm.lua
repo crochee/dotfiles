@@ -1,5 +1,34 @@
 return {
 	"akinsho/toggleterm.nvim",
+	keys = {
+		"<C-\\>",
+		{ "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>", desc = "Terminal horizontal" },
+		{ "<leader>tv", "<cmd>ToggleTerm direction=vertical<cr>", desc = "Terminal vertical" },
+		{ "<leader>ta", "<cmd>ToggleTerm direction=tab<cr>", desc = "Terminal tab" },
+		{ "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", desc = "Terminal float" },
+		{ "<leader>tg", function() _LAZYGIT_OPEN() end, desc = "Lazygit" },
+		{
+			"<leader>tF",
+			function()
+				local git_path = vim.api.nvim_buf_get_name(0)
+				_LAZYGIT_OPEN({ args = { "-f", vim.trim(git_path) } })
+			end,
+			desc = "Lazygit current file history",
+		},
+		{ "<leader>gl", function() _GIT_LOG() end, mode = { "n", "v", "x" }, desc = "Git log for line" },
+		{
+			"<leader>lt",
+			function()
+				if vim.fn.mode() == "n" then
+					require("toggleterm").send_lines_to_terminal("single_line", true, { args = vim.v.count })
+					return
+				end
+				require("toggleterm").send_lines_to_terminal("visual_selection", true, { args = vim.v.count })
+			end,
+			mode = { "n", "v", "x" },
+			desc = "Send line to terminal",
+		},
+	},
 	config = function()
 		require("toggleterm").setup({
 			open_mapping = [[<C-\>]],
@@ -13,7 +42,7 @@ return {
 			direction = "float",
 			close_on_exit = true,
 			on_open = function(term)
-				vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+				vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = term.bufnr, silent = true })
 			end,
 			shell = vim.o.shell,
 			float_opts = {
@@ -161,96 +190,6 @@ return {
 				})
 			end, {
 				buffer = buf,
-			})
-		end
-
-		function _COMMIT_MSG()
-			local gitdir = vim.fn.system(string.format("git -C %s rev-parse --show-toplevel", vim.fn.expand("%:p:h")))
-			if vim.fn.matchstr(gitdir, "^fatal:.*") ~= "" then
-				gitdir = vim.fn.expand(vim.trim(gitdir))
-			end
-			gitdir = vim.split(gitdir, "\n")[1]
-
-			local prompt = string.format(
-				[[You are an expert at following the Conventional Commit specification. Given the git diff listed below, please generate a commit message for me:
-1. Start with an action verb (e.g., feat, fix, refactor, chore, etc.), followed by a colon.
-2. Briefly mention the file or module name that was changed.
-3. Describe the specific changes made.
-4. must match ^(feat|fix|docs|style|refactor|perf|test|chore|revert|build|ci)(\(.+\))?:\s.{1,125}
-
-Examples:
-- feat: update common/util.py, added test cases for util.py
-- fix: resolve bug in user/auth.py related to login validation
-- refactor: optimize database queries in models/query.py
-
-Based on this format, generate appropriate commit messages. Respond with message only. DO NOT format the message in Markdown code blocks, DO NOT use backticks:
-
-```diff
-%s
-```
-]],
-				vim.fn.system(string.format("cd %s && git diff --no-ext-diff --staged", gitdir))
-			)
-			local full_response = ""
-			require("avante.llm").stream({
-				ask = true,
-				code_lang = "git",
-				instructions = prompt,
-				on_start = function() end,
-				on_chunk = function(chunk)
-					full_response = full_response .. chunk
-				end,
-				on_stop = function(stop_opts)
-					if stop_opts.error then
-						vim.notify("Error while generating commit message: " .. stop_opts.error)
-						return
-					end
-					local log = vim.split(full_response, "\n")
-					-- 创建一个新的缓冲区
-					local buf = vim.api.nvim_create_buf(false, true)
-					vim.api.nvim_set_option_value("modifiable", true, {
-						buf = buf,
-					})
-					vim.api.nvim_set_option_value("filetype", "git", {
-						buf = buf,
-					})
-					vim.api.nvim_buf_set_lines(buf, 0, -1, false, log)
-					-- 创建一个浮动窗口来展示缓冲区内容
-					-- 设置浮动窗口的缓冲区
-					local win_size_opts = proportional_size(0.6, 0.8)
-					vim.api.nvim_win_set_buf(
-						vim.api.nvim_open_win(buf, true, {
-							relative = "editor",
-							width = win_size_opts.width,
-							height = win_size_opts.height,
-							row = win_size_opts.row,
-							col = win_size_opts.col,
-							style = "minimal",
-							border = "rounded",
-							title = "commit message",
-							title_pos = "center",
-						}),
-						buf
-					)
-					-- set keymap
-					vim.keymap.set("n", "q", function()
-						vim.api.nvim_buf_delete(buf, {
-							force = true,
-						})
-					end, {
-						buffer = buf,
-					})
-
-					vim.keymap.set("n", "<cr>", function()
-						local contents = vim.api.nvim_buf_get_lines(0, 0, -1, true)
-						vim.api.nvim_command(string.format('!git commit -m "%s"', table.concat(contents, '" -m "')))
-						vim.api.nvim_buf_delete(buf, {
-							force = true,
-						})
-					end, {
-						buffer = buf,
-					})
-				end,
 			})
 		end
 	end,

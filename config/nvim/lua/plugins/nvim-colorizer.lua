@@ -1,22 +1,20 @@
 return {
 	"catgoose/nvim-colorizer.lua",
 	event = "BufReadPre",
-	-- 颜色支持
 	config = function()
-		require("colorizer").setup({ "*" }, {
-			RGB = true, -- #RGB hex codes
-			RRGGBB = true, -- #RRGGBB hex codes
-			names = true, -- "Name" codes like Blue
-			RRGGBBAA = true, -- #RRGGBBAA hex codes
-			rgb_fn = true, -- CSS rgb() and rgba() functions
-			hsl_fn = true, -- CSS hsl() and hsla() functions
-			css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-			css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
-			-- Available modes: foreground, background
-			mode = "background", -- Set the display mode.})
-			--[[ #558817
-    		-- Red Blue Yellow
-    		--]]
+		require("colorizer").setup({
+			filetypes = { "*" },
+			user_default_options = {
+				RGB = true,
+				RRGGBB = true,
+				names = true,
+				RRGGBBAA = true,
+				rgb_fn = true,
+				hsl_fn = true,
+				css = true,
+				css_fn = true,
+				mode = "background",
+			},
 		})
 	end,
 }

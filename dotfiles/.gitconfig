@@ -7,9 +7,6 @@
 
 [core]
 	editor = nvim
-    hooksPath = ~/.dotfiles/src/githooks
-    ; pager = less -FRSX
-    ; pager = delta
 
 [pull]
 	rebase = true
@@ -31,22 +28,20 @@
 	autocorrect = 1
 
 [commit]
-    template = ~/.dotfiles/src/gitcommit
-
-[difftool]
-    prompt = true
+	template = ~/.config/gitcommit
 
 [diff]
-    tool = nvimdiff
+	tool = nvimdiff
 
 [difftool "nvimdiff"]
-    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 
 [merge]
-    tool = nvimdiff
-    conflictstyle = diff3
+	tool = nvimdiff
+	conflictstyle = diff3
 
 [mergetool "nvimdiff"]
-    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\""
+	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\""
+
 [safe]
 	directory = *

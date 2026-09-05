@@ -2,7 +2,9 @@
 *lock.json
 tmux-*
 *.db
-.git
-*.db
 __pycache__/
 **.omc
+.omo/
+system/.env.local
+# 独立维护的子仓（ghostd Rust 集成），不进根仓
+shell/

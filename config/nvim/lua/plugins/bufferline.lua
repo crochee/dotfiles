@@ -1,24 +1,26 @@
 return {
 	"akinsho/bufferline.nvim",
-	-- 顶部状态栏
-	config = function()
-		vim.opt.termguicolors = true
-		require("bufferline").setup({
-			options = {
-				-- 使用 nvim 内置lsp
-				diagnostics = "nvim_lsp",
-				-- 左侧让出 nvim-tree 的位置
-				offsets = {
-					{
-						filetype = "NvimTree",
-						text = "File Explorer",
-						highlight = "Directory",
-						text_align = "left",
-					},
+	dependencies = { "nvim-tree/nvim-web-devicons" },
+	event = "VeryLazy",
+	keys = {
+		{ "<leader>q", "<cmd>BufferLineCyclePrev<cr>", desc = "Previous buffer" },
+		{ "<leader>w", "<cmd>BufferLineCycleNext<cr>", desc = "Next buffer" },
+		{ "<leader>cc", "<cmd>bd<cr>", desc = "Close current buffer" },
+		{ "<leader>cr", "<cmd>BufferLineCloseRight<cr>", desc = "Close right buffers" },
+		{ "<leader>cl", "<cmd>BufferLineCloseLeft<cr>", desc = "Close left buffers" },
+		{ "<leader>co", "<cmd>BufferLineCloseRight<cr><cmd>BufferLineCloseLeft<cr>", desc = "Close other buffers" },
+	},
+	opts = {
+		options = {
+			diagnostics = "nvim_lsp",
+			offsets = {
+				{
+					filetype = "NvimTree",
+					text = "File Explorer",
+					highlight = "Directory",
+					text_align = "left",
 				},
-				-- show_buffer_icons = false,
-				-- show_buffer_close_icons = false,
 			},
-		})
-	end,
+		},
+	},
 }

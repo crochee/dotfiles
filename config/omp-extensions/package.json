@@ -1,0 +1,14 @@
+{
+	"name": "sample-extension",
+	"version": "0.0.0",
+	"private": true,
+	"description": "oh-my-pi 扩展样板（无业务逻辑，仅验证加载链路）",
+	"type": "module",
+	"omp": {
+		"extensions": ["./sample.ts"]
+	},
+	"dependencies": {
+		"@oh-my-pi/pi-coding-agent": "*",
+		"@oh-my-pi/pi-utils": "*"
+	}
+}

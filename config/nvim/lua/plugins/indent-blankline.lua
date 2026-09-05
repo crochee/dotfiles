@@ -1,5 +1,6 @@
 return {
 	"lukas-reineke/indent-blankline.nvim",
+	event = "VeryLazy",
 	main = "ibl",
 	--编辑块的竖线提示
 	config = function()
@@ -39,8 +40,6 @@ return {
 			exclude = {
 				filetypes = {
 					"help",
-					"alpha",
-					"dashboard",
 					"neo-tree",
 					"Trouble",
 					"lazy",

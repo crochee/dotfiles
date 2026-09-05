@@ -1,11 +1,11 @@
 local function is_parser_installed(lang)
 	local installed = require("nvim-treesitter").get_installed()
-	return vim.tbl_contains(installed, lang)
+	return vim.list_contains(installed, lang)
 end
 
 local function is_parser_available(lang)
 	local available = require("nvim-treesitter").get_available()
-	return vim.tbl_contains(available, lang)
+	return vim.list_contains(available, lang)
 end
 
 local function start_treesitter(buf, lang)
@@ -26,6 +26,8 @@ return {
 	-- syntax highlighting.
 	{
 		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		lazy = false,
 		build = ":TSUpdate",
 		config = function()
 			vim.api.nvim_create_autocmd("FileType", {
@@ -49,7 +51,10 @@ return {
 	-- Show context of the current function
 	{
 		"nvim-treesitter/nvim-treesitter-context",
-		event = { "VeryLazy" },
+		event = "VeryLazy",
+		keys = {
+			{ "<leader>tc", function() require("treesitter-context").go_to_context() end, desc = "Jump to context" },
+		},
 		opts = { mode = "cursor", max_lines = 3 },
 	},
 }
