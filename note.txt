@@ -1,0 +1,12 @@
+note.txt — 政策: user-facing 搜索 / 文件列举一律用 rg (见 README「rg 优先」).
+
+A. rg 做不到的位置
+
+1. home/private_dot_system/shell.zsh.sh.tmpl — compinit 缓存新鲜度
+   `find "$_comp_dump" -mtime -1` 按 mtime 过滤文件; rg 不看 mtime.
+2. home/.chezmoiscripts/run_after_apply_install-quiver-stub.sh.tmpl — cp 兜底
+   `find . -type f -name '*.lua'`: 与 `cp --parents` 同表达式的内部管线, 需在源目录
+   内产相对路径, find 是该语义的原生形态.
+3. bin/docker-daemon — grep / pgrep / head / sed / getent
+   该脚本的 root 部分经 `exec sudo -- "$0"` 重入, sudo 默认 env_reset, mise PATH
+   不保证还在; coreutils + glibc 工具一定在, 故刻意只用它们.

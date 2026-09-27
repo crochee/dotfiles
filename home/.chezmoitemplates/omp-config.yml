@@ -1,0 +1,29 @@
+statusLine:
+  separator: slash
+
+lsp:
+  enabled: true
+  lazy: true
+  shared: true
+  formatOnWrite: false
+  diagnosticsOnWrite: true
+  diagnosticsOnEdit: false
+  diagnosticsDeduplicate: true
+
+browser:
+  enabled: false
+
+modelRoles:
+  default: minimax-code-cn/MiniMax-M3
+
+retry:
+  fallbackChains:
+    default:
+      - minimax-code-cn/MiniMax-M3
+      - zai/glm-5.3
+      - deepseek/deepseek-flash
+
+# wezterm reports PUA support, omp auto-upgrades to nerd glyphs; pin to ascii to avoid PUA in slash.
+symbolPreset: ascii
+
+setupVersion: 2

@@ -1,36 +1,14 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+# containerd 2.x (kind v0.27+ node image) 移除了 registry.mirrors, 镜像走
+# /etc/containerd/certs.d 的 hosts.toml (见 k8s/certs.d/, 部署步骤在
+# kind-cluster-guide.md「Registry mirrors」). config_path 在 v0.27+ image 里
+# 本就是默认值, 本 patch 只服务更老的 node image (如 v1.31).
 containerdConfigPatches:
-  # ------------------------
-  # Registry Mirrors Configuration
-  # ------------------------
   - |-
     [plugins."io.containerd.grpc.v1.cri".registry]
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-        # Docker Hub mirrors
-        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-          endpoint = [
-            "https://dockerpull.com",
-            "https://dockerproxy.1panel.live",
-            "https://docker.m.daocloud.io",
-            "https://dockerhub.icu",
-            "https://docker.mirrors.ustc.edu.cn"
-          ]
-        
-        # Google Container Registry mirrors
-        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
-          endpoint = [
-            "https://gcr.mirrors.ustc.edu.cn",
-            "https://registry.aliyuncs.com/google_containers",
-            "https://gcr.io"
-          ]
-        
-        # Quay.io mirrors
-        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
-          endpoint = [
-            "https://quay.mirrors.ustc.edu.cn",
-            "https://quay.io"
-          ]
+      config_path = "/etc/containerd/certs.d"
+
 nodes:
   - role: control-plane
     # Control plane high availability (uncomment to enable)
@@ -40,26 +18,10 @@ nodes:
   - role: worker
 
 networking:
-  # Use default CNI (Flannel) for simplicity and compatibility
+  # kind 自带 kindnet 作为默认 CNI —— 保持启用，集群建好即可用。
+  # 要用别的 CNI（如 Calico）必须同时改成 true 并给出 podSubnet，否则两套
+  # CNI 抢管 pod 网络。切换步骤见 kind-cluster-guide.md。
   disableDefaultCNI: false
-  
+
   # Use IPVS for kube-proxy for better performance and scalability
   kubeProxyMode: "ipvs"
-
-# =========================
-# Cluster Creation Commands
-# =========================
-
-# Create the cluster
-# kind create cluster --config=/home/crochee/.dotfiles/k8s/kind-cluster-config.yaml
-
-# Create cluster with specific Kubernetes version
-# kind create cluster --config=/home/crochee/.dotfiles/k8s/kind-cluster-config.yaml --image=kindest/node:v1.29.0
-
-# Verify cluster status
-# kubectl cluster-info
-# kubectl get nodes -o wide
-# kubectl get pods -A
-
-# Delete cluster when done
-# kind delete cluster

@@ -1,0 +1,5 @@
+{{- $shell := "" -}}
+{{- if hasKey . "chezmoi_shell" }}{{ $shell = .chezmoi_shell }}{{ end -}}
+{{- if and $shell (not (or (eq $shell "bash") (eq $shell "zsh"))) -}}
+{{- fail (printf "chezmoi_shell=%q is invalid; must be \"bash\" or \"zsh\" (or unset, for OS default)" $shell) -}}
+{{- end -}}

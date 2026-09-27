@@ -1,0 +1,213 @@
+{{- /* POSIX stub (linux/darwin) + WSL→Windows mirror. Version tag in defaults.yaml:quiver.
+     The tag is the only update/sync signal: it names the release URL, the
+     Windows exe cache file, and — via `quiver --version` — the installed
+     binary. In-sync runs perform zero network I/O and no hashing.
+     `--stub <layout>` renders host-independently, so the Linux binary writes
+     the Windows stub too — cmd.exe/wine are never invoked.
+     Verbose gates: WEZTERM_VERBOSE / QUIVER_VERBOSE / WOX_VERBOSE (any non-empty value). */ -}}
+{{- if or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin") -}}
+#!/usr/bin/env bash
+set -uo pipefail
+
+log() { [[ -n "${1:-}" ]] && shift && printf '%s\n' "$@"; return 0; }
+warn() { printf '%s\n' "$@" >&2; }
+
+_log_wezterm() { log "${WEZTERM_VERBOSE:-}" "$@"; }
+_log_quiver() { log "${QUIVER_VERBOSE:-}" "$@"; }
+_log_wox() { log "${WOX_VERBOSE:-}" "$@"; }
+
+case "$(uname -s)" in
+    Darwin|Linux) ;;
+    *)      warn "quiver-stub: unsupported uname=$(uname -s); skipping"; exit 0 ;;
+esac
+
+QUIVER_VER="{{ .quiver.version }}"
+QUIVER_WIN_URL="https://github.com/crochee/quiver/releases/download/v${QUIVER_VER}/quiver-x86_64-pc-windows-gnu.exe"
+
+BIN="$HOME/.local/bin/quiver"
+[[ -x "$BIN" ]] || { _log_quiver "quiver-stub: $BIN missing (chezmoi external 未就位); skipping"; exit 0; }
+
+# Tag check, one local exec. A version bump changes the external URL, which is
+# a cache miss, so chezmoi has already refreshed the binary by hook time.
+inst_ver="$("$BIN" --version 2>/dev/null | awk 'NR==1{print $2}')"
+[[ "$inst_ver" == "$QUIVER_VER" ]] || \
+    warn "quiver-stub: installed ${inst_ver:-unknown} != pinned ${QUIVER_VER}"
+
+sync_stub() { # sync_stub <layout> <dst> <label>
+    local tmp; tmp="$(mktemp)"
+    if "$BIN" --stub "$1" > "$tmp" 2>/dev/null && [[ -s "$tmp" ]]; then
+        if cmp -s "$tmp" "$2" 2>/dev/null; then
+            _log_quiver "$3: in sync at $2"
+        elif cp -f "$tmp" "$2"; then
+            chmod +x "$2" 2>/dev/null || true
+            _log_quiver "$3: wrote $2"
+        else
+            warn "$3: cp to $2 failed"
+        fi
+    else
+        warn "$3: '$BIN --stub $1' produced no metadata; skipped"
+    fi
+    rm -f "$tmp"
+}
+
+# --- POSIX stub --------------------------------------------------------------
+posix_dir="$HOME/.wox/wox-user/plugins/scripts"
+if mkdir -p "$posix_dir" 2>/dev/null; then
+    sync_stub posix "$posix_dir/quiver.sh" "quiver-stub"
+else
+    warn "quiver-stub: cannot create $posix_dir; skipped"
+fi
+
+# --- WSL → Windows mirror ----------------------------------------------------
+is_wsl=0
+for _m in /mnt/c /mnt/wsl; do [[ -d "$_m" ]] && is_wsl=1 && break; done
+[[ $is_wsl -eq 1 ]] || exit 0
+
+# WSL user ≠ Windows account; use /mnt/c/Users owner as the Windows home.
+win_home() {
+    local owner; owner="$(stat -c '%U' /mnt/c/Users 2>/dev/null || true)"
+    if [[ -n "$owner" && "$owner" != "root" ]]; then
+        printf '%s' "/mnt/c/Users/${owner}"
+    else
+        printf '%s' "/mnt/c/Users/${USER}"
+    fi
+}
+
+sync_wezterm() {
+    local src="$HOME/.config/wezterm"
+    local dst; dst="$(win_home)/.config/wezterm"
+    [[ -d "$src" ]] || { warn "wezterm sync: $src not found"; return 0; }
+    [[ -d "$dst" ]] || { _log_wezterm "wezterm sync: $dst not reachable; skipping"; return 0; }
+
+    # *.lua only; --delete mirrors src deletes.
+    if command -v rsync >/dev/null 2>&1; then
+        if rsync -a --delete --include='*/' --include='*.lua' --exclude='*' \
+                "$src/" "$dst/" >/dev/null; then
+            _log_wezterm "wezterm sync: done ($src → $dst)"
+        else
+            warn "wezterm sync: rsync failed; WSL config still authoritative"
+        fi
+    else
+        if (cd "$src" && find . -type f -name '*.lua' -print0) 2>/dev/null \
+                | xargs -0 -r cp --target-directory "$dst" --parents 2>/dev/null; then
+            _log_wezterm "wezterm sync: done (cp, $src → $dst, *.lua only)"
+        else
+            warn "wezterm sync: cp fallback failed"
+        fi
+    fi
+}
+
+# Linux-side ~/.wox/wox-user/ is chezmoi-managed; mirrors to Windows HOME:
+# jq deep-merge for wox.json (runtime-added keys survive), cp for ShellCommands.json (repo canonical).
+sync_wox_windows() {
+    command -v jq >/dev/null 2>&1 || { warn "wox sync: jq missing; skipping"; return 0; }
+
+    local native_user_dir="$HOME/.wox/wox-user"
+    local settings_src="${native_user_dir}/settings/wox.json"
+    local shell_cmds_src="${native_user_dir}/ShellCommands.json"
+
+    [[ -f "$settings_src" ]] || { warn "wox sync: $settings_src missing; skipping"; return 0; }
+
+    local win_user_dir; win_user_dir="$(win_home)/.wox/wox-user"
+    if [[ ! -d "$(dirname "$win_user_dir")" ]]; then
+        warn "wox sync: $(dirname "$win_user_dir") not reachable; Windows-side sync skipped"
+        return 0
+    fi
+
+    local wox_json="${win_user_dir}/settings/wox.json"
+    local changed=0
+    mkdir -p "$(dirname "$wox_json")"
+    [[ -f "$wox_json" ]] || echo '{}' > "$wox_json"
+
+    # jq deep-merge: repo wins on shared keys, runtime keys survive.
+    local tmp; tmp="$(mktemp)"
+    local jq_filter='def deepmerge(s;r):
+        reduce (r|keys_unsorted[]) as $k (s;
+            if (s[$k]|type)=="object" and (r[$k]|type)=="object"
+            then .[$k]=deepmerge(s[$k];r[$k])
+            else .[$k]=r[$k]
+            end);
+        $store[0] as $s | $repo[0] as $rp | deepmerge($s;$rp)'
+    if ! jq -n --slurpfile store "$wox_json" --slurpfile repo "$settings_src" \
+            "$jq_filter" > "$tmp" 2>/dev/null; then
+        warn "[windows] jq deep-merge failed; store left unchanged"
+        rm -f "$tmp"
+    elif [[ "$(jq -cS . "$wox_json" 2>/dev/null)" == "$(jq -cS . "$tmp" 2>/dev/null)" ]]; then
+        rm -f "$tmp" # semantically unchanged — leave the store file untouched
+    else
+        mv "$tmp" "$wox_json"
+        _log_wox "[windows] merged $(jq 'keys | length' "$settings_src") top-level keys into $wox_json"
+        changed=1
+    fi
+
+    local shell_cmds_dst="${win_user_dir}/ShellCommands.json"
+    if [[ -f "$shell_cmds_src" ]]; then
+        mkdir -p "$(dirname "$shell_cmds_dst")"
+        if ! cmp -s "$shell_cmds_src" "$shell_cmds_dst" 2>/dev/null; then
+            if cp -f "$shell_cmds_src" "$shell_cmds_dst"; then
+                _log_wox "[windows] copied ShellCommands.json -> $shell_cmds_dst"
+                changed=1
+            else
+                warn "[windows] ShellCommands.json copy failed"
+            fi
+        fi
+    fi
+
+    [[ $changed -eq 0 ]] && _log_wox "[windows] in sync"
+
+    # Old Python plugin era cleanup.
+    local win_cfg; win_cfg="$(win_home)/.config/wox/plugins/crochee-commands"
+    [[ -d "$win_cfg" ]] && rm -rf "$win_cfg" && _log_quiver "quiver plugin: pruned retired Python plugin mirror"
+    local win_wox_cfg; win_wox_cfg="$(win_home)/.config/wox"
+    if [[ -d "$win_wox_cfg" ]]; then
+        rmdir "$win_wox_cfg/plugins" 2>/dev/null || true
+        rmdir "$win_wox_cfg" 2>/dev/null && _log_quiver "quiver plugin: pruned obsolete $win_wox_cfg tree" || true
+    fi
+}
+
+install_quiver_windows() {
+    local scripts; scripts="$(win_home)/.wox/wox-user/plugins/scripts"
+    mkdir -p "$scripts" 2>/dev/null || { warn "quiver plugin: cannot create $scripts; skipped"; return 0; }
+
+    # Tag-stamped cache: the version in the filename is the sync decision.
+    local cache="${XDG_CACHE_HOME:-$HOME/.cache}/quiver-${QUIVER_VER}-windows-amd64.exe"
+
+    if [[ ! -f "$cache" ]]; then
+        _log_quiver "quiver plugin (windows): fetching v$QUIVER_VER"
+        if command -v curl >/dev/null 2>&1; then
+            curl --connect-timeout 10 --max-time 120 --retry 2 --retry-delay 2 \
+                --fail -fsSL "$QUIVER_WIN_URL" -o "$cache" 2>/dev/null \
+                || { warn "quiver plugin (windows): curl failed; keeping current install"; rm -f "$cache"; return 0; }
+        elif command -v wget >/dev/null 2>&1; then
+            wget -q --timeout=120 --tries=2 -O "$cache" "$QUIVER_WIN_URL" 2>/dev/null \
+                || { warn "quiver plugin (windows): wget failed; keeping current install"; rm -f "$cache"; return 0; }
+        else
+            warn "quiver plugin (windows): curl/wget not on PATH; keeping current install"; return 0
+        fi
+        [[ -s "$cache" ]] || { warn "quiver plugin (windows): empty download; keeping current install"; rm -f "$cache"; return 0; }
+    fi
+
+    # Byte-compare against the tag-named cache — no exec, no hash, no network.
+    if cmp -s "$cache" "$scripts/quiver.exe" 2>/dev/null; then
+        _log_quiver "quiver plugin: in sync (windows, v$QUIVER_VER)"
+    else
+        cp -f "$cache" "$scripts/quiver.exe" \
+            && chmod +x "$scripts/quiver.exe" 2>/dev/null \
+            && _log_quiver "quiver plugin: installed quiver.exe v$QUIVER_VER → $scripts"
+    fi
+
+    sync_stub windows "$scripts/quiver" "quiver plugin (windows)"
+
+    # Prune caches and residue from older tags/eras.
+    find "$(dirname -- "$cache")" -maxdepth 1 -type f -name 'quiver-*-windows-amd64.exe' \
+        ! -name "$(basename -- "$cache")" -delete 2>/dev/null
+    rm -f "$scripts/cc" "$scripts/cc.exe" "$scripts/quiver.sh" 2>/dev/null
+    rm -rf "$scripts/quiver-v0.1" 2>/dev/null
+}
+
+sync_wezterm
+sync_wox_windows
+install_quiver_windows
+_log_wezterm "windows-host sync: done"
+exit 0
+{{ end -}}

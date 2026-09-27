@@ -1,42 +1,33 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+# rsx — WSL → Windows rsync. Rewrites the first WSL-internal path to UNC.
+# Windows user: $RSYNC_CMD > $WINUSER > ask Windows > $USER.
 set -e
 
-# 原始rsync命令路径
-RSYNC_CMD="/mnt/c/Users/crochee/.local/bin/rsync/bin/rsync.exe"
-
-# 获取所有参数
-args=("$@")
-
-# 查找需要转换的本地路径参数
-local_path_index=-1
-for i in "${!args[@]}"; do
-    # 跳过以 - 开头的选项参数
-    if [[ "${args[i]}" != -* ]]; then
-        # 检查是否是有效的文件/目录路径
-        if [[ -e "${args[i]}" ]]; then
-            local_path_index=$i
-            break
-        fi
+if [ -z "${RSYNC_CMD:-}" ]; then
+    win_user="${WINUSER:-}"
+    if [ -z "$win_user" ] && command -v cmd.exe >/dev/null 2>&1; then
+        win_user=$(cmd.exe /c 'echo %USERNAME%' 2>/dev/null | tr -d '\r\n' || true)
     fi
-done
-
-# 检查是否找到有效的本地路径
-if [ ! "$local_path_index" -eq -1 ]; then
-    # 获取并处理本地路径
-    local_path="${args[$local_path_index]}"
-    if [ ! -e "$local_path" ]; then
-        echo "错误: 路径 '$local_path' 不存在"
-        exit 1
-    fi
-
-    # 转换为绝对路径并添加WSL前缀
-    abs_path=$(realpath "$local_path")
-    wsl_path="//wsl.localhost/Arch$abs_path"
-
-    # 替换参数数组中的路径
-    args[$local_path_index]="$wsl_path"
+    [ -n "$win_user" ] || win_user="$USER"
+    RSYNC_CMD="/mnt/c/Users/$win_user/.local/bin/rsync/bin/rsync.exe"
 fi
 
-# 执行rsync命令
-$RSYNC_CMD "${args[@]}"
+args=("$@")
+local_path_index=-1
+for i in "${!args[@]}"; do
+    _p="${args[i]}"
+    [[ "$_p" != -* ]] && [[ -e "$_p" ]] || continue
+    [[ "$_p" == /mnt/* ]] && continue
+    local_path_index=$i
+    break
+done
+
+if [ "$local_path_index" -ge 0 ]; then
+    args[local_path_index]="//wsl.localhost/${WSL_DISTRO_NAME:?rsx 需在 WSL 内运行}$(realpath "${args[$local_path_index]}")"
+fi
+
+if [ ! -x "$RSYNC_CMD" ]; then
+    echo "rsx: rsync 二进制 $RSYNC_CMD 不存在或不可执行 (设置 RSYNC_CMD 或 WINUSER)" >&2
+    exit 1
+fi
+"$RSYNC_CMD" "${args[@]}"

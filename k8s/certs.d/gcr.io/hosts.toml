@@ -1,0 +1,8 @@
+# containerd 2.x registry mirror (hosts.toml). 部署: kind-cluster-guide.md「Registry mirrors」.
+server = "https://gcr.io"
+
+[host."https://gcr.mirrors.ustc.edu.cn"]
+capabilities = ["pull", "resolve"]
+
+[host."https://registry.aliyuncs.com/google_containers"]
+capabilities = ["pull", "resolve"]

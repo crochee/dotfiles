@@ -1,0 +1,19 @@
+{
+  "$comment": "Wox v2.4.5 settings override — only fields that differ from defaults. See docs/WOX.md.",
+  "MainHotkey@windows": "alt+space",
+  "MainHotkey@darwin": "cmd+space",
+  "MainHotkey@linux": "alt+space",
+
+  "SelectionHotkey@windows": "win+alt+space",
+  "SelectionHotkey@darwin": "command+option+space",
+  "SelectionHotkey@linux": "ctrl+shift+alt+space",
+
+  "ActionPanelHotkey@windows": "ctrl+k",
+  "ActionPanelHotkey@darwin": "cmd+k",
+  "ActionPanelHotkey@linux": "ctrl+k",
+
+  "EnableAutostart@windows": true,
+  "EnableAutostart@darwin": true,
+  "EnableAutostart@linux": true,
+  "EnableQueryCompletionHint": true
+}

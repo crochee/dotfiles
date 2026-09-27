@@ -1,10 +1,11 @@
 .DS_Store
-*lock.json
 tmux-*
 *.db
 __pycache__/
-**.omc
-.omo/
-system/.env.local
-# 独立维护的子仓（ghostd Rust 集成），不进根仓
-shell/
+*.pyc
+
+# 每机生成的 lockfile (nvim lazy-lock.json; 其余 lockfile 各工具自管, 不在此拦)
+lazy-lock.json
+
+# 本机覆盖与 secrets
+home/.chezmoidata/local.yaml

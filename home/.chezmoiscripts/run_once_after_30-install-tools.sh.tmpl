@@ -1,0 +1,48 @@
+#!/bin/sh
+# mise (curl → ~/.local/bin) + tools from ~/.config/mise/config.toml. No `set -e`:
+# tool install failure must not abort `chezmoi init --apply`. Docker daemon is
+# owned by bin/docker-daemon (mise unit path + generated systemd unit).
+# Note: this script runs *before* the login shell sources ~/.system/env.sh and
+# ~/.system/shell.{zsh,bash}.sh, which is where `mise activate` is evaluated for
+# interactive shells. Here we only need `mise` itself on PATH so we can run
+# `mise install`. Once mise install completes, the per-tool shims/bin dirs are
+# available to subsequent interactive shells via PATH activation.
+set -u
+
+say() { printf '\n==> %s\n' "$*"; }
+
+if [ "$(uname -s)" = "Darwin" ]; then
+    for _b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+        if [ -x "$_b" ]; then
+            # shellcheck disable=SC1090
+            eval "$("$_b" shellenv 2>/dev/null)"
+            break
+        fi
+    done
+fi
+
+# `~/.local/bin` hosts the mise binary itself. We do NOT prepend
+# `~/.local/share/mise/shims` here: PATH activation (`mise activate` in the
+# shell init scripts) owns shim ordering. A stale/partial shim dir from a
+# previous apply can poison non-interactive `npm`/`node` invocations made
+# before the shell ever sources env.sh.
+export PATH="$HOME/.local/bin:$PATH"
+
+if command -v mise >/dev/null 2>&1; then
+    say "mise already present: $(mise --version 2>/dev/null || echo yes)"
+else
+    say "installing mise (curl https://mise.run)"
+    curl -fsSL https://mise.run | sh -s -- -b "$HOME/.local/bin" \
+        || say "mise curl install failed"
+fi
+
+# `mise install` rebuilds shims for the tools it installs. A separate
+# `mise reshim` is redundant in the steady state (no npm -g, no extra backends
+# between install and shell activation) and was previously kept as a "fix it"
+# guard. Dropping it: idempotency is already guaranteed by mise install, and
+# the script stays readable. If a tool's bin dir is missing on first interactive
+# login, `mise activate` will trigger `not_found_auto_install` (default true).
+say "mise install (tools from ~/.config/mise/config.toml)"
+mise install || say "mise install failed; check ~/.config/mise/config.toml"
+
+exit 0

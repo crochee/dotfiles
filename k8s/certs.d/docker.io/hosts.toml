@@ -1,0 +1,17 @@
+# containerd 2.x registry mirror (hosts.toml). 部署: kind-cluster-guide.md「Registry mirrors」.
+server = "https://docker.io"
+
+[host."https://dockerpull.com"]
+capabilities = ["pull", "resolve"]
+
+[host."https://dockerproxy.1panel.live"]
+capabilities = ["pull", "resolve"]
+
+[host."https://docker.m.daocloud.io"]
+capabilities = ["pull", "resolve"]
+
+[host."https://dockerhub.icu"]
+capabilities = ["pull", "resolve"]
+
+[host."https://docker.mirrors.ustc.edu.cn"]
+capabilities = ["pull", "resolve"]

@@ -1,0 +1,54 @@
+# ~/.system/shell.zsh.sh — sourced by ~/.zshrc.
+# Init order (shim mode): mise activate → starship → zoxide → compinit → plugins → mcfly.
+# compinit cache mtime guard avoids >1s compaudit on every login.
+# shellcheck shell=bash disable=SC2148
+
+_zsh_plugin_source() {
+    local _zp=$1 _cand
+    for _cand in \
+        "/opt/homebrew/share/${_zp}/${_zp}.zsh" \
+        "/opt/homebrew/share/${_zp}/share/${_zp}.zsh" \
+        "/usr/local/share/${_zp}/${_zp}.zsh" \
+        "/usr/share/${_zp}/${_zp}.zsh" \
+        "/usr/share/zsh/plugins/${_zp}/${_zp}.zsh" \
+        "$HOME/.zsh/${_zp}/${_zp}.zsh" \
+        "$HOME/.local/share/zsh/plugins/${_zp}/${_zp}.zsh" \
+        "$HOME/.config/zsh/${_zp}/${_zp}.zsh"; do
+        [ -r "$_cand" ] && source "$_cand" 2>/dev/null && return 0
+    done
+    return 1
+}
+
+stty -ixon 2>/dev/null || true
+
+eval "$(mise activate --shims zsh)"
+eval "$(starship init zsh)"
+eval "$(zoxide init --cmd cd zsh)"
+
+autoload -Uz compinit
+_comp_dump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-${ZSH_VERSION:-5}"
+if [ -s "$_comp_dump" ] && [ -n "$(find "$_comp_dump" -mtime -1 2>/dev/null)" ]; then
+    compinit -C -d "$_comp_dump"
+else
+    compinit -d "$_comp_dump" 2>/dev/null || compinit
+fi
+unset _comp_dump
+
+export HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
+export HISTSIZE=20000 SAVEHIST=20000
+mkdir -p "${HISTFILE%/*}"
+[ -e "$HISTFILE" ] || : >> "$HISTFILE"
+setopt INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
+
+if _zsh_plugin_source zsh-history-substring-search; then
+    bindkey '\e[A' history-substring-search-up
+    bindkey '\e[B' history-substring-search-down
+else
+    bindkey '\e[A' history-beginning-search-backward
+    bindkey '\e[B' history-beginning-search-forward
+fi
+
+_zsh_plugin_source zsh-autosuggestions
+eval "$(mcfly init zsh)"
+_zsh_plugin_source zsh-syntax-highlighting     # must be last
+unset -f _zsh_plugin_source

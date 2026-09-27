@@ -1,0 +1,6 @@
+{{- template "chezmoi-shell-validate" . -}}
+# shellcheck shell=bash disable=SC2148
+# .zprofile = zsh login-only env (incl. login+interactive, where .zshrc also runs;
+# env.sh is idempotent via its own guard).
+
+. "$HOME/.system/env.sh"

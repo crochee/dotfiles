@@ -1,0 +1,48 @@
+# ignore — patterns match target paths under $HOME (post-render), not source paths.
+# Most entries are runtime artifacts that block `chezmoi add ~` from sucking them in.
+
+.bash_history
+.zsh_history
+.local/state/bash/history
+.local/state/zsh/history
+
+{{- $shell := "" }}
+{{- if hasKey . "chezmoi_shell" }}{{ $shell = .chezmoi_shell }}{{ end }}
+{{- if eq $shell "" }}
+{{- if eq .chezmoi.os "linux" }}{{ $shell = "bash" }}{{ end }}
+{{- if eq .chezmoi.os "darwin" }}{{ $shell = "zsh" }}{{ end }}
+{{- end }}
+{{- if eq $shell "zsh" }}
+.bashrc
+.bash_profile
+.system/shell.bash.sh
+{{- end }}
+{{- if eq $shell "bash" }}
+.zshrc
+.zprofile
+.system/shell.zsh.sh
+{{- end }}
+
+.config/nvim/lazy-lock.json
+
+.omp/config.yml
+.omp/agent/*.db*
+.omp/agent/cache
+.omp/agent/sessions
+.omp/agent/terminal-sessions
+.omp/gpu_cache.json
+.omp/logs
+.omp/natives
+.omp/run
+.omp/plugins
+.omp/marketplaces.json
+
+.wox/wox-user/wox.db*
+.wox/wox-user/notes
+.wox/wox-user/themes
+.wox/wox-user/plugins
+
+.claude/*.lock*
+.claude/sessions
+.claude/terminal-sessions
+.claude/skills/**/__pycache__

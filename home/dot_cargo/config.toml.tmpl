@@ -1,0 +1,13 @@
+{{- with .chezmoi_cargo_registry }}
+[source.crates-io]
+replace-with = "rsproxy-sparse"
+
+[source.rsproxy-sparse]
+registry = {{ . | quote }}
+{{- end }}
+
+[net]
+retry = 3
+
+[http]
+timeout = 30

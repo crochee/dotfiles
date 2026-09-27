@@ -1,0 +1,12 @@
+chezmoi_uv_index_url: "https://mirrors.aliyun.com/pypi/simple/"
+chezmoi_cargo_registry: "sparse+https://rsproxy.cn/index/"
+
+# "" = OS default (linux→bash, darwin→zsh); "bash" / "zsh" override.
+chezmoi_shell: ""
+
+quiver:
+    version: "0.3.0"
+
+# env: per-machine shell variables. Values are exported iff non-empty.
+env:
+    GOPROXY: "https://goproxy.cn,direct"

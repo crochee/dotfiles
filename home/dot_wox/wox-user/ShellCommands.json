@@ -1,0 +1,481 @@
+{
+  "$comment": "Wox catalog consumed by the Quiver plugin. {query}/$1/$@ are substituted verbatim per quiver (https://github.com/crochee/quiver). Hotkeys: docs/KEYMAP.md §1.5.",
+  "version": 1,
+  "defaultInterpreter@windows": "powershell",
+  "defaultInterpreter@darwin": "bash",
+  "defaultInterpreter@linux": "bash",
+  "defaultWorkingDirectory": "$HOME/workspace",
+  "defaultWorkingDirectory@windows": "$HOME",
+  "commands": [
+    {
+      "alias": "b64d",
+      "command": "import base64;s='''{query}''';print(base64.urlsafe_b64decode(s+'='*(-len(s)%4)).decode('utf-8','replace'))",
+      "interpreter": "python",
+      "capture": true,
+      "tags": [
+        "dev",
+        "encoding",
+        "token"
+      ],
+      "description": "Base64 / JWT-segment decoder; Enter copies the plaintext."
+    },
+    {
+      "alias": "da",
+      "command": "chezmoi diff --exclude=scripts --",
+      "tags": [
+        "workflow",
+        "dotfiles",
+        "alias"
+      ]
+    },
+    {
+      "alias": "disks",
+      "command": "Get-PSDrive -PSProvider FileSystem | Select-Object Name,@{N='Used(GB)';E={[math]::Round($_.Used/1GB,2)}},@{N='Free(GB)';E={[math]::Round($_.Free/1GB,2)}} | Format-Table -AutoSize",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "sys"
+      ]
+    },
+    {
+      "alias": "dive",
+      "command": "docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/wagoodman/dive:latest \"$1\"",
+      "tags": [
+        "community",
+        "docker"
+      ]
+    },
+    {
+      "alias": "dns",
+      "command": "Clear-DnsClientCache; Get-DnsClientCache | Format-Table -AutoSize",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "net"
+      ]
+    },
+    {
+      "alias": "dotst",
+      "command": "git status -sb",
+      "interpreter": "bash",
+      "capture": true,
+      "workingDirectory": "$HOME/.dotfiles",
+      "tags": [
+        "dev",
+        "git",
+        "dotfiles"
+      ],
+      "description": "git status of the dotfiles repo, in the preview."
+    },
+    {
+      "alias": "dotup",
+      "command": "chezmoi update",
+      "tags": [
+        "workflow",
+        "dotfiles"
+      ]
+    },
+    {
+      "alias": "extract",
+      "command": "Expand-Archive -Force -Path '$1' -DestinationPath .",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "fs"
+      ]
+    },
+    {
+      "alias": "flushdns",
+      "command": "Clear-DnsClientCache",
+      "interpreter": "powershell",
+      "silent": true,
+      "tags": [
+        "community",
+        "net",
+        "maintenance"
+      ]
+    },
+    {
+      "alias": "ip",
+      "command": "for /f \"tokens=4\" %i in ('route print -4 0.0.0.0 ^| findstr /R /C:\"^ *0\\.0\\.0\\.0 \"') do @echo %i",
+      "interpreter": "cmd",
+      "capture": true,
+      "tags": [
+        "community",
+        "net"
+      ],
+      "description": "Primary outbound IPv4 from the default route. Enter copies it."
+    },
+    {
+      "alias": "kexec",
+      "command": "kubectl exec -it -n openstack $(kubectl get pods -n openstack | rg 'mariadb.*-server-.*Running' | head -1 | cut -d' ' -f1) -- mysql --defaults-file=/etc/mysql/admin_user.cnf",
+      "interpreter": "bash",
+      "tags": [
+        "workflow",
+        "k8s"
+      ]
+    },
+    {
+      "alias": "kill",
+      "command": "Stop-Process -Id '$1' -Force",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "sys"
+      ]
+    },
+    {
+      "alias": "killport",
+      "command": "Get-NetTCPConnection -LocalPort '$1' -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "sys"
+      ]
+    },
+    {
+      "alias": "ll",
+      "command": "Get-ChildItem -Force | Format-Table Name,Length,LastWriteTime -AutoSize",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "ls"
+      ]
+    },
+    {
+      "alias": "lla",
+      "command": "Get-ChildItem -Force -Hidden | Format-Table Name,Length,LastWriteTime -AutoSize",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "ls"
+      ]
+    },
+    {
+      "alias": "node-clean",
+      "command": "Get-ChildItem -Recurse -Directory -Filter node_modules | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue; Get-ChildItem -Recurse -File -Filter package-lock.json | Remove-Item -Force -ErrorAction SilentlyContinue",
+      "interpreter": "powershell",
+      "tags": [
+        "workflow",
+        "dev"
+      ]
+    },
+    {
+      "alias": "ports",
+      "command": "Get-NetTCPConnection -State Listen | Select-Object LocalAddress,LocalPort,OwningProcess | Format-Table -AutoSize",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "net"
+      ]
+    },
+    {
+      "alias": "pwip",
+      "command": "gopass find -o \"$@\" | head -1 | xargs -I{} sh -c 'gopass show \"${1}\" | grep -m1 \"^username:\" | sed \"s/^username: *//\"' _ {} | tr -d '\\n'",
+      "interpreter": "bash",
+      "capture": true,
+      "tags": [
+        "pm",
+        "gopass",
+        "username"
+      ],
+      "description": "Gopass: copy username field. Use 'pwip <query>'."
+    },
+    {
+      "alias": "pwl",
+      "command": "gopass list -f",
+      "interpreter": "bash",
+      "capture": true,
+      "tags": [
+        "pm",
+        "gopass",
+        "list"
+      ],
+      "description": "Gopass: list entries (first line copied)."
+    },
+    {
+      "alias": "pwp",
+      "command": "gopass find -o \"$@\" | head -1 | xargs -I{} gopass show -o {} | tr -d '\\n'",
+      "interpreter": "bash",
+      "capture": true,
+      "tags": [
+        "pm",
+        "gopass",
+        "password"
+      ],
+      "description": "Gopass: copy password (first line). Use 'pwp <query>'."
+    },
+    {
+      "alias": "pwu",
+      "command": "gopass find -o \"$@\" | head -1 | xargs -I{} sh -c 'gopass show \"${1}\" | grep -m1 \"^url:\" | sed \"s/^url: *//\"' _ {} | tr -d '\\n'",
+      "interpreter": "bash",
+      "capture": true,
+      "tags": [
+        "pm",
+        "gopass",
+        "url"
+      ],
+      "description": "Gopass: copy URL field. Use 'pwu <query>'."
+    },
+    {
+      "alias": "pwc",
+      "command": "gopass generate -n \"$@\"",
+      "interpreter": "bash",
+      "silent": true,
+      "tags": [
+        "pm",
+        "gopass",
+        "create"
+      ],
+      "description": "Gopass: create entry with auto-generated password. Use 'pwc <name>'."
+    },
+    {
+      "alias": "pwe",
+      "command": "gopass edit \"$@\"",
+      "interpreter": "bash",
+      "tags": [
+        "pm",
+        "gopass",
+        "edit"
+      ],
+      "description": "Gopass: open entry in $EDITOR. Use 'pwe <name>'."
+    },
+    {
+      "alias": "pwd",
+      "command": "gopass rm -f \"$@\"",
+      "interpreter": "bash",
+      "silent": true,
+      "tags": [
+        "pm",
+        "gopass",
+        "delete"
+      ],
+      "description": "Gopass: force-delete entry. Use 'pwd <name>'."
+    },
+    {
+      "alias": "pwm",
+      "command": "arg=\"$1\"; old=\"${arg%%:*}\"; new=\"${arg##*:}\"; [ \"$old\" != \"$new\" ] && gopass mv \"$old\" \"$new\"",
+      "interpreter": "bash",
+      "silent": true,
+      "tags": [
+        "pm",
+        "gopass",
+        "rename"
+      ],
+      "description": "Gopass: rename entry. Use 'pwm <old>:<new>'."
+    },
+    {
+      "alias": "pyclean",
+      "command": "Get-ChildItem -Recurse -Include __pycache__ | Remove-Item -Recurse -Force; Get-ChildItem -Recurse -Filter '*.pyc' | Remove-Item -Force",
+      "interpreter": "powershell",
+      "tags": [
+        "workflow",
+        "dev"
+      ]
+    },
+    {
+      "alias": "services",
+      "command": "Get-Service | Where-Object {$_.Status -eq 'Running'} | Format-Table Name,DisplayName,StartType -AutoSize",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "sys"
+      ]
+    },
+    {
+      "alias": "sysinfo",
+      "command": "systeminfo | Select-Object OSName,OSVersion,OSArchitecture,SystemBootTime,TotalPhysicalMemory | Format-List",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "sys"
+      ]
+    },
+    {
+      "alias": "sysmon",
+      "command": "resmon",
+      "silent": true,
+      "tags": [
+        "community",
+        "sys"
+      ]
+    },
+    {
+      "alias": "taskmgr",
+      "command": "taskmgr",
+      "silent": true,
+      "tags": [
+        "community",
+        "sys"
+      ]
+    },
+    {
+      "alias": "tree",
+      "command": "tree /F /A",
+      "interpreter": "cmd",
+      "tags": [
+        "community",
+        "fs"
+      ]
+    },
+    {
+      "alias": "update",
+      "command": "winget upgrade --all --silent",
+      "silent": true,
+      "tags": [
+        "community",
+        "maintenance"
+      ],
+      "description": "winget upgrade --all --silent (Windows)."
+    },
+    {
+      "alias": "update-brew",
+      "command": "brew update && brew upgrade && brew cleanup",
+      "silent": true,
+      "tags": [
+        "community",
+        "maintenance"
+      ],
+      "description": "brew update + upgrade + cleanup (macOS)."
+    },
+    {
+      "alias": "uuid",
+      "command": "console.log(crypto.randomUUID())",
+      "interpreter": "node",
+      "capture": true,
+      "tags": [
+        "dev",
+        "generator"
+      ],
+      "description": "Fresh v4 UUID; Enter copies it."
+    },
+    {
+      "alias": "which",
+      "command": "Get-Command '$1' -ErrorAction SilentlyContinue | Select-Object Name,Source,CommandType | Format-List",
+      "interpreter": "powershell",
+      "tags": [
+        "community",
+        "dev"
+      ]
+    },
+    {
+      "alias": "wk",
+      "command": "try { $d = (wsl -l --quiet | Select-Object -First 1).Trim(); if (-not $d) { Write-Warning 'No WSL distro found'; return }; explorer.exe \"\\\\wsl$\\$d\\home\\$env:USERNAME\\workspace\" } catch { Write-Warning \"wsl not available: $_\"; return }",
+      "silent": true,
+      "tags": [
+        "workflow",
+        "fs"
+      ]
+    },
+    {
+      "alias": "wsltmp",
+      "command": "try { $d = (wsl -l --quiet | Select-Object -First 1).Trim(); if (-not $d) { Write-Warning 'No WSL distro found'; return }; explorer.exe \"\\\\wsl$\\$d\\tmp\" } catch { Write-Warning \"wsl not available: $_\"; return }",
+      "silent": true,
+      "tags": [
+        "workflow",
+        "wsl"
+      ]
+    },
+    {
+      "alias": "wslhome",
+      "command": "try { $d = (wsl -l --quiet | Select-Object -First 1).Trim(); if (-not $d) { Write-Warning 'No WSL distro found'; return }; explorer.exe \"\\\\wsl$\\$d\\home\\$env:USERNAME\" } catch { Write-Warning \"wsl not available: $_\"; return }",
+      "silent": true,
+      "tags": [
+        "workflow",
+        "wsl",
+        "fs"
+      ],
+      "description": "Open current user's WSL home in Explorer."
+    },
+    {
+      "alias": "wsldot",
+      "command": "try { $d = (wsl -l --quiet | Select-Object -First 1).Trim(); if (-not $d) { Write-Warning 'No WSL distro found'; return }; explorer.exe \"\\\\wsl$\\$d\\home\\$env:USERNAME\\.dotfiles\" } catch { Write-Warning \"wsl not available: $_\"; return }",
+      "silent": true,
+      "tags": [
+        "workflow",
+        "wsl",
+        "dotfiles"
+      ],
+      "description": "Open the dotfiles repo in Explorer."
+    },
+    {
+      "alias": "ts",
+      "command": "import time;q='''{query}''';print(int(time.time() if not q.strip() else float(q)))",
+      "interpreter": "python",
+      "capture": true,
+      "tags": [
+        "dev",
+        "time"
+      ],
+      "description": "Unix timestamp. No query = now; with a number = normalized (RFC3339 or epoch)."
+    },
+    {
+      "alias": "now",
+      "command": "import datetime;print(datetime.datetime.now().isoformat(timespec='seconds'))",
+      "interpreter": "python",
+      "capture": true,
+      "tags": [
+        "dev",
+        "time"
+      ],
+      "description": "Local RFC3339 timestamp; Enter copies."
+    },
+    {
+      "alias": "hash",
+      "command": "import hashlib;a='''{query}'''.encode();print('md5   ',hashlib.md5(a).hexdigest());print('sha1  ',hashlib.sha1(a).hexdigest());print('sha256',hashlib.sha256(a).hexdigest());print('sha512',hashlib.sha512(a).hexdigest())",
+      "interpreter": "python",
+      "capture": true,
+      "tags": [
+        "dev",
+        "encoding",
+        "digest"
+      ],
+      "description": "md5/sha1/sha256/sha512 digests of {query}; Enter copies the block."
+    },
+    {
+      "alias": "cidr",
+      "command": "import ipaddress;i=ipaddress.ip_interface('''{query}'''.strip());print(f'network={i.network}\\nnetmask={i.netmask}\\nbroadcast={i.network.broadcast_address}\\nhosts={i.network.num_addresses-2 if i.network.num_addresses>2 else i.network.num_addresses}\\nfirst={i.network[1] if i.network.num_addresses>2 else i.network[0]}\\nlast={i.network[-2] if i.network.num_addresses>2 else i.network[-1]}')",
+      "interpreter": "python",
+      "capture": true,
+      "tags": [
+        "net",
+        "dev"
+      ],
+      "description": "CIDR info for an IPv4/IPv6 address or a.b.c.d/n. Enter copies the block."
+    },
+    {
+      "alias": "open",
+      "command": "Start-Process '$1'",
+      "interpreter": "powershell",
+      "silent": true,
+      "tags": [
+        "workflow",
+        "fs",
+        "browser"
+      ],
+      "description": "Open a path or URL with the default handler. `qv open <url|path>`."
+    },
+    {
+      "alias": "kctx",
+      "command": "kubectl config use-context \"$1\" && kubectl config current-context",
+      "interpreter": "bash",
+      "capture": true,
+      "tags": [
+        "workflow",
+        "k8s"
+      ],
+      "description": "Switch kubectl context and confirm. `qv kctx prod-east`."
+    },
+    {
+      "alias": "winip",
+      "command": "ipconfig | Select-String 'IPv4' | ForEach-Object { ($_ -split ':')[1].Trim() } | Where-Object { $_ -ne '' } | Select-Object -First 1",
+      "interpreter": "powershell",
+      "capture": true,
+      "tags": [
+        "net",
+        "windows"
+      ],
+      "description": "Primary Windows-side IPv4 (ipconfig); Enter copies."
+    }
+  ]
+}

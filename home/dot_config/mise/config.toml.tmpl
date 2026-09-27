@@ -1,0 +1,58 @@
+# mise is the SINGLE source of truth for tools. Every tool below is pinned to
+# `latest` — this is a rolling-tracker config, not a reproducible build, so we
+# leave `lockfile = false` (the default). bootstrap-pre (git/curl/chezmoi/mise)
+# and bash-completion / zsh plugins live outside mise. Docker daemon is owned
+# by bin/docker-daemon; PM docker packages are removed by cleanup.sh --only=dups.
+#
+# `experimental = true` is intentional: it opts us into newer features that
+# upstream still iterates on (e.g. the lockfile subsystem). It can be flipped
+# per-machine without changing this file via `mise settings unset experimental`.
+
+[settings]
+experimental = true
+jobs = 8
+
+[tools]
+node = "latest"
+python = "latest"
+rust = "latest"
+go = "latest"
+bun = "latest"
+uv = "latest"
+
+cargo-binstall = "latest"
+
+"cargo:mcfly" = "latest"
+"cargo:starship" = "latest"
+"cargo:zoxide" = "latest"
+"cargo:bat" = "latest"
+"cargo:ripgrep" = "latest"
+"cargo:git-delta" = "latest"
+
+"go:sigs.k8s.io/kind" = "latest"
+"go:github.com/jesseduffield/lazygit" = "latest"
+
+kubectl = "latest"
+neovim = "latest"
+
+# 7zip (Info-ZIP unzip not in registry).
+7zip = "latest"
+
+"github:can1357/oh-my-pi" = "latest"
+
+# CLI plugin: docker only loads $DOCKER_CONFIG/cli-plugins/docker-<cmd>.
+"aqua:docker/cli" = "latest"
+"aqua:docker/buildx" = "latest"
+
+"aqua:mikefarah/yq" = "latest"
+
+# Wox + quiver (pwp/pwip/pwu/pwl in home/dot_wox/wox-user/ShellCommands.json).
+"aqua:gopasspw/gopass" = "latest"
+"github:gopasspw/gopass-jsonapi" = "latest"
+
+{{ if eq .chezmoi.os "darwin" -}}
+# darwin-only: colima runs dockerd inside a Lima VM, so colima + lima are
+# pinned together. Without lima, `colima start` fails on `limactl` missing.
+"aqua:lima-vm/lima" = "latest"
+"aqua:abiosoft/colima" = "latest"
+{{ end -}}

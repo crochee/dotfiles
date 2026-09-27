@@ -1,0 +1,367 @@
+#!/usr/bin/env bash
+# docker-daemon {setup|start|stop|restart|status|revert} [--dry-run]
+# Linux=systemd (own unit, owned by mise's aqua-docker-cli), macOS=colima (mise CLI).
+# Root-required subcommands re-exec via `sudo -E` so DOCKER_DAEMON_DRY_RUN survives env_reset.
+set -uo pipefail
+
+# sudo env_reset/always_set_home may rewrite HOME; resolve from SUDO_USER.
+if [ -n "${SUDO_USER:-}" ]; then
+    _home="$(getent passwd "$SUDO_USER" 2>/dev/null | cut -d: -f6)"
+fi
+MISE_DATA_DIR="${MISE_DATA_DIR:-${_home:-$HOME}/.local/share/mise}"
+BIN_DIR="$MISE_DATA_DIR/installs/aqua-docker-cli/latest/docker"
+DOCKER_CLI="$BIN_DIR/docker"
+UNIT_DOCKER=/etc/systemd/system/docker.service
+UNIT_CONTAINERD=/etc/systemd/system/containerd.service
+SYS_PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+BINS="dockerd containerd containerd-shim-runc-v2 runc docker docker-proxy docker-init"
+
+DRY_RUN="${DOCKER_DAEMON_DRY_RUN:-0}"
+CMD=""
+for _a in "$@"; do
+    case "$_a" in
+        setup | start | stop | restart | status | revert)
+            [ -z "$CMD" ] || { echo "多个子命令: $CMD 和 $_a" >&2; _bad=1; }
+            CMD="$_a" ;;
+        -n | --dry-run) DRY_RUN=1 ;;
+        -h | --help | help) CMD=help ;;
+        *)
+            echo "未知参数: $_a" >&2
+            _bad=1 ;;
+    esac
+done
+DOCKER_DAEMON_DRY_RUN=$DRY_RUN
+export DOCKER_DAEMON_DRY_RUN
+
+say() { printf '\033[0;34m==>\033[0m %s\n' "$*"; }
+warn() { printf '\033[0;31m!!\033[0m %s\n' "$*" >&2; }
+die() { warn "$*"; exit 1; }
+run() {
+    [ "$DRY_RUN" = 1 ] && { printf '    [dry-run] %s\n' "$*"; return 0; }
+    "$@"
+}
+
+OS="$(uname -s)"
+case "$OS" in
+    Linux) PLATFORM=systemd ;;
+    Darwin) PLATFORM=colima ;;
+    *) die "不支持的平台: $OS (本脚本只覆盖 Linux/systemd 与 macOS/colima)" ;;
+esac
+
+help() {
+    cat <<'EOF'
+docker-daemon — docker daemon control (Linux=systemd, macOS=colima)
+
+  start     Linux: idempotent unit apply + systemctl enable --now docker │ macOS: colima start
+  setup     Linux: apply units, restart+restore only on content change  │ macOS: no-op
+  stop      Linux: systemctl stop docker/containerd                     │ macOS: colima stop
+  restart   Linux: restart containerd+docker and restore containers      │ macOS: colima restart
+  status    unit/container/version + running binary's owning path
+  revert    Linux: delete units + stop daemon (no PM fallback)           │ macOS: no-op
+
+Add --dry-run to any subcommand; root-required Linux subcommands auto-sudo in interactive terminals.
+EOF
+}
+
+need_root() {
+    [ "$(id -u)" = 0 ] && return 0
+    [ "$DRY_RUN" = 1 ] && { say "[dry-run] 需要 root, 实际执行时会 sudo 重入"; return 0; }
+    if [ -t 0 ] && [ -t 1 ]; then
+        # DOCKER_DAEMON_DRY_RUN rides via `sudo -E`; re-exec uses $CMD only.
+        exec sudo -E -- "$0" "$CMD"
+    fi
+    die "需要 root 但当前无 TTY — 请显式 sudo: sudo $0 $CMD [--dry-run]"
+}
+
+check_bundle() {
+    if [ "$PLATFORM" = colima ]; then
+        [ -x "$DOCKER_CLI" ] || die "缺 mise docker CLI: $DOCKER_CLI (先 mise install)"
+        return 0
+    fi
+    for _b in $BINS; do
+        [ -x "$BIN_DIR/$_b" ] || die "mise 包里缺可执行文件: $BIN_DIR/$_b (先 mise install)"
+    done
+}
+
+check_systemd() {
+    [ "$PLATFORM" = systemd ] || return 0
+    if systemctl --version >/dev/null 2>&1; then
+        return 0
+    fi
+    [ "$DRY_RUN" = 1 ] && { say "[dry-run] systemctl 不可用, 跳过 systemd 检查"; return 0; }
+    die "systemctl 不可用 (WSL? 在 /etc/wsl.conf 设 [boot] systemd=true 并 wsl.exe --shutdown)"
+}
+
+ensure_group() {
+    [ "$DRY_RUN" = 1 ] && { say "[dry-run] 跳过 ensure_group"; return 0; }
+    getent group docker >/dev/null || groupadd -r docker
+    _u="${SUDO_USER:-}"
+    if [ -n "$_u" ] && ! id -nG "$_u" | tr ' ' '\n' | grep -qx docker; then
+        gpasswd -a "$_u" docker >/dev/null && say "已将 $_u 加入 docker 组 (重新登录后生效)"
+    fi
+}
+
+unit_text_docker() {
+    cat <<EOF
+[Unit]
+Description=Docker Application Container Engine (mise-managed)
+Documentation=https://docs.docker.com
+Requires=containerd.service
+After=network-online.target nss-lookup.target firewalld.service containerd.service time-set.target
+Wants=network-online.target
+StartLimitBurst=3
+StartLimitIntervalSec=60
+
+[Service]
+Type=notify
+ExecStart=$BIN_DIR/dockerd -H unix:///var/run/docker.sock --containerd=/run/containerd/containerd.sock
+Environment=PATH=$BIN_DIR:$SYS_PATH
+ExecReload=/bin/kill -s HUP \$MAINPID
+TimeoutStartSec=0
+RestartSec=2
+Restart=always
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+Delegate=yes
+KillMode=process
+OOMScoreAdjust=-500
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+unit_text_containerd() {
+    cat <<EOF
+[Unit]
+Description=containerd container runtime (mise-managed)
+Documentation=https://containerd.io
+After=network.target dbus.service
+
+[Service]
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=$BIN_DIR/containerd
+Environment=PATH=$BIN_DIR:$SYS_PATH
+Type=notify
+Delegate=yes
+KillMode=process
+Restart=always
+RestartSec=5
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+OOMScoreAdjust=-999
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+
+put_file() {
+    _f=$1; _new=$2
+    if [ -r "$_f" ] && [ "$(cat "$_f")" = "$_new" ]; then
+        say "已是最新: $_f"
+        return 1
+    fi
+    if [ "$DRY_RUN" = 1 ]; then
+        printf '    [dry-run] 写入 %s:\n' "$_f"
+        printf '%s\n' "$_new" | sed 's/^/        /'
+        return 0
+    fi
+    mkdir -p "$(dirname "$_f")"
+    printf '%s\n' "$_new" >"$_f"
+    say "写入 $_f"
+    return 0
+}
+
+restore_containers() {
+    _list=$1
+    [ -n "${_list// /}" ] || return 0
+    say "恢复切换前运行中的容器"
+    for _c in $_list; do
+        printf '    docker start %s\n' "$_c"
+        [ "$DRY_RUN" = 1 ] && continue
+        "$DOCKER_CLI" start "$_c" >/dev/null 2>&1 || warn "  $_c 启动失败"
+    done
+}
+
+wait_socket() {
+    local _sock=$1 _limit=${2:-30} _i
+    for ((_i = 0; _i < _limit; _i++)); do
+        [ -S "$_sock" ] && return 0
+        sleep 1
+    done
+    return 1
+}
+
+restart_and_verify() {
+    _before=$1
+    run systemctl daemon-reload
+    run systemctl restart containerd
+    if [ "$DRY_RUN" = 1 ]; then
+        say "dry-run: 跳过 socket/active 等待与校验"
+        return 0
+    fi
+    wait_socket /run/containerd/containerd.sock
+    run systemctl restart docker
+    wait_socket /var/run/docker.sock
+    sleep 2
+
+    _fail=""
+    systemctl is-active --quiet containerd || _fail="containerd 未 active"
+    systemctl is-active --quiet docker || _fail="${_fail:+$_fail; }docker 未 active"
+    # unit points at `latest` symlink; /proc/PID/exe resolves under installs/<ver>/.
+    _root="$(readlink -f "$MISE_DATA_DIR/installs/aqua-docker-cli")"
+    _ctd_exe="$(readlink -f "/proc/$(pgrep -x containerd | head -1)/exe" 2>/dev/null)"
+    _dkd_exe="$(readlink -f "/proc/$(pgrep -x dockerd | head -1)/exe" 2>/dev/null)"
+    case "$_ctd_exe" in "$_root"/*) ;; *) _fail="${_fail:+$_fail; }containerd 不在 mise 包内 ($_ctd_exe, 期望 $_root/…)" ;; esac
+    case "$_dkd_exe" in "$_root"/*) ;; *) _fail="${_fail:+$_fail; }dockerd 不在 mise 包内 ($_dkd_exe, 期望 $_root/…)" ;; esac
+    "$DOCKER_CLI" info >/dev/null 2>&1 || _fail="${_fail:+$_fail; }docker info 失败"
+
+    if [ -n "$_fail" ]; then
+        warn "校验失败: $_fail"
+        say "停用 unit 并退出 (无 PM 兜底)"
+        systemctl disable --now docker containerd >/dev/null 2>&1
+        rm -f "$UNIT_DOCKER" "$UNIT_CONTAINERD"
+        systemctl daemon-reload
+        die "已停用; 排查 journalctl -u docker -u containerd, 修复后重跑 setup"
+    fi
+    say "校验通过: containerd → $_ctd_exe"
+    say "          dockerd    → $_dkd_exe"
+    restore_containers "$_before"
+}
+
+cmd_status() {
+    echo "platform : $OS ($PLATFORM)"
+    echo "mise 包  : $BIN_DIR ($("$DOCKER_CLI" --version 2>/dev/null | head -1))"
+    if [ "$PLATFORM" = systemd ]; then
+        printf 'unit 文件 : docker=%s containerd=%s (本仓生成)\n' \
+            "$([ -e "$UNIT_DOCKER" ] && echo 有 || echo 无)" \
+            "$([ -e "$UNIT_CONTAINERD" ] && echo 有 || echo 无)"
+        echo "unit     : docker=$(systemctl is-active docker 2>/dev/null || true) containerd=$(systemctl is-active containerd 2>/dev/null || true)"
+        echo "enabled  : docker=$(systemctl is-enabled docker 2>/dev/null || true) containerd=$(systemctl is-enabled containerd 2>/dev/null || true)"
+        # dockerd live but unit file gone → reboot would drop docker; force setup before reboot.
+        if ! systemctl cat docker >/dev/null 2>&1 && pgrep -x dockerd >/dev/null; then
+            warn "dockerd 在跑, 但系统里已无 docker.service unit 文件 — 跑 docker-daemon setup 收口 (重启前必须处理)"
+        fi
+        for _n in containerd dockerd; do
+            _p=$(pgrep -x "$_n" | head -1)
+            [ -n "$_p" ] && printf '%-9s: pid %-6s exe %s\n' "$_n" "$_p" "$(readlink -f "/proc/$_p/exe" 2>/dev/null || echo '(需 root 读取)')"
+        done
+    elif command -v colima >/dev/null 2>&1; then
+        echo "colima   : $(colima status 2>&1 | head -2 | tr '\n' ' ')"
+    else
+        echo "colima   : (未安装, macOS 通过 brew install colima 启用)"
+    fi
+    echo "docker   : $("$DOCKER_CLI" version --format 'client={{.Client.Version}} go={{.Client.GoVersion}} | server={{.Server.Version}} go={{.Server.GoVersion}}' 2>/dev/null || echo '(daemon 未运行)')"
+    echo "containers: running=$("$DOCKER_CLI" ps -q 2>/dev/null | wc -l) total=$("$DOCKER_CLI" ps -aq 2>/dev/null | wc -l)"
+}
+
+apply_units() {
+    check_bundle
+    ensure_group
+    say "mise docker 包: $BIN_DIR"
+    _before=""
+    if "$DOCKER_CLI" info >/dev/null 2>&1; then
+        _before="$("$DOCKER_CLI" ps --format '{{.Names}}' 2>/dev/null | tr '\n' ' ')"
+    fi
+
+    # PM's docker.socket would block dockerd from binding /var/run/docker.sock.
+    run systemctl stop docker.socket >/dev/null 2>&1 || true
+    run systemctl disable docker.socket >/dev/null 2>&1 || true
+    [ "$DRY_RUN" = 1 ] && say "dry-run: 已 stop+disable 旧 docker.socket (若在)"
+
+    _changed=0
+    put_file "$UNIT_CONTAINERD" "$(unit_text_containerd)" && _changed=1
+    put_file "$UNIT_DOCKER" "$(unit_text_docker)" && _changed=1
+    if [ "$_changed" = 0 ]; then
+        say "unit 未变化 — 不动 daemon (要拾取 mise 新版本用 restart)"
+        return 0
+    fi
+
+    if [ -n "${_before// /}" ]; then
+        say "当前运行中的容器: ${_before:-（无）}"
+        restart_and_verify "$_before"
+    else
+        run systemctl daemon-reload
+        say "unit 就绪 — 启动: docker-daemon start"
+    fi
+    return 0
+}
+
+cmd_setup() {
+    if [ "$PLATFORM" = colima ]; then
+        check_bundle
+        say "macOS: daemon 在 colima 的 Lima VM 内, mise 只管 CLI; 启动: docker-daemon start"
+        return 0
+    fi
+    need_root
+    check_systemd
+    apply_units
+}
+
+cmd_start() {
+    case "$PLATFORM" in
+        systemd)
+            need_root
+            check_systemd
+            apply_units
+            run systemctl enable --now docker
+            [ "$DRY_RUN" = 1 ] && return 0
+            for _i in $(seq 1 30); do
+                "$DOCKER_CLI" info >/dev/null 2>&1 && break
+                sleep 1
+            done
+            "$DOCKER_CLI" info --format 'daemon 就绪: server={{.ServerVersion}} storage={{.Driver}} cgroup={{.CgroupDriver}}' ;;
+        colima) command -v colima >/dev/null 2>&1 || die "macOS: 缺 colima (brew install colima; 启 daemon: docker-daemon start)"; run colima start ;;
+    esac
+}
+
+cmd_revert() {
+    if [ "$PLATFORM" = colima ]; then
+        say "macOS: 无需回退 (daemon 一直在 colima VM 内)"
+        return 0
+    fi
+    need_root
+    say "停用并删除本仓生成的 unit — docker daemon 随之停止 (无 PM 兜底; 恢复用 start)"
+    run systemctl disable --now docker containerd
+    run rm -f "$UNIT_DOCKER" "$UNIT_CONTAINERD"
+    run systemctl daemon-reload
+}
+
+cmd_stop() {
+    case "$PLATFORM" in
+        systemd)
+            need_root
+            run systemctl stop docker
+            run systemctl stop containerd ;;
+        colima) run colima stop ;;
+    esac
+}
+
+cmd_restart() {
+    case "$PLATFORM" in
+        systemd)
+            need_root
+            check_bundle
+            _before="$("$DOCKER_CLI" ps --format '{{.Names}}' 2>/dev/null | tr '\n' ' ')"
+            restart_and_verify "$_before" ;;
+        colima) run colima restart ;;
+    esac
+}
+
+if [ "${_bad:-0}" = 1 ] || [ -z "$CMD" ]; then
+    help >&2
+    exit 2
+fi
+
+case "$CMD" in
+    help) help ;;
+    setup) cmd_setup ;;
+    start) cmd_start ;;
+    stop) cmd_stop ;;
+    restart) cmd_restart ;;
+    status) cmd_status ;;
+    revert) cmd_revert ;;
+    *) die "用法: docker-daemon {setup|start|stop|restart|status|revert} [--dry-run] (-h 看说明)" ;;
+esac

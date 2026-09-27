@@ -1,0 +1,5 @@
+# containerd 2.x registry mirror (hosts.toml). 部署: kind-cluster-guide.md「Registry mirrors」.
+server = "https://quay.io"
+
+[host."https://quay.mirrors.ustc.edu.cn"]
+capabilities = ["pull", "resolve"]

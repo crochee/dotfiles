@@ -1,0 +1,5 @@
+#!/bin/sh
+# docker buildx CLI plugin entry (chezmoi-owned).
+# docker scans $DOCKER_CONFIG/cli-plugins only — exec the mise shim directly so
+# `mise upgrade` keeps working without rewriting this file.
+exec "${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims/docker-cli-plugin-docker-buildx" "$@"

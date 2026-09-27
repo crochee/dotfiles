@@ -1,0 +1,28 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -u
+
+for _bp in /opt/homebrew/bin /usr/local/bin; do
+    case ":${PATH:-}:" in
+        *":$_bp:"*) ;;
+        *) export PATH="$_bp:$PATH" ;;
+    esac
+done
+
+if ! command -v brew >/dev/null 2>&1; then
+    echo "==> brew 未安装 (装法见 https://brew.sh); 装好后清 scriptState 再重跑 bootstrap:"
+    echo "    chezmoi state delete-bucket --bucket=scriptState && chezmoi init --apply"
+    exit 0
+fi
+
+# zsh plugins only (colima/docker CLI are mise-managed via home/dot_config/mise/config.toml).
+for _zp in zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search; do
+    echo "==> installing ${_zp} (brew)"
+    brew install "${_zp}" || echo "${_zp} install failed"
+done
+
+exit 0
+{{- else -}}
+#!/bin/sh
+exit 0
+{{- end -}}

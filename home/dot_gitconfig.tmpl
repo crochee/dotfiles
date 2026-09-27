@@ -1,0 +1,82 @@
+{{- /* git identity (name/email/github_user) lives in .chezmoidata/local.yaml only —
+     never in [data] here (chezmoi merges [data] > local.yaml, would override). */ -}}
+{{- if and (not (index . "name")) (not (index . "email")) (not (index . "github_user")) }}
+# WARN: home/.chezmoidata/local.yaml 缺 name/email/github_user; dot_gitconfig 不渲染.
+{{- end }}
+{{- if or (index . "name") (index . "email") }}
+[user]
+{{- if index . "name" }}
+	name = {{ index . "name" | quote }}
+{{- end }}
+{{- if index . "email" }}
+	email = {{ index . "email" | quote }}
+{{- end }}
+	# SSH commit signing public key; private key (same basename) must be ssh-add'd into agent.
+	signingkey = ~/.ssh/id_ed25519.pub
+{{- end }}
+{{- if index . "github_user" }}
+
+[github]
+	user = {{ index . "github_user" | quote }}
+{{- end }}
+
+[core]
+	editor = nvim
+	pager = delta
+{{- if index . "hooks_path" }}
+	hooksPath = {{ index . "hooks_path" | quote }}
+{{- end }}
+
+[pull]
+	rebase = true
+
+[init]
+	defaultBranch = master
+
+[push]
+	default = simple
+	followTags = true
+
+[fetch]
+	prune = true
+
+[grep]
+	lineNumber = true
+
+[help]
+	autocorrect = 1
+
+[commit]
+	template = ~/.config/gitcommit
+	gpgsign = true
+
+[diff]
+	tool = nvimdiff
+
+[difftool "nvimdiff"]
+	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+
+[merge]
+	tool = nvimdiff
+	conflictstyle = diff3
+
+[mergetool "nvimdiff"]
+	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\""
+
+[safe]
+	directory = *
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	dark = true
+	line-numbers = true
+	side-by-side = false
+	[delta "default"]
+		file-style = yellow
+		hunk-header-style = file
+
+[gpg]
+	format = ssh

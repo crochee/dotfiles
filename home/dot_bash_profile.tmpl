@@ -1,0 +1,5 @@
+{{- template "chezmoi-shell-validate" . -}}
+# shellcheck shell=bash disable=SC2148
+
+. "$HOME/.system/env.sh"
+case $- in *i*) . "$HOME/.bashrc" ;; esac

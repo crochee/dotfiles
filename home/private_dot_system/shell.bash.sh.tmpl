@@ -1,0 +1,31 @@
+# ~/.system/shell.bash.sh — sourced by ~/.bashrc.
+# Init order (shim mode): mise activate → starship → zoxide → bash-completion → mcfly.
+# `mise activate --shims` dispatches via ~/.local/share/mise/shims (PATH-listed by env.sh),
+# not via PATH activation. Acceptable because no [env] blocks in mise.toml — only tool
+# version pins, and `executable_docker-buildx` already uses shim-by-absolute-path.
+# shellcheck shell=bash disable=SC2148
+
+stty -ixon 2>/dev/null || true
+
+eval "$(mise activate --shims bash)"
+eval "$(starship init bash)"
+eval "$(zoxide init --cmd cd bash)"
+
+for _bc in \
+    /usr/share/bash-completion/bash_completion \
+    /opt/homebrew/share/bash-completion/bash_completion \
+    /usr/local/share/bash-completion/bash_completion; do
+    # shellcheck disable=SC1090  # platform-dependent source path.
+    [ -r "$_bc" ] && { . "$_bc"; break; }
+done
+unset _bc
+
+export HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/bash/history"
+export HISTSIZE=10000 HISTCONTROL=ignoreboth
+mkdir -p "${HISTFILE%/*}"
+[ -e "$HISTFILE" ] || : >> "$HISTFILE"
+shopt -s histappend
+# cmdhist OFF: bracketed paste collapses to one multi-line entry, then Up floods readline with ^J.
+shopt -u cmdhist
+
+eval "$(mcfly init bash)"

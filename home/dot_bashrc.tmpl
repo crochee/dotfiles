@@ -1,0 +1,10 @@
+{{- template "chezmoi-shell-validate" . -}}
+# shellcheck shell=bash disable=SC2148
+
+[[ $- == *i* ]] || return 0
+[ -n "${__DOTFILES_SOURCED_dot_bashrc:-}" ] && return 0
+__DOTFILES_SOURCED_dot_bashrc=1
+
+. "$HOME/.system/env.sh"
+. "$HOME/.system/alias.sh"
+. "$HOME/.system/shell.bash.sh"

@@ -1,0 +1,91 @@
+#!/bin/sh
+# ~/.omp/agent/config.yml — merge, don't silently drop omp's own writes.
+#   empty target OR OMP_CONFIG_FORCE=1 → use repo verbatim
+#   drift in any block → stderr report + SKIP (live file unchanged)
+# OMP_CONFIG_FORCE=1 (install.sh and `daf`) overrides drift detection.
+
+set -eu
+
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+managed="$tmpdir/managed.yml"
+live="$tmpdir/live.yml"
+
+# heredoc loses its trailing newline through $(…); printf re-adds one.
+printf '%s\n' "$(cat <<'OMP_CONFIG_PAYLOAD'
+{{ template "omp-config.yml" . }}
+OMP_CONFIG_PAYLOAD
+)" >"$managed"
+
+cat >"$live"
+
+live_tail_nl=0
+if [ -s "$live" ] && [ "$(tail -c 1 "$live" | wc -l)" -eq 1 ]; then
+	live_tail_nl=1
+fi
+
+awk -v force="${OMP_CONFIG_FORCE:-}" -v live_tail_nl="${live_tail_nl}" '
+function trim(s) { sub(/[ \t\r]+$/, "", s); return s }
+function norm(s,   i, n, t, out, lines) {
+	out = ""
+	n = split(s, lines, "\n")
+	for (i = 1; i <= n; i++) {
+		t = trim(lines[i])
+		if (t == "" || t ~ /^#/) continue
+		out = out t "\n"
+	}
+	return out
+}
+function iskey(line) { return line ~ /^[A-Za-z_][A-Za-z0-9_.-]*:/ }
+
+FNR == NR {
+	if (iskey($0)) { k = $0; sub(/:.*/, "", k); order[++keys] = k; have[k] = 1; mbody[k] = $0 }
+	else if (keys > 0) mbody[order[keys]] = mbody[order[keys]] "\n" $0
+	mlines[++mn] = $0
+	next
+}
+{
+	if (iskey($0)) { lkey = $0; sub(/:.*/, "", lkey); lseen[lkey] = 1; lbody[lkey] = $0 }
+	else if (lkey != "") lbody[lkey] = lbody[lkey] "\n" $0
+	live[++lnl] = $0
+}
+
+END {
+	drifted = 0
+	if (lnl > 0 && force == "") {
+		report = ""
+		for (i = 1; i <= keys; i++) {
+			k = order[i]
+			want = norm(mbody[k])
+			got = (k in lseen) ? norm(lbody[k]) : "<absent from the live file>"
+			if (want != got) { drifted++; report = report "    " k "\n" }
+		}
+	}
+
+	if (drifted > 0) {
+		printf "~/.omp/agent/config.yml: oh-my-pi changed %d block(s) this repository manages:\n", drifted > "/dev/stderr"
+		printf "%s", report > "/dev/stderr"
+		printf "  SKIPPED: your live file is left untouched.\n" > "/dev/stderr"
+		printf "  Port the change into .chezmoitemplates/omp-config.yml, then run `da` again.\n" > "/dev/stderr"
+		printf "  Or take the repository version as-is with `daf`.\n" > "/dev/stderr"
+		# Skip: byte-perfect replay of live file so chezmoi sees no change.
+		sep = ""
+		for (i = 1; i <= lnl; i++) { printf "%s%s", sep, live[i]; sep = "\n" }
+		if (lnl > 0 && live_tail_nl == 1) printf "\n"
+		exit 0
+	}
+
+	for (i = 1; i <= mn; i++) print mlines[i]
+
+	appended = 0
+	keep = 0
+	for (i = 1; i <= lnl; i++) {
+		if (iskey(live[i])) {
+			k = live[i]; sub(/:.*/, "", k)
+			keep = !(k in have)
+			if (keep && !appended) { print ""; appended = 1 }
+		}
+		if (keep) print live[i]
+	}
+}
+' "$managed" "$live"
