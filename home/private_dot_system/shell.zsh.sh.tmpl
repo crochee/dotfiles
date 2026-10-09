@@ -1,5 +1,9 @@
 # ~/.system/shell.zsh.sh — sourced by ~/.zshrc.
-# Init order (shim mode): mise activate → starship → zoxide → compinit → plugins → mcfly.
+# Init order: mise activate → starship → zoxide → compinit → plugins → mcfly.
+# `mise activate --shims` is the canonical mise activation site (~10ms cold).
+# Each shim is a symlink to the mise binary; first invocation resolves `latest`
+# to a concrete version and caches it. Full `mise activate` would add ~400ms
+# to every shell start, so we keep shim-mode. No [env] blocks in mise.toml.
 # compinit cache mtime guard avoids >1s compaudit on every login.
 # shellcheck shell=bash disable=SC2148
 

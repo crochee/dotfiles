@@ -1,8 +1,10 @@
 # ~/.system/shell.bash.sh — sourced by ~/.bashrc.
-# Init order (shim mode): mise activate → starship → zoxide → bash-completion → mcfly.
-# `mise activate --shims` dispatches via ~/.local/share/mise/shims (PATH-listed by env.sh),
-# not via PATH activation. Acceptable because no [env] blocks in mise.toml — only tool
-# version pins, and `executable_docker-buildx` already uses shim-by-absolute-path.
+# Init order: mise activate → starship → zoxide → bash-completion → mcfly.
+# `mise activate --shims` is the canonical mise activation site (~10ms cold).
+# Each shim is a symlink to the mise binary; first invocation resolves `latest`
+# to a concrete version and caches it. Full `mise activate` would add ~400ms
+# to every shell start, so we keep shim-mode + path-only setup. No [env] blocks
+# in mise.toml, so shim-mode is sufficient.
 # shellcheck shell=bash disable=SC2148
 
 stty -ixon 2>/dev/null || true

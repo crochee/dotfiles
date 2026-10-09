@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-smoke
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: cm-smoke-test
+  secretName: cm-smoke-test-tls
+  duration: 8760h
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+    group: cert-manager.io

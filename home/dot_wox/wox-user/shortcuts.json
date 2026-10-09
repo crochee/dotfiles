@@ -1,0 +1,209 @@
+[
+  {
+    "shortcut": "b64d",
+    "script": "python -c \"import base64;s='''$@''';print(base64.urlsafe_b64decode(s+'='*(-len(s)%4)).decode('utf-8','replace'))\"",
+    "description": "Base64 / JWT-segment decoder."
+  },
+  {
+    "shortcut": "da",
+    "script": "chezmoi diff --exclude=scripts --"
+  },
+  {
+    "shortcut": "disks",
+    "script": "powershell -NoProfile -Command \"Get-PSDrive -PSProvider FileSystem | Select-Object Name,@{N='Used(GB)';E={[math]::Round($_.Used/1GB,2)}},@{N='Free(GB)';E={[math]::Round($_.Free/1GB,2)}} | Format-Table -AutoSize\""
+  },
+  {
+    "shortcut": "dive",
+    "script": "docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/wagoodman/dive:latest \"$1\""
+  },
+  {
+    "shortcut": "dns",
+    "script": "powershell -NoProfile -Command \"Clear-DnsClientCache; Get-DnsClientCache | Format-Table -AutoSize\""
+  },
+  {
+    "shortcut": "dotst",
+    "script": "cd \"$HOME/.dotfiles\" && git status -sb",
+    "description": "git status of the dotfiles repo."
+  },
+  {
+    "shortcut": "dotup",
+    "script": "chezmoi update"
+  },
+  {
+    "shortcut": "extract",
+    "script": "powershell -NoProfile -Command \"Expand-Archive -Force -Path '$1' -DestinationPath .\""
+  },
+  {
+    "shortcut": "flushdns",
+    "script": "powershell -NoProfile -Command \"Clear-DnsClientCache\""
+  },
+  {
+    "shortcut": "ip",
+    "script": "for /f \"tokens=4\" %i in ('route print -4 0.0.0.0 ^| findstr /R /C:\"^ *0\\.0\\.0\\.0 \"') do @echo %i",
+    "description": "Primary outbound IPv4 from the default route."
+  },
+  {
+    "shortcut": "kexec",
+    "script": "kubectl exec -it -n openstack $(kubectl get pods -n openstack | rg 'mariadb.*-server-.*Running' | head -1 | cut -d' ' -f1) -- mysql --defaults-file=/etc/mysql/admin_user.cnf"
+  },
+  {
+    "shortcut": "kill",
+    "script": "powershell -NoProfile -Command \"Stop-Process -Id '$1' -Force\""
+  },
+  {
+    "shortcut": "killport",
+    "script": "powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort '$1' -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }\""
+  },
+  {
+    "shortcut": "ll",
+    "script": "powershell -NoProfile -Command \"Get-ChildItem -Force | Format-Table Name,Length,LastWriteTime -AutoSize\""
+  },
+  {
+    "shortcut": "lla",
+    "script": "powershell -NoProfile -Command \"Get-ChildItem -Force -Hidden | Format-Table Name,Length,LastWriteTime -AutoSize\""
+  },
+  {
+    "shortcut": "node-clean",
+    "script": "powershell -NoProfile -Command \"Get-ChildItem -Recurse -Directory -Filter node_modules | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue; Get-ChildItem -Recurse -File -Filter package-lock.json | Remove-Item -Force -ErrorAction SilentlyContinue\""
+  },
+  {
+    "shortcut": "ports",
+    "script": "powershell -NoProfile -Command \"Get-NetTCPConnection -State Listen | Select-Object LocalAddress,LocalPort,OwningProcess | Format-Table -AutoSize\""
+  },
+  {
+    "shortcut": "pwip",
+    "script": "gopass find -o \"$@\" | head -1 | xargs -I{} sh -c 'gopass show \"${1}\" | grep -m1 \"^username:\" | sed \"s/^username: *//\"' _ {} | tr -d '\\n'",
+    "description": "Gopass: show username field. Use 'pwip <query>'."
+  },
+  {
+    "shortcut": "pwl",
+    "script": "gopass list -f",
+    "description": "Gopass: list entries."
+  },
+  {
+    "shortcut": "pwp",
+    "script": "gopass find -o \"$@\" | head -1 | xargs -I{} gopass show -o {} | tr -d '\\n'",
+    "description": "Gopass: show password. Use 'pwp <query>'."
+  },
+  {
+    "shortcut": "pwu",
+    "script": "gopass find -o \"$@\" | head -1 | xargs -I{} sh -c 'gopass show \"${1}\" | grep -m1 \"^url:\" | sed \"s/^url: *//\"' _ {} | tr -d '\\n'",
+    "description": "Gopass: show URL field. Use 'pwu <query>'."
+  },
+  {
+    "shortcut": "pwc",
+    "script": "gopass generate -n \"$@\"",
+    "description": "Gopass: create entry with auto-generated password. Use 'pwc <name>'."
+  },
+  {
+    "shortcut": "pwe",
+    "script": "gopass edit \"$@\"",
+    "description": "Gopass: open entry in $EDITOR. Use 'pwe <name>'."
+  },
+  {
+    "shortcut": "pwd",
+    "script": "gopass rm -f \"$@\"",
+    "description": "Gopass: force-delete entry. Use 'pwd <name>'."
+  },
+  {
+    "shortcut": "pwm",
+    "script": "arg=\"$1\"; old=\"${arg%%:*}\"; new=\"${arg##*:}\"; [ \"$old\" != \"$new\" ] && gopass mv \"$old\" \"$new\"",
+    "description": "Gopass: rename entry. Use 'pwm <old>:<new>'."
+  },
+  {
+    "shortcut": "pyclean",
+    "script": "powershell -NoProfile -Command \"Get-ChildItem -Recurse -Include __pycache__ | Remove-Item -Recurse -Force; Get-ChildItem -Recurse -Filter '*.pyc' | Remove-Item -Force\""
+  },
+  {
+    "shortcut": "services",
+    "script": "powershell -NoProfile -Command \"Get-Service | Where-Object {$_.Status -eq 'Running'} | Format-Table Name,DisplayName,StartType -AutoSize\""
+  },
+  {
+    "shortcut": "sysinfo",
+    "script": "powershell -NoProfile -Command \"systeminfo | Select-Object OSName,OSVersion,OSArchitecture,SystemBootTime,TotalPhysicalMemory | Format-List\""
+  },
+  {
+    "shortcut": "sysmon",
+    "script": "resmon"
+  },
+  {
+    "shortcut": "taskmgr",
+    "script": "taskmgr"
+  },
+  {
+    "shortcut": "tree",
+    "script": "tree /F /A"
+  },
+  {
+    "shortcut": "update",
+    "script": "winget upgrade --all --silent",
+    "description": "winget upgrade --all --silent (Windows)."
+  },
+  {
+    "shortcut": "update-brew",
+    "script": "brew update && brew upgrade && brew cleanup",
+    "description": "brew update + upgrade + cleanup (macOS)."
+  },
+  {
+    "shortcut": "uuid",
+    "script": "node -e \"console.log(crypto.randomUUID())\"",
+    "description": "Fresh v4 UUID."
+  },
+  {
+    "shortcut": "which",
+    "script": "powershell -NoProfile -Command \"Get-Command '$1' -ErrorAction SilentlyContinue | Select-Object Name,Source,CommandType | Format-List\""
+  },
+  {
+    "shortcut": "wk",
+    "script": "powershell -NoProfile -Command \"try { $d = (wsl -l --quiet | Select-Object -First 1).Trim(); if (-not $d) { Write-Warning 'No WSL distro found'; return }; explorer.exe ('\\\\wsl$\\' + $d + '\\home\\' + $env:USERNAME + '\\workspace') } catch { Write-Warning ('wsl not available: ' + $_); return }\""
+  },
+  {
+    "shortcut": "wsltmp",
+    "script": "powershell -NoProfile -Command \"try { $d = (wsl -l --quiet | Select-Object -First 1).Trim(); if (-not $d) { Write-Warning 'No WSL distro found'; return }; explorer.exe ('\\\\wsl$\\' + $d + '\\tmp') } catch { Write-Warning ('wsl not available: ' + $_); return }\""
+  },
+  {
+    "shortcut": "wslhome",
+    "script": "powershell -NoProfile -Command \"try { $d = (wsl -l --quiet | Select-Object -First 1).Trim(); if (-not $d) { Write-Warning 'No WSL distro found'; return }; explorer.exe ('\\\\wsl$\\' + $d + '\\home\\' + $env:USERNAME) } catch { Write-Warning ('wsl not available: ' + $_); return }\"",
+    "description": "Open current user's WSL home in Explorer."
+  },
+  {
+    "shortcut": "wsldot",
+    "script": "powershell -NoProfile -Command \"try { $d = (wsl -l --quiet | Select-Object -First 1).Trim(); if (-not $d) { Write-Warning 'No WSL distro found'; return }; explorer.exe ('\\\\wsl$\\' + $d + '\\home\\' + $env:USERNAME + '\\.dotfiles') } catch { Write-Warning ('wsl not available: ' + $_); return }\"",
+    "description": "Open the dotfiles repo in Explorer."
+  },
+  {
+    "shortcut": "ts",
+    "script": "python -c \"import time;q='''$@''';print(int(time.time() if not q.strip() else float(q)))\"",
+    "description": "Unix timestamp. No query = now; with a number = normalized (RFC3339 or epoch)."
+  },
+  {
+    "shortcut": "now",
+    "script": "python -c \"import datetime;print(datetime.datetime.now().isoformat(timespec='seconds'))\"",
+    "description": "Local RFC3339 timestamp."
+  },
+  {
+    "shortcut": "hash",
+    "script": "python -c \"import hashlib;a='''$@'''.encode();print('md5   ',hashlib.md5(a).hexdigest());print('sha1  ',hashlib.sha1(a).hexdigest());print('sha256',hashlib.sha256(a).hexdigest());print('sha512',hashlib.sha512(a).hexdigest())\"",
+    "description": "md5/sha1/sha256/sha512 digests."
+  },
+  {
+    "shortcut": "cidr",
+    "script": "python -c \"import ipaddress;i=ipaddress.ip_interface('''$@'''.strip());print(f'network={i.network}\\nnetmask={i.netmask}\\nbroadcast={i.network.broadcast_address}\\nhosts={i.network.num_addresses-2 if i.network.num_addresses>2 else i.network.num_addresses}\\nfirst={i.network[1] if i.network.num_addresses>2 else i.network[0]}\\nlast={i.network[-2] if i.network.num_addresses>2 else i.network[-1]}')\"",
+    "description": "CIDR info for an IPv4/IPv6 address or a.b.c.d/n."
+  },
+  {
+    "shortcut": "open",
+    "script": "powershell -NoProfile -Command \"Start-Process '$1'\"",
+    "description": "Open a path or URL with the default handler."
+  },
+  {
+    "shortcut": "kctx",
+    "script": "kubectl config use-context \"$1\" && kubectl config current-context",
+    "description": "Switch kubectl context and confirm."
+  },
+  {
+    "shortcut": "winip",
+    "script": "powershell -NoProfile -Command \"ipconfig | Select-String 'IPv4' | ForEach-Object { ($_ -split ':')[1].Trim() } | Where-Object { $_ -ne '' } | Select-Object -First 1\"",
+    "description": "Primary Windows-side IPv4 (ipconfig)."
+  }
+]

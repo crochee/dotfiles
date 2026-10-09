@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+# sync-wox-shortcuts-db.sh — push ~/.wox/wox-user/shortcuts.json into Wox's SQLite plugin store.
+#
+# Wox loads the Custom Commands catalog (sachadvr/Wox.Custom.Commands.Plugin) via
+# `api.GetSetting(ctx, "shortcuts")` backed by `plugin_settings.value` in
+# <wox-user>/wox.db — never from the JSON file on disk. This script closes that
+# gap so `chezmoi apply` keeps the JSON and the DB in lock-step.
+#
+# Safety:
+#   - Refuses to write while Wox holds <wox-user>/wox.lock (SQLite WAL/Busy trap).
+#   - Idempotent: only writes when the JSON hash differs from the stored value.
+#   - Single-row UPSERT scoped to (plugin_id, key) — no broad mutations.
+#   - -n / --dry-run prints the intended change without touching the DB.
+#
+# Usage:
+#   sync-wox-shortcuts-db                 # apply if changed and Wox not running
+#   sync-wox-shortcuts-db -n              # dry-run
+#   sync-wox-shortcuts-db --force         # apply even when Wox is running (data-loss risk)
+#   sync-wox-shortcuts-db --help
+set -euo pipefail
+
+PLUGIN_ID='09785021-7f9e-4482-903a-51c90a585a7d'
+SETTING_KEY='shortcuts'
+
+# Locations: WSL-side canonical, Windows-side mirror (the one Wox actually reads).
+SRC="${HOME}/.wox/wox-user/shortcuts.json"
+WIN_USER_DIR="/mnt/c/Users/$(stat -c '%U' /mnt/c/Users 2>/dev/null || echo "${USER}")"
+DB="${WIN_USER_DIR}/.wox/wox-user/wox.db"
+LOCK="${WIN_USER_DIR}/.wox/wox-user/wox.lock"
+
+log()  { printf '%s\n' "$*"; }
+warn() { printf 'sync-wox-shortcuts-db: %s\n' "$*" >&2; }
+die()  { warn "$@"; exit 1; }
+
+usage() {
+    sed -n '2,/^set -/{//!p;}' "${0}" | sed -e 's/^# \{0,1\}//' -e 's/^$/{EMPTY}/' | head -40
+    exit "${1:-0}"
+}
+
+DRY_RUN=0
+FORCE=0
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -n|--dry-run) DRY_RUN=1 ;;
+        --force)      FORCE=1 ;;
+        -h|--help)    usage 0 ;;
+        *)            usage 2 ;;
+    esac
+    shift
+done
+
+[ -f "${SRC}" ] || die "source not found: ${SRC}"
+[ -f "${DB}" ]  || die "Wox DB not found: ${DB} (Wox installed?)"
+
+# Validate JSON and compute a stable fingerprint over the *normalized* form so
+# cosmetic whitespace differences don't trigger a redundant write.
+if ! SRC_JSON="$(/usr/sbin/jq -c '.' "${SRC}" 2>/dev/null)"; then
+    die "source is not valid JSON: ${SRC}"
+fi
+# Hash on the byte-for-byte representation stored in SQLite: trim trailing
+# newlines and quote-escape (`'` -> `''`) added by the literal — because both
+# sides must round-trip through the same SQL literal syntax.
+_src_canon_hash() {
+    /usr/sbin/jq -c . | awk 'NR==1 { sub(/\n+$/, ""); print }' | sha256sum | cut -d' ' -f1
+}
+SRC_HASH="$(printf '%s' "${SRC_JSON}" | _src_canon_hash)"
+
+# Pull current stored value, if any. Empty when the row doesn't exist yet.
+# Hash over *canonical* JSON (jq -c .) on both sides, so SQLite's text-quoting
+# (`'` -> `''`) doesn't make semantically-equal values look different.
+STORED="$(/usr/sbin/sqlite3 -separator $'\x1f' "${DB}" \
+    "SELECT COALESCE(value,'') FROM plugin_settings \
+     WHERE plugin_id='${PLUGIN_ID}' AND key='${SETTING_KEY}';" 2>/dev/null || echo "")"
+if [ -z "${STORED}" ]; then
+    STORED_HASH=""
+elif STORED_CANON="$(printf '%s' "${STORED}" | /usr/sbin/jq -c . 2>/dev/null)"; then
+    STORED_HASH="$(printf '%s' "${STORED_CANON}" | _src_canon_hash)"
+else
+    STORED_HASH="corrupt"
+fi
+
+log "source:  ${SRC}  (sha256=${SRC_HASH})"
+log "store:   ${DB}"
+log "row:     plugin_id=${PLUGIN_ID}  key=${SETTING_KEY}"
+if [ -n "${STORED}" ]; then
+    log "stored:  sha256=${STORED_HASH}  length=${#STORED}"
+else
+    log "stored:  <row not present yet>"
+fi
+
+if [ "${SRC_HASH}" = "${STORED_HASH}" ]; then
+    log "unchanged (hash match) — nothing to do"
+    exit 0
+fi
+
+# Refuse if Wox is currently running. The portable signal is a Wox process
+# visible to Windows itself (wox-windows-amd64.exe); wox.lock is unreliable —
+# Wox deletes it on graceful exit. Use both signals to be safe.
+if [ "${FORCE}" -ne 1 ]; then
+    set +e
+    lock_present=0
+    [ -e "${LOCK}" ] && lock_present=1
+
+    # Drive tasklist from a Windows cwd so the UNC quirk in this WSL install
+    # doesn't bite (it refuses to handle tasklist from \\wsl$… paths).
+    wox_pid_count=0
+    if command -v cmd.exe >/dev/null 2>&1; then
+        wox_pid_count="$(cd /mnt/c/Windows && cmd.exe /c "tasklist" 2>/dev/null \
+            | grep -c -i 'wox-windows-amd64\.exe' || true)"
+    fi
+    [ -z "${wox_pid_count}" ] && wox_pid_count=0
+
+    set -e
+
+    if [ "${lock_present}" -eq 1 ] || [ "${wox_pid_count}" -gt 0 ]; then
+        die "Wox appears to be running (lock=${lock_present}, processes=${wox_pid_count}). Quit Wox and retry, or pass --force."
+    fi
+fi
+
+# Build the UPSERT. The stored value is a JSON array, so we escape single quotes
+# only — SQLite textual literal syntax. No NUL, no other escapes needed for our
+# shortcut docs (verified against the existing rows for other plugins).
+ESCAPED="$(printf '%s' "${SRC_JSON}" | sed "s/'/''/g")"
+SQL="INSERT INTO plugin_settings (plugin_id, key, value, is_local)
+     VALUES ('${PLUGIN_ID}', '${SETTING_KEY}', '${ESCAPED}', 0)
+     ON CONFLICT(plugin_id, key) DO UPDATE
+       SET value = excluded.value, is_local = excluded.is_local;"
+
+COUNT="$(printf '%s' "${SRC_JSON}" | /usr/sbin/jq 'length')"
+
+if [ "${DRY_RUN}" -eq 1 ]; then
+    log "dry-run: would write ${COUNT} shortcuts (${#SRC_JSON} bytes)"
+    log "sql: ${SQL}" | sed 's/.\{200\}/&\n        /g'
+    exit 0
+fi
+
+log "writing ${COUNT} shortcuts to plugin_settings..."
+# journal_mode=WAL → set busy_timeout so a stale lock doesn't immediately fail.
+/usr/sbin/sqlite3 -cmd ".timeout 5000" "${DB}" "${SQL}"
+
+NEW_LEN="$(/usr/sbin/sqlite3 "${DB}" \
+    "SELECT length(value) FROM plugin_settings WHERE plugin_id='${PLUGIN_ID}' AND key='${SETTING_KEY}';")"
+log "done — stored length=${NEW_LEN}"
+log "next: launch (or restart) Wox, then trigger any query; the plugin will load on init."
+
+# vim: ft=sh ts=4 sw=4 et

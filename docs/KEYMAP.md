@@ -122,6 +122,7 @@ omp TUI 内单键 > 启动器 (Wox 不与任何终端/编辑器键重叠)**.
    System Settings → Keyboard → Keyboard Shortcuts → Spotlight, 或改 Wox 的 `MainHotkey`.
 2. **omp followUp 的 Ctrl+Enter**: wezterm 把 `mod+Enter` 借给 SmartSplit; omp 有 `Ctrl+Q` fallback.
 3. **Alt+H/J/K/L**: 与系统 IME 的 Alt 切换潜在冲突 — 本机未启用 fcitx/IBus, 无影响.
-4. **Wox 与 dotfiles**: 本仓只镜像 Wox *store* (`ShellCommands.json` + `settings/wox.json`),
-   不管理 Wox 主程序与第三方插件. Wox 是 Windows 原生程序, 通过 `\\wsl$\<distro>\...`
+4. **Wox 与 dotfiles**: 本仓只镜像 Wox 配置 (`shortcuts.json` + `settings/wox.json`),
+   不管理 Wox 主程序与第三方插件本体 (Custom Commands 插件用户自装, 仓库只提供其
+   命令目录 `shortcuts.json`). Wox 是 Windows 原生程序, 通过 `\\wsl$\<distro>\...`
    访问 WSL 文件 (Wox Everything 等插件用户自装).
