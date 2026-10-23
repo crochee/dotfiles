@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{PRODUCT}} — design preview</title>
+<style>
+/* ============================================================================
+   GENERATED BLOCK — from design-tokens.json. Do not hand-edit.
+   Regenerate this block whenever a token value changes; components below
+   consume the custom properties only, never raw values.
+
+   Mapping (see references/design-tokens.md):
+     color.<group>.<name>             -> --color-<group>-<name>
+     typography.fontFamily.<name>     -> --font-family-<name>
+     typography.fontSize.<name>       -> --font-size-<name>
+     typography.lineHeight.<name>     -> --line-height-<name>
+     typography.fontWeight.<name>     -> --font-weight-<name>
+     typography.letterSpacing.<name>  -> --letter-spacing-<name>
+     spacing.<name>                   -> --space-<name>
+     radius.<name>                   -> --radius-<name>
+     shadow.<name>                   -> --shadow-<name>
+     motion.duration.<name>          -> --duration-<name>
+     motion.easing.<name>            -> --easing-<name>
+     motion.group.<name>             -> --motion-<name>-duration / -easing / -property
+   ========================================================================== */
+:root {
+  color-scheme: light;
+
+  --color-surface-canvas: #ffffff;
+  --color-surface-raised: #f6f6f7;
+  --color-surface-sunken: #ececed;
+  --color-surface-inverse: #111113;
+  --color-content-primary: #111113;
+  --color-content-secondary: #4b4b52;
+  --color-content-muted: #6b6b74;
+  --color-content-on-accent: #ffffff;
+  --color-accent-default: #1f4fd8;
+  --color-accent-hover: #1a43b5;
+  --color-accent-subtle: #e9eefc;
+  --color-border-default: #d9d9de;
+  --color-border-strong: #8a8a94;
+  --color-border-focus: #1f4fd8;
+  --color-status-danger: #b3261e;
+  --color-status-warning: #7a4e00;
+  --color-status-success: #14663a;
+  --color-status-info: #0a58a8;
+
+  --font-family-display: "Söhne", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-family-body: "Söhne", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-family-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.75rem;
+
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.02em;
+
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(17, 17, 19, 0.08);
+  --shadow-md: 0 4px 16px rgba(17, 17, 19, 0.10);
+  --shadow-lg: 0 18px 48px rgba(17, 17, 19, 0.16);
+
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --easing-entrance: cubic-bezier(0, 0, 0, 1);
+  --easing-exit: cubic-bezier(0.3, 0, 1, 1);
+  --motion-hover-duration: var(--duration-fast);
+  --motion-hover-easing: var(--easing-standard);
+  --motion-hover-property: opacity, transform;
+  --motion-press-duration: var(--duration-fast);
+  --motion-press-easing: var(--easing-standard);
+  --motion-press-property: transform;
+  --motion-enter-duration: var(--duration-slow);
+  --motion-enter-easing: var(--easing-entrance);
+  --motion-enter-property: opacity, transform;
+  --motion-exit-duration: var(--duration-base);
+  --motion-exit-easing: var(--easing-exit);
+  --motion-exit-property: opacity;
+}
+
+/* Dark mode lives here, at the token layer — no component branches on theme. */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-surface-canvas: #0e0e11;
+  --color-surface-raised: #18181c;
+  --color-surface-sunken: #08080a;
+  --color-surface-inverse: #f5f5f7;
+  --color-content-primary: #f2f2f4;
+  --color-content-secondary: #b4b4bd;
+  --color-content-muted: #8e8e99;
+  --color-content-on-accent: #0e0e11;
+  --color-accent-default: #7aa2ff;
+  --color-accent-hover: #9bb8ff;
+  --color-accent-subtle: #1c2740;
+  --color-border-default: #2c2c33;
+  --color-border-strong: #6b6b76;
+  --color-border-focus: #7aa2ff;
+  --color-status-danger: #ff8a80;
+  --color-status-warning: #f5b942;
+  --color-status-success: #5fd08a;
+  --color-status-info: #7ab6ff;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.65);
+}
+
+/* ---------------------------------------------------------------- layout -- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-surface-canvas);
+  color: var(--color-content-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6) var(--space-16);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.section { padding-block: var(--space-12); border-bottom: 1px solid var(--color-border-default); }
+.section:last-child { border-bottom: 0; }
+
+.section__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-content-muted);
+  margin: 0 0 var(--space-4);
+}
+
+/* ------------------------------------------------------------ typography -- */
+h1, h2, h3 { font-family: var(--font-family-display); margin: 0; }
+h1 { font-size: var(--font-size-4xl); line-height: var(--line-height-tight); font-weight: var(--font-weight-bold); letter-spacing: var(--letter-spacing-tight); }
+h2 { font-size: var(--font-size-2xl); line-height: var(--line-height-snug); font-weight: var(--font-weight-semibold); }
+h3 { font-size: var(--font-size-xl); line-height: var(--line-height-snug); font-weight: var(--font-weight-semibold); }
+p { margin: 0; color: var(--color-content-secondary); max-width: 62ch; }
+.lead { font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); }
+.caption { font-size: var(--font-size-xs); color: var(--color-content-muted); }
+.mono { font-family: var(--font-family-mono); font-variant-numeric: tabular-nums; }
+
+.scale-row {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding-block: var(--space-2);
+}
+
+/* ------------------------------------------------------------ components -- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;          /* 44px — comfortably over the 24px minimum */
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: opacity var(--motion-hover-duration) var(--motion-hover-easing),
+              transform var(--motion-press-duration) var(--motion-press-easing);
+}
+.button--primary { background: var(--color-accent-default); color: var(--color-content-on-accent); }
+.button--primary:hover { background: var(--color-accent-hover); }
+.button--secondary { background: var(--color-surface-canvas); color: var(--color-content-primary); border-color: var(--color-border-strong); }
+.button--ghost { background: transparent; color: var(--color-content-secondary); border-color: transparent; }
+.button:active { transform: scale(0.98); }
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.field { display: grid; gap: var(--space-2); max-width: 24rem; }
+.field label { font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); }
+.field input {
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  font: inherit;
+  color: var(--color-content-primary);
+  background: var(--color-surface-canvas);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+.field input::placeholder { color: var(--color-content-muted); }
+.field__hint { font-size: var(--font-size-xs); color: var(--color-content-muted); }
+
+.card {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid currentColor;
+}
+.badge--success { color: var(--color-status-success); }
+.badge--warning { color: var(--color-status-warning); }
+.badge--danger { color: var(--color-status-danger); }
+.badge--info { color: var(--color-status-info); }
+
+.swatch { display: grid; gap: var(--space-2); }
+.swatch__chip {
+  height: 4rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-default);
+}
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--space-4);
+}
+
+/* ---------------------------------------------------------------- motion -- */
+/* The single directed load sequence: elements rise in, once, on first paint. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: reveal var(--motion-enter-duration) var(--motion-enter-easing) forwards;
+  }
+  .reveal--2 { animation-delay: 80ms; }
+  .reveal--3 { animation-delay: 160ms; }
+}
+@keyframes reveal {
+  to { opacity: 1; transform: none; }
+}
+
+/* Reduced motion: keep the content, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; animation: none; }
+  .button { transition: none; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* ---------------------------------------------------------- breakpoints --- */
+@media (max-width: 47.99rem) {
+  .scale-row { grid-template-columns: 1fr; gap: var(--space-1); }
+  h1 { font-size: var(--font-size-3xl); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="topbar">
+    <div>
+      <p class="section__label">{{PRODUCT}}</p>
+      <h1>{{Direction in one line}}</h1>
+    </div>
+    <button class="button button--secondary" id="theme-toggle" type="button" aria-pressed="false">
+      Toggle theme
+    </button>
+  </header>
+
+  <main>
+  <section class="section">
+    <p class="section__label">Type scale</p>
+    <div class="scale-row reveal">
+      <span class="caption mono">--font-size-3xl</span>
+      <h2 style="font-size: var(--font-size-3xl); line-height: var(--line-height-tight);">Section heading</h2>
+    </div>
+    <div class="scale-row reveal reveal--2">
+      <span class="caption mono">--font-size-xl</span>
+      <h3 style="font-size: var(--font-size-xl);">Sub-heading</h3>
+    </div>
+    <div class="scale-row reveal reveal--3">
+      <span class="caption mono">--font-size-md</span>
+      <p>Body copy sits at {{font-size-md}} with line-height {{line-height-normal}} and a
+         {{max-width}} measure.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="section__label">Colour roles</p>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch__chip" style="background: var(--color-accent-default);"></div>
+        <span class="caption mono">accent.default</span>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background: var(--color-surface-raised);"></div>
+        <span class="caption mono">surface.raised</span>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background: var(--color-surface-sunken);"></div>
+        <span class="caption mono">surface.sunken</span>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background: var(--color-status-danger);"></div>
+        <span class="caption mono">status.danger</span>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background: var(--color-status-success);"></div>
+        <span class="caption mono">status.success</span>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background: var(--color-status-warning);"></div>
+        <span class="caption mono">status.warning</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="section__label">Components</p>
+    <div class="card">
+      <h3>Invite a teammate</h3>
+      <p class="lead">Every value below comes from a token — no literal sizes, colours or durations.</p>
+
+      <div class="field" style="margin-block: var(--space-6);">
+        <label for="email">Work email</label>
+        <input id="email" type="email" placeholder="name@example.com" autocomplete="email">
+        <span class="field__hint">We only use this to send the invite.</span>
+      </div>
+
+      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
+        <button class="button button--primary" type="button">Send invite</button>
+        <button class="button button--secondary" type="button">Cancel</button>
+        <button class="button button--ghost" type="button">Learn more</button>
+      </div>
+
+      <div style="display: flex; gap: var(--space-2); margin-top: var(--space-6); flex-wrap: wrap;">
+        <span class="badge badge--success">Active</span>
+        <span class="badge badge--warning">Pending</span>
+        <span class="badge badge--danger">Overdue</span>
+        <span class="badge badge--info">Invited</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="section__label">Motion</p>
+    <p class="lead">One directed load sequence (the <code>.reveal</code> classes above) and
+      purposeful transitions on hover and press. Under
+      <code>prefers-reduced-motion: reduce</code> the content still appears — only the
+      movement is removed.</p>
+  </section>
+  </main>
+
+</div>
+
+<script>
+  // Theme switching is a token-layer switch: one attribute on <html>.
+  (function () {
+    var toggle = document.getElementById('theme-toggle');
+    var root = document.documentElement;
+    toggle.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      toggle.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+    });
+  })();
+</script>
+</body>
+</html>

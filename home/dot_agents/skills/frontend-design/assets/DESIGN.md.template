@@ -1,0 +1,131 @@
+# {{PRODUCT}} — design system
+
+> Fill every `{{PLACEHOLDER}}`. Delete a section only if it genuinely does not
+> apply, and say so in "Open questions". Do not ship an unfilled placeholder.
+
+**Direction:** {{one sentence — e.g. "Swiss-industrial: dense grid, one red accent, monospaced numerals"}}
+**Audience:** {{who this is for}}
+**Primary surface:** {{the screen this system is judged on}}
+**One thing to remember:** {{the single memorable visual idea}}
+
+## Rationale
+
+| Decision | Choice | Why it fits this product | Alternative rejected |
+|---|---|---|---|
+| {{e.g. Display typeface}} | {{value}} | {{reason tied to audience/product}} | {{option and why it lost}} |
+| {{e.g. Accent colour}} | {{value}} | {{reason}} | {{option and why it lost}} |
+| {{e.g. Corner radius}} | {{value}} | {{reason}} | {{option and why it lost}} |
+
+## Type scale
+
+Base size {{16px}}; scale ratio {{1.25}}. Sizes are tokens, never literals.
+
+| Token | Size | Line height | Weight | Use |
+|---|---|---|---|---|
+| `--font-size-4xl` | {{2.75rem / 44px}} | {{1.15}} | {{700}} | {{Display heading}} |
+| `--font-size-3xl` | {{2rem / 32px}} | {{1.15}} | {{700}} | {{Page title}} |
+| `--font-size-2xl` | {{1.5rem / 24px}} | {{1.35}} | {{600}} | {{Section heading}} |
+| `--font-size-xl` | {{1.25rem / 20px}} | {{1.35}} | {{600}} | {{Sub-heading}} |
+| `--font-size-lg` | {{1.125rem / 18px}} | {{1.5}} | {{500}} | {{Lead paragraph}} |
+| `--font-size-md` | {{1rem / 16px}} | {{1.5}} | {{400}} | {{Body}} |
+| `--font-size-sm` | {{0.875rem / 14px}} | {{1.5}} | {{400}} | {{Secondary text}} |
+| `--font-size-xs` | {{0.75rem / 12px}} | {{1.5}} | {{500}} | {{Caption / label}} |
+
+Display family: {{name, fallback stack}}. Body family: {{name, fallback stack}}.
+Monospace: {{name, fallback stack}} — used for {{numerals / codes / ids}}.
+
+## Colour roles
+
+Each colour is a role, not a swatch. Roles are declared in `design-tokens.json`
+under `color.<group>.<name>` with a `light` and a `dark` value.
+
+| Role | Light | Dark | Used for |
+|---|---|---|---|
+| `surface.canvas` | {{#ffffff}} | {{#0e0e11}} | {{Page background}} |
+| `surface.raised` | {{#f6f6f7}} | {{#18181c}} | {{Cards, panels}} |
+| `content.primary` | {{#111113}} | {{#f2f2f4}} | {{Body text}} |
+| `content.secondary` | {{#4b4b52}} | {{#b4b4bd}} | {{Supporting text}} |
+| `content.muted` | {{#6b6b74}} | {{#8e8e99}} | {{Captions, disabled}} |
+| `accent.default` | {{#1f4fd8}} | {{#7aa2ff}} | {{Primary action, links}} |
+| `border.default` | {{#d9d9de}} | {{#2c2c33}} | {{Dividers, decorative rules}} |
+| `border.strong` | {{#8a8a94}} | {{#6b6b76}} | {{Control boundaries}} |
+| `border.focus` | {{#1f4fd8}} | {{#7aa2ff}} | {{Focus ring}} |
+
+Accent is used for **one** action type per screen. Status colours
+(`danger`, `warning`, `success`, `info`) are reserved for status only.
+
+### Contrast
+
+The pairs the design actually uses, with the ratio measured (not assumed):
+
+| Foreground | Background | Role | Required | Measured | Pass |
+|---|---|---|---|---|---|
+| `content.primary` | `surface.canvas` | body-text | {{4.5:1}} | {{19.2:1}} | {{yes}} |
+
+## Spacing scale
+
+4px base. Steps: `0, 1, 2, 3, 4, 6, 8, 12, 16, 24` →
+`{{0, 4, 8, 12, 16, 24, 32, 48, 64, 96}}px`.
+
+- Section rhythm: {{e.g. `--space-12` between sections}}
+- Component padding: {{e.g. `--space-4`}}
+- Inline gap: {{e.g. `--space-2`}}
+- Grid gutter: {{e.g. `--space-6}}
+
+## Layout and composition
+
+- Container: {{max width and how it centres}}
+- Grid: {{columns at each breakpoint}}
+- Breakpoints: `sm {{480px}}`, `md {{768px}}`, `lg {{1024px}}`, `xl {{1280px}}` —
+  declared in `design-tokens.json` and mirrored in the stylesheet's media queries.
+- Breakpoint behaviour for the primary surface:
+  - `sm`: {{...}}
+  - `md`: {{...}}
+  - `lg`: {{...}}
+  - `xl`: {{...}}
+- Where the composition deliberately breaks the grid: {{...}}
+
+## Motion rules
+
+- **One load sequence**, on first paint only: {{what animates, in order}}
+- Purposeful transitions elsewhere: {{hover/press/expand — what changes and why}}
+- Durations: `--duration-fast` {{120ms}}, `--duration-base` {{200ms}},
+  `--duration-slow` {{320ms}}. Easings: `--easing-standard`,
+  `--easing-entrance`, `--easing-exit`.
+- Animated properties are `transform` and `opacity` only — never `width`,
+  `height`, `top` or `left`.
+- `prefers-reduced-motion: reduce` disables the load sequence and every
+  non-essential transition. State which transitions survive and why.
+
+## Component rules
+
+| Component | Rule | Anti-rule |
+|---|---|---|
+| {{Button}} | {{one primary per view, 44px min target}} | {{two primaries on one screen}} |
+| {{Card}} | {{...}} | {{every element is a card}} |
+
+## Accessibility
+
+Target: **WCAG 2.2 AA**. AA conformance is a gate, not a score.
+
+- Body text contrast ≥ 4.5:1; large text (≥24px, or ≥18.66px bold) ≥ 3:1;
+  UI component boundaries and focus indicators ≥ 3:1.
+- Every interactive element is reachable and operable by keyboard, with a
+  visible `:focus-visible` state that is not obscured by other content.
+- Target size ≥ 24×24 CSS px.
+- `prefers-reduced-motion` honoured.
+- Accessible name for every icon-only control.
+
+## Performance budget
+
+| Metric | Budget |
+|---|---|
+| CLS | ≤ 0.1 |
+| LCP | ≤ 2.5 s |
+| Images | sized (`width`/`height` attributes or `aspect-ratio`) and lazy below the fold |
+| Animation | `transform` / `opacity` only; no layout thrash |
+| Fonts | ≤ 2 families, `font-display: swap`, preloaded |
+
+## Open questions
+
+- {{Anything undecided, with the decision owner.}}

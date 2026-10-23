@@ -3,6 +3,7 @@ tmux-*
 *.db
 __pycache__/
 *.pyc
+.ruff_cache/
 
 # 每机生成的 lockfile (nvim lazy-lock.json; 其余 lockfile 各工具自管, 不在此拦)
 lazy-lock.json

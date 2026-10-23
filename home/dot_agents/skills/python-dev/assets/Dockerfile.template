@@ -1,0 +1,64 @@
+# syntax=docker/dockerfile:1
+#
+# Two stages. The builder resolves and installs the venv; the runtime copies it and
+# runs as a non-root user with no compiler, no uv and no source tree.
+#
+# The base image minor must equal the `requires-python` minor, and no tag is ever
+# `latest`: a mutable tag makes yesterday's image unreproducible.
+
+FROM python:3.15-slim AS builder
+
+# uv is copied from its official image at an exact version: pinned, and absent from
+# the runtime stage. A `pip install uv` here would drag pip into the build layer for
+# no benefit.
+COPY --from=ghcr.io/astral-sh/uv:0.13.6 /uv /uvx /bin/
+
+# COMPILE_BYTECODE: skip compilation on every container start.
+# LINK_MODE=copy: the cache mount cannot hardlink across layers.
+# PYTHON_DOWNLOADS=never: the interpreter comes from the base image, not from uv.
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never
+
+WORKDIR /app
+
+# Dependency layer: cached until a manifest or the lockfile changes, so a source edit
+# does not re-resolve the world. --no-install-project installs dependencies only,
+# because the source has not been copied yet.
+COPY pyproject.toml uv.lock ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-install-project
+
+# Source layer: invalidated by any source change. The build backend also reads the
+# files the manifest points at (readme, license-files), so they are copied first.
+COPY src/ src/
+COPY README.md LICENSE ./
+# --no-editable installs the project as a snapshot: the runtime stage then needs no
+# source tree and no build backend.
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-editable
+
+
+FROM python:3.15-slim AS runtime
+
+# Unbuffered stdout: container logs appear immediately.
+# No .pyc writes: the image filesystem is read-only at runtime.
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/app/.venv/bin:$PATH"
+
+# Same path as the builder: console scripts in .venv/bin carry the absolute
+# interpreter path /app/.venv/bin/python.
+WORKDIR /app
+
+# The user is created in this stage only. A user created in the builder does not
+# exist here, and COPY --chown to it would fail.
+RUN useradd --create-home --uid 10001 appuser
+
+COPY --from=builder --chown=appuser:appuser /app/.venv /app/.venv
+
+USER appuser
+EXPOSE 8000
+
+# Use the console script from [project.scripts]; `python -m` is the fallback.
+CMD ["REPLACE-ME-PKG"]

@@ -1,0 +1,362 @@
+# The identity service's OpenAPI 3.1 document.
+# scripts/validate.py --contract checks this file against the skill's absolutes.
+
+openapi: 3.1.0
+info:
+  title: Identity API
+  version: "3.0.0"
+  description: >-
+    The identity service for platform teams: it manages the users of a tenant and
+    their lifecycle. Every endpoint requires a credential; this API has no public
+    surface, so it records `cors: not_used`.
+  license:
+    name: Proprietary
+    url: https://identity.internal/terms
+servers:
+  - url: https://identity.internal
+security:
+  - bearerAuth: []
+x-conventions:
+  path_casing: snake_case
+  field_casing: snake_case
+  error_format: problem_json
+  pagination: cursor
+  page_size_param: limit
+  page_size_default: 50
+  page_size_max: 500
+  filter_syntax: named
+  version_placement: path
+  auth_scheme: oauth_bearer
+  tenant_scoping: credential
+  datetime_format: rfc3339_utc
+  nullable_semantics: absent
+  cors: not_used
+  header_fields: []
+  notes:
+    - axis: path_casing
+      reason: The service was already published with snake_case paths.
+    - subject: error_catalogue
+      reason: The catalogue is open — a client must tolerate a code it does not know.
+x-error-catalogue:
+  - {type: "https://identity.internal/problems/internal-error", status: "500", meaning: "An unexpected server failure."}
+  - {type: "https://identity.internal/problems/not-found", status: "404", meaning: "The resource does not exist, or the caller may not know that it does."}
+  - {type: "https://identity.internal/problems/method-not-allowed", status: "405", meaning: "The method is not supported on this resource."}
+  - {type: "https://identity.internal/problems/unauthorized", status: "401", meaning: "No usable credential was presented."}
+  - {type: "https://identity.internal/problems/validation-error", status: "422", meaning: "The request parsed but a value is missing or invalid."}
+  - {type: "https://identity.internal/problems/invalid-value", status: "422", meaning: "A field value does not match its rule."}
+  - {type: "https://identity.internal/problems/invalid-sort", status: "422", meaning: "The requested sort key is not in the allow-list."}
+  - {type: "https://identity.internal/problems/invalid-cursor", status: "400", meaning: "The cursor is malformed, expired, or bound to another sort or filter."}
+  - {type: "https://identity.internal/problems/bad-request", status: "400", meaning: "The request could not be parsed, or a parameter cannot be turned into a value."}
+  - {type: "https://identity.internal/problems/forbidden", status: "403", meaning: "Authenticated, but not permitted to perform this operation."}
+  - {type: "https://identity.internal/problems/conflict", status: "409", meaning: "The request conflicts with the current state."}
+  - {type: "https://identity.internal/problems/rate-limit-exceeded", status: "429", meaning: "The caller exceeded the published limit."}
+  - {type: "https://identity.internal/problems/unsupported-media-type", status: "415", meaning: "The body is not in a format the endpoint accepts."}
+paths:
+  /v1/users:
+    get:
+      summary: List the caller's tenant's users.
+      operationId: list_users
+      x-auth: authenticated
+      parameters:
+        - {$ref: '#/components/parameters/Limit'}
+        - {$ref: '#/components/parameters/Cursor'}
+        - {$ref: '#/components/parameters/IncludeTotal'}
+        - {$ref: '#/components/parameters/UserStatus'}
+        - {$ref: '#/components/parameters/Sort'}
+      responses:
+        '200':
+          description: One page of users.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UserCollection'}
+              examples:
+                default: {$ref: '#/components/examples/UserCollectionExample'}
+                filtered: {$ref: '#/components/examples/UserCollectionFilteredExample'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '405': {$ref: '#/components/responses/MethodNotAllowed'}
+        '422': {$ref: '#/components/responses/InvalidQuery'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      summary: Create a user in the caller's tenant.
+      operationId: create_user
+      x-auth: privileged
+      x-privileged-check: The `users:write` scope on the caller's token, after the tenant is derived from that token.
+      parameters:
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateUserRequest'}
+      responses:
+        '201':
+          description: The user was created.
+          headers:
+            Location: {description: The URL of the new user., schema: {type: string, format: uri-reference}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/User'}
+              examples:
+                default: {$ref: '#/components/examples/UserExample'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '405': {$ref: '#/components/responses/MethodNotAllowed'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+        '500': {$ref: '#/components/responses/InternalError'}
+  /v1/users/{user_id}:
+    parameters:
+      - {$ref: '#/components/parameters/UserId'}
+    get:
+      summary: Read one user in the caller's tenant.
+      operationId: get_user
+      x-auth: authenticated
+      responses:
+        '200':
+          description: The user.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/User'}
+              examples:
+                default: {$ref: '#/components/examples/UserExample'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '405': {$ref: '#/components/responses/MethodNotAllowed'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    delete:
+      summary: Delete one user.
+      operationId: delete_user
+      x-auth: privileged
+      x-privileged-check: The `users:write` scope on the caller's token, after the tenant is derived from that token.
+      responses:
+        '204':
+          description: The user was deleted.
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '405': {$ref: '#/components/responses/MethodNotAllowed'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '429': {$ref: '#/components/responses/TooManyRequests'}
+        '500': {$ref: '#/components/responses/InternalError'}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: A bearer token identifying the caller and its tenant.
+  parameters:
+    UserId:
+      name: user_id
+      in: path
+      required: true
+      description: Opaque identifier of the user.
+      schema: {type: string}
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: >-
+        Page size; zero or less and values above 500 are rejected with 422. The
+        default and maximum agree with `x-conventions.page_size_default` and
+        `x-conventions.page_size_max`.
+      schema: {type: integer, minimum: 1, maximum: 500, default: 50}
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: >-
+        Opaque, signed cursor naming the position to continue from; valid for 24
+        hours and only for the sort and filter it was issued under.
+      schema: {type: string}
+    IncludeTotal:
+      name: include_total
+      in: query
+      required: false
+      description: Ask the service to include the filtered row count.
+      schema: {type: boolean, default: false}
+    UserStatus:
+      name: status
+      in: query
+      required: false
+      description: Filter to users in this status; the cursor is bound to the value it was issued with.
+      schema: {type: string, enum: [active, suspended]}
+    Sort:
+      name: sort
+      in: query
+      required: false
+      description: The sort key and direction, from the published allow-list; the service appends the unique `id:desc` tie-breaker.
+      schema:
+        type: string
+        enum: ["created_at:desc", "created_at:asc", "email:asc", "email:desc"]
+        default: "created_at:desc"
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: >-
+        A unique key that makes this request safe to retry. Scoped to
+        (principal, endpoint, tenant, key) and retained for 24 hours; a repeat
+        with the same fingerprint replays the stored response.
+      schema: {type: string}
+  schemas:
+    User:
+      type: object
+      additionalProperties: false
+      required: [id, email, display_name, status, created_at]
+      properties:
+        id: {type: string, description: Opaque identifier.}
+        email: {type: string, format: email}
+        display_name: {type: string}
+        status: {type: string, enum: [active, suspended]}
+        created_at: {type: string, format: date-time}
+    CreateUserRequest:
+      type: object
+      additionalProperties: false
+      required: [email, display_name]
+      properties:
+        email: {type: string, format: email}
+        display_name: {type: string}
+    UserCollection:
+      type: object
+      additionalProperties: false
+      required: [data, limit]
+      properties:
+        data:
+          type: array
+          items: {$ref: '#/components/schemas/User'}
+        limit: {type: integer, minimum: 1, description: The effective page size served.}
+        next_cursor: {type: string, description: Present only when another page exists.}
+        total: {type: integer, minimum: 0, description: Present only when include_total=true.}
+    FieldProblem:
+      type: object
+      additionalProperties: false
+      required: [pointer, code, detail]
+      properties:
+        pointer: {type: string}
+        code: {type: string}
+        detail: {type: string}
+    Problem:
+      type: object
+      additionalProperties: true
+      required: [type, title, status]
+      properties:
+        type: {type: string, format: uri}
+        title: {type: string}
+        status: {type: integer}
+        detail: {type: string}
+        instance: {type: string, format: uri-reference}
+        errors:
+          type: array
+          items: {$ref: '#/components/schemas/FieldProblem'}
+  responses:
+    BadRequest:
+      description: The request could not be parsed, or a parameter cannot be turned into a value.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          examples:
+            unparseable-body:
+              value: {type: "https://identity.internal/problems/bad-request", title: "Bad request", status: 400, detail: "the request body could not be parsed"}
+            malformed-limit:
+              value: {type: "https://identity.internal/problems/bad-request", title: "Malformed parameter", status: 400, detail: "the limit parameter is not an integer"}
+            invalid-cursor:
+              value: {type: "https://identity.internal/problems/invalid-cursor", title: "Invalid cursor", status: 400, detail: "the cursor does not match the current sort and filter"}
+    InvalidQuery:
+      description: A query parameter is rejected by a rule.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          examples:
+            invalid-sort:
+              value: {type: "https://identity.internal/problems/invalid-sort", title: "Invalid sort key", status: 422, detail: "sort must be one of created_at:desc, created_at:asc, email:asc, email:desc"}
+            invalid-limit:
+              value: {type: "https://identity.internal/problems/validation-error", title: "Request validation failed", status: 422, detail: "limit must be between 1 and 500"}
+    Unauthorized:
+      description: No usable credential was presented.
+      headers: {WWW-Authenticate: {description: The authentication challenge., schema: {type: string}}}
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/unauthorized", title: "Unauthorized", status: 401, detail: "the access token is missing, invalid, or expired"}
+    Forbidden:
+      description: Authenticated, but not permitted to perform this operation.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/forbidden", title: "Forbidden", status: 403, detail: "this operation requires a different role"}
+    NotFound:
+      description: The resource does not exist, or the caller may not know that it does.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/not-found", title: "Resource not found", status: 404, detail: "user 999 does not exist"}
+    Conflict:
+      description: The request conflicts with the current state.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/conflict", title: "Conflict", status: 409, detail: "a user with this email already exists"}
+    UnsupportedMediaType:
+      description: The body is not in a format the endpoint accepts.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/unsupported-media-type", title: "Unsupported media type", status: 415, detail: "the body is not in a format this endpoint accepts"}
+    ValidationError:
+      description: The body parsed but a value is missing or invalid.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/validation-error", title: "Request validation failed", status: 422, detail: "The request body has one invalid field.", errors: [{pointer: /display_name, code: invalid-value, detail: "Must not be empty"}]}
+    TooManyRequests:
+      description: The caller exceeded the published limit.
+      headers:
+        Retry-After: {description: Seconds to wait before retrying., schema: {type: integer}, example: 60}
+        RateLimit-Policy: {description: The quota policy — 100 requests per 60 seconds per principal., schema: {type: string}, example: '"default";q=100;w=60'}
+        RateLimit: {description: The current window state — remaining count and reset seconds., schema: {type: string}, example: '"default";r=0;t=60'}
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/rate-limit-exceeded", title: "Too many requests", status: 429, detail: "rate limit exceeded, try again in 60 seconds"}
+    InternalError:
+      description: An unexpected server failure.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/internal-error", title: "Internal server error", status: 500, detail: "an unexpected error occurred"}
+    MethodNotAllowed:
+      description: The method is not supported on this resource.
+      headers:
+        Allow: {description: The methods this resource supports., schema: {type: string}}
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+          example: {type: "https://identity.internal/problems/method-not-allowed", title: "Method not allowed", status: 405, detail: "the method is not supported on this resource; see Allow"}
+  examples:
+    UserExample:
+      summary: One active user
+      value: {id: "42", email: ada@example.com, display_name: "Ada Lovelace", status: active, created_at: "2026-10-30T09:12:44Z"}
+    UserCollectionExample:
+      summary: One page of users
+      value:
+        data:
+          - {id: "43", email: grace@example.com, display_name: "Grace Hopper", status: suspended, created_at: "2026-10-30T09:13:02Z"}
+          - {id: "42", email: ada@example.com, display_name: "Ada Lovelace", status: active, created_at: "2026-10-30T09:12:44Z"}
+        limit: 50
+        next_cursor: 9cQ2mZp1rLx8sVbN
+    UserCollectionFilteredExample:
+      summary: One page filtered to active users, with the count requested
+      value:
+        data:
+          - {id: "42", email: ada@example.com, display_name: "Ada Lovelace", status: active, created_at: "2026-10-30T09:12:44Z"}
+        limit: 50
+        total: 1

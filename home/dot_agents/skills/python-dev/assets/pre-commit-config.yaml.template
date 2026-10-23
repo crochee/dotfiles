@@ -1,0 +1,20 @@
+# Copy to .pre-commit-config.yaml. Every rev is a released tag: a branch pin makes the
+# build depend on whatever upstream contains that day. Bump with `pre-commit autoupdate`
+# in its own commit.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.3
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-toml
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-merge-conflict

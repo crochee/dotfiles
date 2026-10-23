@@ -1,0 +1,101 @@
+# Python package manifest — copy to pyproject.toml and replace the REPLACE-ME-* placeholders.
+# Versions are the floors verified against PyPI; bump them deliberately, in their own commit.
+
+[build-system]
+requires = ["hatchling>=1.33,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "REPLACE-ME-PKG"
+version = "0.1.0"
+description = "REPLACE-ME-DESC"
+readme = "README.md"
+requires-python = ">=3.15"
+license = "MIT"                       # PEP 639 SPDX expression, not a {text = ...} table
+license-files = ["LICENSE"]
+authors = [{ name = "REPLACE-ME-OWNER" }]
+dependencies = [
+    # An application bounds its dependencies (>=x,<y) and commits uv.lock.
+    # A published library declares lower bounds only: "pydantic>=2.14".
+]
+
+[project.scripts]
+REPLACE-ME-PKG = "REPLACE-ME-PKG.cli:main"
+
+[dependency-groups]                   # PEP 735: development only, never installed by a consumer
+dev = [
+    "pytest>=9.2,<10",
+    "pytest-asyncio>=1.4,<2",
+    "pytest-cov>=7.1,<8",
+    "pytest-xdist>=3.6,<4",
+    "hypothesis>=6.170,<7",
+    "ruff>=0.17,<1",
+    "pyright>=1.1.414,<2",
+    "import-linter>=2.15,<3",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/REPLACE-ME-PKG"]
+
+[tool.ruff]
+target-version = "py315"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F", "I", "UP", "B", "BLE", "SIM", "C4", "PIE", "RET", "PERF", "FURB", "RUF",
+    "S", "T10", "T20", "PTH", "DTZ", "LOG", "G", "EM", "TRY", "RSE", "SLOT", "INP", "ISC",
+    "ICN", "TID", "PGH", "FIX", "ERA", "N", "A", "PL", "ASYNC", "PT", "TC", "FA", "TD",
+]
+ignore = ["TRY003", "PLR0913", "PLR2004", "COM812", "ISC001", "TD003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "SLF001"]
+"migrations/versions/**" = ["E501"]
+"scripts/**" = ["T201"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["REPLACE-ME-PKG"]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.15"
+typeCheckingMode = "strict"
+reportUnnecessaryTypeIgnoreComment = true
+reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+asyncio_mode = "strict"
+# Pinned: unset, the plugin derives this from the fixture scope and plans to change the default.
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "slow: long-running test; deselect with -m 'not slow'",
+    "integration: needs a real service; CI runs -m 'not integration' by default",
+]
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+source = ["src"]
+
+[tool.coverage.report]
+skip_covered = false
+
+# Layer contracts — see references/architecture-and-errors.md.
+[tool.importlinter]
+root_packages = ["REPLACE-ME-PKG"]
+
+[[tool.importlinter.contracts]]
+name = "Layered architecture"
+type = "layers"
+layers = [
+    "REPLACE-ME-PKG.entrypoints",
+    "REPLACE-ME-PKG.adapters",
+    "REPLACE-ME-PKG.application",
+    "REPLACE-ME-PKG.domain",
+]

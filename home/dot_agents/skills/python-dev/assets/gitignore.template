@@ -1,0 +1,15 @@
+# Copy to .gitignore. A .venv is never committed: it carries absolute paths and a full
+# copy of the installed packages.
+.venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+*.egg-info/
+.env

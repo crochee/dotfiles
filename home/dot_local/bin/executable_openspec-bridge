@@ -1,0 +1,343 @@
+#!/usr/bin/env bash
+# openspec-bridge — 接入 superpowers-bridge schema 的三件事,任意目录可调用。
+#
+#   openspec-bridge skills [--with-verify|--core]   在临时目录生成 openspec skill,装到 ~/.agents/skills/
+#   openspec-bridge init [DIR] [--no-agents]        给项目写 openspec/config.yaml 并追加 AGENTS.md 片段
+#   openspec-bridge check [DIR]                     校验用户层(schema/skill)+ 端到端 change 流程
+#
+# 依赖:openspec CLI(mise 管理 npm:@fission-ai/openspec)、jq。
+# schema 本体与 AGENTS.md 片段由 dotfiles 部署(chezmoi apply),本脚本只读它们。
+#
+# 约定:
+#   - 幂等。skills 先 rm 再 cp(否则重复执行会套出 openspec-propose/openspec-propose/);
+#     init 已含片段标记就跳过;check 不改任何东西。
+#   - 不碰用户项目:check 的端到端流程在 mktemp -d 里跑。
+#   - 输出面向人,不面向管道;需要机器可读时直接用 openspec 的 --json。
+set -euo pipefail
+
+SCHEMA=superpowers-bridge
+SKILLS_DIR="$HOME/.agents/skills"
+FRAGMENT_MARKER='<!-- 来源:superpowers-bridge/adopters/AGENTS.md.fragment.md -->'
+CORE_SKILLS=(openspec-propose openspec-explore openspec-apply-change \
+             openspec-update-change openspec-sync-specs openspec-archive-change)
+VERIFY_SKILL=openspec-verify-change
+VERIFY_WORKFLOWS='["propose","explore","apply","update","sync","archive","verify"]'
+
+fail=0
+
+# ── 输出 ──────────────────────────────────────────────────────────────────────
+ok()   { printf '✓ %s\n' "$*"; }
+bad()  { printf '✗ %s\n' "$*"; fail=1; }
+warn() { printf '! %s\n' "$*"; }
+die()  { printf 'openspec-bridge: %s\n' "$*" >&2; exit 1; }
+
+usage() {
+  cat <<'USAGE'
+用法:
+  openspec-bridge skills [--with-verify|--core]
+      在临时目录 openspec init --tools agents,把生成的 openspec-* 装到 ~/.agents/skills/。
+      默认按当前全局 profile 决定装哪些;--with-verify 切 profile=custom 并加上 verify 工作流;
+      --core 切回 profile=core。装完需重开 agent 会话才生效。
+
+  openspec-bridge init [DIR] [--no-agents]
+      DIR(默认 .)写 openspec/config.yaml(schema: superpowers-bridge + 中文 context),
+      并把 schema 的 adopters/AGENTS.md.fragment.md 追加到 DIR/AGENTS.md。
+      --no-agents 跳过 AGENTS.md。已有 config.yaml 缺 schema: 时补首行;
+      声明了别的 schema 时退出,不改文件。
+
+  openspec-bridge check [DIR]
+      校验:openspec 在 PATH、schema 解析到 user 层、schema 结构、8 个模板、
+      core 6 个 skill、端到端蓝图(brainstorm=ready)。临时目录内跑,不碰任何项目。
+      给了 DIR 时额外校验 DIR/openspec/config.yaml 的 schema。
+
+  -h, --help
+USAGE
+}
+
+# ── 环境 ──────────────────────────────────────────────────────────────────────
+need_openspec() {
+  command -v openspec >/dev/null 2>&1 \
+    || die 'openspec 不在 PATH(mise 管理 npm:@fission-ai/openspec;先 mise install)'
+}
+
+need_jq() {
+  command -v jq >/dev/null 2>&1 || die '需要 jq(解析 openspec 的 --json 输出)'
+}
+
+# 用户层 / 项目层解析结果。只认 `openspec schemas --json`(纯 JSON,
+# `openspec schema which --json` 会先往 stdout 打提示行,不适合管道)。
+schema_source() {
+  openspec schemas --json 2>/dev/null \
+    | jq -r --arg n "$SCHEMA" '[.[]|select(.name==$n)][0].source // empty' || true
+}
+
+# 项目 config.yaml 里声明的 schema;无该行则输出空。
+schema_of() {
+  awk '/^schema:/{sub(/^schema:[[:space:]]*/,""); print; exit}' "$1" | tr -d "\"'"
+}
+
+config_body() {
+  cat <<'YAML'
+schema: superpowers-bridge
+
+context: |
+  Language: Chinese (Simplified)
+  All artifacts must be written in Chinese (Simplified).
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+YAML
+}
+
+# AGENTS.md 片段:先找部署后的用户层,再回落到 dotfiles 源码。
+fragment_path() {
+  local p
+  for p in \
+    "${XDG_DATA_HOME:-$HOME/.local/share}/openspec/schemas/$SCHEMA/adopters/AGENTS.md.fragment.md" \
+    "${DOTFILES_DIR:-$HOME/.dotfiles}/home/dot_local/share/openspec/schemas/$SCHEMA/adopters/AGENTS.md.fragment.md"; do
+    if [ -f "$p" ]; then
+      printf '%s\n' "$p"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# ── skills ────────────────────────────────────────────────────────────────────
+cmd_skills() {
+  local with_verify=0 core=0 f
+  for f in "$@"; do
+    case "$f" in
+      --with-verify) with_verify=1 ;;
+      --core)        core=1 ;;
+      *) die_usage "未知参数: $f" ;;
+    esac
+  done
+  [ "$with_verify" = 1 ] && [ "$core" = 1 ] && die_usage '--with-verify 与 --core 不能同时使用'
+
+  need_openspec
+  if [ "$with_verify" = 1 ]; then
+    openspec config set profile custom >/dev/null
+    openspec config set workflows "$VERIFY_WORKFLOWS" >/dev/null
+    printf '注意:profile=custom 是全局设置,影响之后所有 openspec init\n'
+  elif [ "$core" = 1 ]; then
+    openspec config set profile core >/dev/null
+  fi
+
+  # 全局变量:EXIT trap 在函数返回后执行,拿不到 local。
+  TMPD=$(mktemp -d)
+  trap 'rm -rf "${TMPD:-}"' EXIT
+  local d="$TMPD"
+  ( cd "$d" && openspec init --tools agents --no-animation >/dev/null )
+
+  # 必须在 rm -rf 之前判:init 没产出时宁可失败,也不要把已装 skill 删干净。
+  shopt -s nullglob
+  local -a src=("$d"/.agents/skills/openspec-*/)
+  shopt -u nullglob
+  ((${#src[@]})) || die "openspec init 未在临时目录生成 openspec-* skill($d)"
+
+  mkdir -p "$SKILLS_DIR"
+  rm -rf "$SKILLS_DIR"/openspec-*
+  cp -r "${src[@]}" "$SKILLS_DIR"/
+  [ -f "$SKILLS_DIR/openspec-propose/SKILL.md" ] \
+    || die "复制后结构异常(期望 $SKILLS_DIR/openspec-propose/SKILL.md)"
+
+  shopt -s nullglob
+  local -a have2=("$SKILLS_DIR"/openspec-*/)
+  shopt -u nullglob
+  printf '已安装 %d 个 skill 到 %s:\n' "${#have2[@]}" "$SKILLS_DIR"
+  local p
+  for p in "${have2[@]}"; do
+    printf '  %s\n' "$(basename "$p")"
+  done
+  printf '重开 agent 会话后 skill 才生效\n'
+}
+
+# ── init ──────────────────────────────────────────────────────────────────────
+cmd_init() {
+  local no_agents=0 f
+  local -a dirs=()
+  for f in "$@"; do
+    case "$f" in
+      --no-agents) no_agents=1 ;;
+      -*) die_usage "未知参数: $f" ;;
+      *) dirs+=("$f") ;;
+    esac
+  done
+  ((${#dirs[@]} <= 1)) || die_usage 'init 最多接受一个目录'
+  local dir="${dirs[0]:-.}"
+  [ -d "$dir" ] || die "目录不存在: $dir"
+
+  need_openspec
+  need_jq
+  local src; src=$( cd "$dir" && schema_source )
+  case "$src" in
+    user) ;;
+    project) warn "项目内 openspec/schemas/$SCHEMA 覆盖了用户级 schema" ;;
+    *) die "schema $SCHEMA 未解析到(当前: ${src:-缺失});先 cd ~/.dotfiles && chezmoi apply" ;;
+  esac
+
+  mkdir -p "$dir/openspec"
+  local cfg="$dir/openspec/config.yaml"
+  if [ ! -e "$cfg" ]; then
+    config_body > "$cfg"
+    printf '写入 %s\n' "$cfg"
+  else
+    local cur; cur=$(schema_of "$cfg")
+    if [ -z "$cur" ]; then
+      local tmp; tmp=$(mktemp)
+      printf 'schema: %s\n\n' "$SCHEMA" > "$tmp"
+      cat "$cfg" >> "$tmp"
+      mv "$tmp" "$cfg"
+      printf '在 %s 首行补 schema: %s\n' "$cfg" "$SCHEMA"
+    elif [ "$cur" = "$SCHEMA" ]; then
+      printf '%s 已声明 schema: %s,无改动\n' "$cfg" "$cur"
+    else
+      die "$cfg 已声明 schema: $cur;改成 $SCHEMA 或删掉该行后重跑"
+    fi
+  fi
+
+  if [ "$no_agents" = 1 ]; then
+    printf '跳过 AGENTS.md(--no-agents)\n'
+  else
+    local frag agents="$dir/AGENTS.md"
+    frag=$(fragment_path) || die "找不到 AGENTS.md 片段(先 chezmoi apply,或加 --no-agents)"
+    if [ -f "$agents" ] && grep -qF "$FRAGMENT_MARKER" "$agents"; then
+      printf '%s 已含片段,跳过\n' "$agents"
+    else
+      if [ -s "$agents" ]; then
+        printf '\n' >> "$agents"
+      fi
+      cat "$frag" >> "$agents"
+      printf '追加片段到 %s(来源 %s)\n' "$agents" "$frag"
+    fi
+  fi
+
+  if [ "$dir" = "." ]; then
+    printf '下一步: openspec new change <name>\n'
+  else
+    printf '下一步: cd %s && openspec new change <name>\n' "$dir"
+  fi
+}
+
+# ── check ─────────────────────────────────────────────────────────────────────
+cmd_check() {
+  local f
+  local -a dirs=()
+  for f in "$@"; do
+    case "$f" in
+      -*) die_usage "未知参数: $f" ;;
+      *) dirs+=("$f") ;;
+    esac
+  done
+  ((${#dirs[@]} <= 1)) || die_usage 'check 最多接受一个目录'
+  local dir="${dirs[0]:-}"
+
+  need_openspec
+  need_jq
+  fail=0
+  ok "openspec 在 PATH: $(command -v openspec)"
+
+  local src; src=$(schema_source)
+  if [ "$src" = user ]; then
+    ok "schema $SCHEMA 解析到 user 层"
+  elif [ "$src" = project ]; then
+    bad "schema 解析: project(项目内 openspec/schemas/$SCHEMA 覆盖了用户级;删掉它)"
+  else
+    bad "schema 解析: ${src:-缺失}(期望 user;先 cd ~/.dotfiles && chezmoi apply)"
+  fi
+
+  if openspec schema validate "$SCHEMA" >/dev/null 2>&1; then
+    ok 'schema 结构校验通过'
+  else
+    bad "schema 结构校验失败(openspec schema validate $SCHEMA)"
+  fi
+
+  local n; n=$(openspec templates --schema "$SCHEMA" --json 2>/dev/null | jq 'length' || true)
+  if [ "$n" = 8 ]; then
+    ok '模板 8 个'
+  else
+    bad "模板数 ${n:-0}(期望 8)"
+  fi
+
+  local s missing=()
+  for s in "${CORE_SKILLS[@]}"; do
+    [ -f "$SKILLS_DIR/$s/SKILL.md" ] || missing+=("$s")
+  done
+  if ((${#missing[@]})); then
+    for s in "${missing[@]}"; do
+      bad "缺 skill: $s(跑 openspec-bridge skills)"
+    done
+  else
+    ok "core 6 个 skill 齐全($SKILLS_DIR)"
+  fi
+
+  if [ -f "$SKILLS_DIR/$VERIFY_SKILL/SKILL.md" ]; then
+    ok "$VERIFY_SKILL 已装"
+  else
+    warn "无 $VERIFY_SKILL:verify 阶段按 schema 的 7 项检查手工执行"
+  fi
+
+  # 端到端:schema 真能起 change,蓝图里 brainstorm 立即可做、apply 需要 plan。
+  TMPD=$(mktemp -d)
+  trap 'rm -rf "${TMPD:-}"' EXIT
+  local t="$TMPD"
+  mkdir -p "$t/openspec"
+  config_body > "$t/openspec/config.yaml"
+  if ( cd "$t" && openspec new change demo >/dev/null 2>&1 ); then
+    local json
+    json=$(cd "$t" && openspec status --change demo --json 2>/dev/null || true)
+    if printf '%s' "$json" | jq -e '.schemaName=="superpowers-bridge"' >/dev/null 2>&1; then
+      ok '端到端 schemaName=superpowers-bridge'
+    else
+      bad "端到端 schemaName=$(printf '%s' "$json" | jq -r '.schemaName // "缺失"' 2>/dev/null || echo 缺失)(期望 superpowers-bridge)"
+    fi
+    if printf '%s' "$json" | jq -e '.applyRequires|index("plan")' >/dev/null 2>&1; then
+      ok '端到端 applyRequires 含 plan'
+    else
+      bad '端到端 applyRequires 不含 plan'
+    fi
+    if printf '%s' "$json" | jq -e '(.artifacts[]|select(.id=="brainstorm")|.status)=="ready"' >/dev/null 2>&1; then
+      ok '端到端 brainstorm=ready'
+    else
+      bad "端到端 brainstorm 状态=$(printf '%s' "$json" | jq -r '.artifacts[]|select(.id=="brainstorm")|.status // "缺失"' 2>/dev/null || echo 缺失)(期望 ready)"
+    fi
+  else
+    bad "openspec new change 在只有 openspec/config.yaml 的目录里失败"
+  fi
+
+  if [ -n "$dir" ]; then
+    local cfg="$dir/openspec/config.yaml" cur
+    if [ -f "$cfg" ]; then
+      cur=$(schema_of "$cfg")
+      if [ "$cur" = "$SCHEMA" ]; then
+        ok "$cfg: schema=$cur"
+      else
+        bad "$cfg: schema=${cur:-缺失}(期望 $SCHEMA)"
+      fi
+    else
+      bad "$cfg 不存在(跑 openspec-bridge init $dir)"
+    fi
+  fi
+
+  if [ "$fail" = 0 ]; then
+    printf '全部通过\n'
+  else
+    printf '有失败项,见上\n'
+  fi
+  exit "$fail"
+}
+
+# ── 分发 ──────────────────────────────────────────────────────────────────────
+die_usage() {
+  printf 'openspec-bridge: %s\n\n' "$*" >&2
+  usage >&2
+  exit 2
+}
+
+case "${1:-}" in
+  skills) shift; cmd_skills "$@" ;;
+  init)   shift; cmd_init "$@" ;;
+  check)  shift; cmd_check "$@" ;;
+  -h|--help|help) usage ;;
+  '')     die_usage '缺少子命令' ;;
+  *)      die_usage "未知子命令: $1" ;;
+esac
