@@ -1,0 +1,30 @@
+{
+  "skill": "rust-dev",
+  "workflow_marker": "semver-checks",
+  "queries": [
+    {"query": "帮我审这个 crate 的公共 API 和文档注释。", "should_trigger": true, "holdout": false},
+    {"query": "这里的错误类型调用方没法 match，帮我改成枚举或 thiserror。", "should_trigger": true, "holdout": false},
+    {"query": "这段 async 代码里 select! 的分支不是取消安全的，帮我改。", "should_trigger": true, "holdout": true},
+    {"query": "帮我把 cargo-semver-checks 和 cargo-hack 加进 CI 门禁。", "should_trigger": true, "holdout": false},
+    {"query": "帮我给这个解析器写属性测试，再加一个模糊测试目标。", "should_trigger": true, "holdout": false},
+    {"query": "这个 Rust 服务要打成 musl 静态镜像跑在集群里，帮我审构建和 profile。", "should_trigger": true, "holdout": false},
+    {"query": "Review this crate's public API: can a caller match every error it returns?", "should_trigger": true, "holdout": false},
+    {"query": "Rewrite these error types so callers can match on them without string comparison.", "should_trigger": true, "holdout": true},
+    {"query": "This tokio select! branch is not cancellation-safe; fix it.", "should_trigger": true, "holdout": false},
+    {"query": "Add cargo-semver-checks and cargo-hack to this crate's CI.", "should_trigger": true, "holdout": false},
+    {"query": "Write proptest properties for this parser and one fuzz target.", "should_trigger": true, "holdout": false},
+    {"query": "Ship this Rust service as a musl static image in a non-root container.", "should_trigger": true, "holdout": true},
+    {"query": "帮我修这个 Go 服务的 goroutine 泄漏。", "should_trigger": false, "holdout": true},
+    {"query": "帮我配 ruff 和 pyright 作为 Python 项目的门禁。", "should_trigger": false, "holdout": false},
+    {"query": "帮我写 controller 的 reconcile 和 finalizer。", "should_trigger": false, "holdout": false},
+    {"query": "帮我把这个 Python 项目打包成 wheel 发到私有源。", "should_trigger": false, "holdout": false},
+    {"query": "帮我解释一下所有权和借用的一般规则。", "should_trigger": false, "holdout": false},
+    {"query": "把这个 TOML 文件里的注释删掉。", "should_trigger": false, "holdout": false},
+    {"query": "Add a golangci-lint gate to this Go repository.", "should_trigger": false, "holdout": false},
+    {"query": "Set up uv and pytest for this Python service.", "should_trigger": false, "holdout": false},
+    {"query": "Our CRD's status never updates; debug the controller.", "should_trigger": false, "holdout": false},
+    {"query": "Write a Dockerfile for a Python 3.13 service with uv.", "should_trigger": false, "holdout": true},
+    {"query": "What is the difference between a thread and a coroutine in general?", "should_trigger": false, "holdout": false},
+    {"query": "Format this JSON file with two-space indentation.", "should_trigger": false, "holdout": true}
+  ]
+}

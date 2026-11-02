@@ -1,4 +1,11 @@
 <!--
+产物语言由项目 openspec/config.yaml 决定(默认简体中文);
+本模板的说明是中英双语的,两种语言的约束完全一致。
+The artifact language follows the project's openspec/config.yaml (Simplified Chinese by default);
+this template's guidance is bilingual and both versions carry the same constraints.
+-->
+
+<!--
 change 用的 delta spec 模板。
 
 本模板示範 4 种 delta section,按实际需要取用:
@@ -16,9 +23,29 @@ change 用的 delta spec 模板。
 `## Requirements` 两个章节标题 —— 那是主 spec 的格式,不要在本模板里写。
 -->
 
+<!--
+Delta spec template for a change.
+
+This template demonstrates 4 delta sections; use only the ones you actually need:
+- ADDED / MODIFIED / REMOVED / RENAMED
+File and location: openspec/changes/<change-name>/specs/<capability>/spec.md
+(`<capability>` aligns with the directory name under openspec/specs/<capability>/)
+
+Format hard rules (OpenSpec will validate them):
+- A Requirement sentence MUST contain `SHALL` or `MUST`
+- Every Requirement MUST have at least one `#### Scenario:`
+- A Scenario MUST use level-4 (`####`); level-3 or a bullet will silently fail
+
+Note: this file is in delta form — write only the delta sections.
+After archiving, the main spec at openspec/specs/<capability>/spec.md uses the two
+section headings `## Purpose` and `## Requirements` — that is the main spec format,
+do not write it in this template.
+-->
+
 ## ADDED Requirements
 
 <!-- 新增行为。列出本 change 要加到 capability 的新 Requirement。 -->
+<!-- New behavior. List the new Requirements this change adds to the capability. -->
 
 ### Requirement: <!-- requirement name -->
 <!-- requirement text — 须含 SHALL 或 MUST -->
@@ -40,6 +67,16 @@ change 用的 delta spec 模板。
 是用全文替换的方式 apply MODIFIED。
 -->
 
+<!--
+Modify an existing Requirement. **MUST use exactly the same normalized header as
+openspec/specs/<capability>/spec.md** (compared case-sensitively after trimming),
+otherwise the delta apply during archive fails because it cannot find the
+corresponding requirement.
+
+**MUST paste the full modified content** (not just a diff), because OpenSpec archive
+applies MODIFIED by replacing the whole text.
+-->
+
 ### Requirement: <!-- 与既有 spec 中相同的 header -->
 <!-- 修改后的完整 requirement text — 含 SHALL 或 MUST -->
 
@@ -54,6 +91,11 @@ change 用的 delta spec 模板。
 <!--
 删除既有 Requirement。MUST 包含 Reason 与 Migration 说明,让 reviewer
 理解为何废除以及既有引用方该怎么迁移。
+-->
+
+<!--
+Remove an existing Requirement. MUST include a Reason and a Migration note so the
+reviewer understands why it is being dropped and how existing callers should migrate.
 -->
 
 ### Requirement: <!-- 要删除的 header,与既有 spec 完全相同 -->
@@ -72,6 +114,14 @@ change 用的 delta spec 模板。
 用**新的** header 再写一份完整内容。
 
 archive 时 apply 顺序:RENAMED → REMOVED → MODIFIED → ADDED
+-->
+
+<!--
+Rename a Requirement header. The format is fixed: FROM / TO use code-fence headers.
+If the name changes together with the content, **also** list the name change under
+RENAMED, and write a full copy of the content under MODIFIED using the **new** header.
+
+Apply order during archive: RENAMED → REMOVED → MODIFIED → ADDED
 -->
 
 - FROM: `### Requirement: <Old Name>`

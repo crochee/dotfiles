@@ -1,8 +1,9 @@
 ---
 name: architecture-design
-description: "Produces a decision record and design review: NFR numbers, candidates that lost, failure modes, C4 and Mermaid views. Use when making a structural decision, writing an ADR, or reviewing scalability, consistency, or RPO/RTO."
+description: "Produces a decision record and design review: NFR numbers, candidates that lost, failure modes, C4 and Mermaid views. Use when making a structural decision, writing an ADR, or reviewing scalability, consistency, or RPO/RTO. Not for HTTP contracts (api-design), code-level review (golang-dev, rust-dev, python-dev), page flows (frontend-design), or prose critique (technical-writing). 中文：写 ADR、架构设计与评审、NFR、失败模式。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Architecture Design
@@ -19,7 +20,7 @@ Three modes, one deliverable each:
 
 A structural decision is one that is expensive to reverse and crosses a component or team boundary. A choice confined to one module with a cheap local undo is code review, and does not earn an ADR. The skill is language-independent: it reads Go, Rust, TypeScript or anything else for the structure, and delegates syntax-level findings to the language skill.
 
-Not for HTTP contract design (api-design), implementation-level review (rust-dev, golang-dev, python-dev), page and flow structure (frontend-design), a prose critique of a document (technical-writing), or an interview that stress-tests the decider's thinking before the decision exists (grilling) — this skill delivers the record, not the interview.
+Not for HTTP contract design (api-design), implementation-level review (rust-dev, golang-dev, python-dev), page and flow structure (frontend-design), a prose critique of a document (technical-writing), or an interview that stress-tests the decider's thinking before the decision exists — this skill delivers the record, not the interview.
 
 ## Workflow
 

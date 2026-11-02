@@ -1,0 +1,133 @@
+{
+  "skill_name": "deep-research",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "is langgraph production-ready for an internal analyst workflow? need github evidence, docs, releases, issues, license",
+      "expected_output": "A cited Markdown report. Every high-impact claim carries an evidence id that resolves to a logged evidence row, with a locator, a freshness label and an uncertainty label. The report names at least one contradicting or unclear finding, and states the effort tier and source classes used.",
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "Every [E####] citation in the report resolves to a row in evidence_ledger.csv",
+        "The report contains at least one evidence row whose stance is contradicts or unclear",
+        "The report's method appendix states the effort tier and the source classes searched",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Research whether LangChain open_deep_research is production-ready for an internal analyst workflow. Include GitHub evidence, docs, releases, issues, license, and alternatives.",
+      "expected_output": "A cited report that inspects the repository beyond its README: the source, the tests, the releases, the open issues, and the licence file, each with a locator. Maintenance risk and the unresolved issues are named, and every high-impact claim cites an evidence id.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "The report has an Executive summary section and a Method appendix section",
+        "The report cites at least three distinct evidence ids",
+        "At least one evidence row has source_type of source-code, release-note, or official-doc",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Write a literature review of Self-RAG, IRCoT, ReAct, STORM, and GraphRAG for building a research agent. Include papers, code/data, limitations, and open questions.",
+      "expected_output": "A literature review with a literature map grouping the papers by idea, the paper route covered (arXiv or venue pages), the limitations each paper states, the follow-up graph, and the open questions the literature leaves unresolved.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "The report names all five papers by title",
+        "The report has a Literature map section or a table of papers",
+        "At least one evidence row has source_type of paper or preprint",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Verify the claim: \"a graph-based retrieval system is safer than a flat one because it preserves relationships.\" Find supporting and contradicting evidence.",
+      "expected_output": "A claim verification report. The claim gets a claim id, supporting and contradicting evidence rows, an independence assessment, and an explicit uncertainty label when the evidence does not settle it.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "The report has a Claim verification matrix section",
+        "The report contains at least one evidence row whose stance is contradicts or unclear",
+        "Every high-impact claim in the report cites an evidence id",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Compare three open research agent frameworks for a build-vs-adopt decision, with sources.",
+      "expected_output": "A decision-grade comparison: a comparison matrix with strengths, weaknesses, evidence and fit per option, source-quality notes, and a minimum validation plan naming the smallest experiment that would remove the biggest uncertainty.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "The report has a comparison table with one row per option",
+        "The report has a Method appendix section",
+        "Every [E####] citation in the report resolves to a row in evidence_ledger.csv",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I uploaded a whitepaper. Summarize it and check whether its claims are still current using web sources.",
+      "expected_output": "A report that separates the local document's claims from the external verification. The local claims carry exact locators, the external sources carry freshness labels, and the report says which claims are still current and which have moved.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "At least one evidence row has source_type of local-file",
+        "At least one evidence row has source_type of official-doc, paper, news, or blog",
+        "The report states which local claims are still current",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Audit this GitHub repo for maintenance risk, security advisories, release history, docs/source mismatch, and license risk.",
+      "expected_output": "A due-diligence report that opened the repository's artefacts rather than its README: the release history, the advisories, the licence, and whether the documentation matches the implementation, with each finding carrying an evidence id and a locator.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "The report names the release history and the licence of the project",
+        "At least one evidence row has source_type of release-note, changelog, filing, or source-code",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Produce a cited report on whether a benchmark result has replication failures or data contamination concerns.",
+      "expected_output": "A report on the benchmark that separates the recorded result from the reproducibility of that result: the metric and its setup, the replications, the contamination or leakage evidence, and the critiques, with every claim citing an evidence id.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "The report states the metric and the evaluation setup it relies on",
+        "The report contains at least one evidence row whose stance is contradicts or unclear",
+        "Every [E####] citation in the report resolves to a row in evidence_ledger.csv",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Deep research: is this vendor's API suitable for production? Include official docs, changelog, the GitHub SDK, incidents, and competing views.",
+      "expected_output": "A report that weighs the vendor's own documentation against the changelog, the SDK, the incident history, and the outside view. The risk section names what would break, and the recommendation is separated from the evidence that supports it.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "The report has a Method appendix section",
+        "The report contains at least one evidence row whose stance is contradicts or unclear",
+        "Every [E####] citation in the report resolves to a row in evidence_ledger.csv",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Here is a design document from our team with performance numbers in it. Check the numbers against the public benchmarks and tell me which ones hold up.",
+      "expected_output": "A verification report for the local document: each performance claim extracted with an exact locator, each checked against a public source, and the report saying which claims hold, which do not, and which could not be checked.",
+      "files": [],
+      "assertions": [
+        "A Markdown report file exists and is non-empty",
+        "At least one evidence row has source_type of local-file",
+        "The report states which claims hold up and which do not",
+        "Every high-impact claim in the report cites an evidence id",
+        "The report contains no unresolved {placeholder} text"
+      ]
+    }
+  ]
+}

@@ -56,6 +56,16 @@ The third is the one worth writing first. It is cheap to check when the agent re
 
 Follow the table with the delta per task where it matters, the unstable tasks, and the cost of the improvement: +17.7k tokens and +46 s per task buys +38 points of pass rate. That trade is a decision someone can make; a single percentage is not.
 
+### Tool inventory
+
+Tool work keeps an inventory next to the server, one row per tool. It is not documentation; it is the review artefact — a tool missing from it is invisible at review time and permanent in the schema.
+
+| Tool | Read-only | Destructive | Paginates | Error path |
+|---|---|---|---|---|
+| `example_search_users` | yes | no | cursor (token absent on the last page) | names the unmatched field, suggests `query=` |
+
+A row that cannot be filled is a tool that is not finished.
+
 ## Regression thresholds
 
 Set the threshold before the run, or the result will be explained into acceptability.

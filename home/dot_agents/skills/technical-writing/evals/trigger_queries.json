@@ -1,0 +1,30 @@
+{
+  "skill": "technical-writing",
+  "workflow_marker": "Supersedes",
+  "queries": [
+    {"query": "帮我起草一份设计文档，读者是评审人，决定还没定。", "should_trigger": true, "holdout": true},
+    {"query": "帮我把这份 RFC 的大纲列出来，标题按读者的问题写。", "should_trigger": true, "holdout": false},
+    {"query": "我们这套文档教程、操作指南和参考混在一起，帮我按 Diátaxis 拆开。", "should_trigger": true, "holdout": false},
+    {"query": "帮我评审这份草稿的结构，指出哪里会让读者停下来。", "should_trigger": true, "holdout": false},
+    {"query": "帮我给这份文档加两张 Mermaid 图，说明服务拓扑和消息顺序。", "should_trigger": true, "holdout": false},
+    {"query": "这份 API 文档的接口说明是准确的，但章节结构混乱，帮我重排。", "should_trigger": true, "holdout": false},
+    {"query": "Draft a design doc for a decision that is still forming, with the reviewer as the reader.", "should_trigger": true, "holdout": false},
+    {"query": "Give me the RFC outline with every heading phrased as the reader's question.", "should_trigger": true, "holdout": false},
+    {"query": "Split this documentation set into tutorials, how-tos, reference and explanation.", "should_trigger": true, "holdout": false},
+    {"query": "Critique this draft: where will a reader stop, and what is the fix?", "should_trigger": true, "holdout": true},
+    {"query": "Add two Mermaid diagrams to this doc: service topology and a message sequence.", "should_trigger": true, "holdout": false},
+    {"query": "The API descriptions here are correct, but the document's structure is wrong; restructure it.", "should_trigger": true, "holdout": true},
+    {"query": "这段读着像 AI 写的，帮我去掉 AI 味。", "should_trigger": false, "holdout": true},
+    {"query": "帮我设计这个 REST 接口的分页方案和错误码。", "should_trigger": false, "holdout": false},
+    {"query": "给这个陌生仓库生成一套多页 wiki。", "should_trigger": false, "holdout": false},
+    {"query": "帮我把这份文档的错别字和标点统一一下。", "should_trigger": false, "holdout": false},
+    {"query": "帮我用 pandoc 把这份 Markdown 转成 PDF。", "should_trigger": false, "holdout": false},
+    {"query": "帮我统计这份文档的字数。", "should_trigger": false, "holdout": false},
+    {"query": "Humanise this draft; it reads like a model wrote it.", "should_trigger": false, "holdout": false},
+    {"query": "Write the OpenAPI document for our billing endpoints.", "should_trigger": false, "holdout": false},
+    {"query": "Produce the multi-page wiki for this repository.", "should_trigger": false, "holdout": false},
+    {"query": "Fix the punctuation and capitalisation in these slide notes.", "should_trigger": false, "holdout": true},
+    {"query": "Convert this Markdown file to DOCX.", "should_trigger": false, "holdout": false},
+    {"query": "How many words are in this file?", "should_trigger": false, "holdout": true}
+  ]
+}

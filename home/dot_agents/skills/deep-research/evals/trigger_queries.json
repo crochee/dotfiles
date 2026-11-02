@@ -1,0 +1,136 @@
+{
+  "skill": "deep-research",
+  "workflow_marker": "research_ledger",
+  "queries": [
+    {
+      "query": "Research whether the langgraph project is production-ready. Include GitHub releases, issues, and license evidence.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Write a literature review of Self-RAG, IRCoT, ReAct, and STORM for building a research agent. Include papers, code, limitations, and open questions.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Verify the claim that a graph-based retrieval system beats a flat one. Find supporting and contradicting evidence.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Compare three open research agent frameworks for a build-vs-adopt decision, with sources.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "I uploaded a whitepaper. Summarize it and check whether its claims are still current using web sources.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Audit this GitHub repo for maintenance risk, security advisories, release history, docs/source mismatch, and license risk.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Produce a cited report on whether this benchmark result has replication failures or data contamination concerns.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Deep research: is this vendor's API suitable for production? Include official docs, changelog, the GitHub SDK, incidents, and competing views.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Is library X still current? Check the latest release notes and cite the changelog entry that confirms feature Y.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Here is our design document with performance numbers in it. Check the numbers against the public benchmarks and tell me which ones hold up.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Summarize this research paper in five bullets, without using external sources: Self-RAG proposes learning to retrieve, generate, and critique through self-reflection.",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "What is a literature review, and what sections does one usually have?",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "Find me papers about retrieval-augmented generation. Just a list of titles and links.",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "Translate this paragraph into Chinese: \"Our research team publishes every paper in an open repository.\"",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "Brainstorm names for my research newsletter.",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "Chat casually with me about why research is hard.",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "Rewrite this summary so it reads better. Keep every fact as it is: \"The team completed the migration in March and reduced latency by 20 percent.\"",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "Fix the grammar in this README sentence about the research pipeline.",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "What does RAG stand for?",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "Based only on this document, extract the abstract and the methods section: \"We propose a graph-based retrieval system that preserves document relationships for multi-hop question answering.\"",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "I need to decide between two vector databases for our retrieval service. Compare them with sources and give me a recommendation.",
+      "should_trigger": true,
+      "holdout": true
+    },
+    {
+      "query": "Summarize what the published research on long-context models says about retrieval quality, with citations.",
+      "should_trigger": true,
+      "holdout": true
+    },
+    {
+      "query": "Our team claims the new orchestrator handles ten thousand requests per second. Verify that claim with evidence.",
+      "should_trigger": true,
+      "holdout": true
+    },
+    {
+      "query": "What is the difference between a preprint and a peer-reviewed paper?",
+      "should_trigger": false,
+      "holdout": true
+    },
+    {
+      "query": "List the ten most recent papers on retrieval-augmented generation, newest first.",
+      "should_trigger": false,
+      "holdout": true
+    },
+    {
+      "query": "Rewrite this paragraph about our research process so it reads better: \"We surveyed the team, ran three interviews, and wrote up the findings in the usual way.\"",
+      "should_trigger": false,
+      "holdout": true
+    }
+  ]
+}

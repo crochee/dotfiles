@@ -1,24 +1,22 @@
 ---
 name: python-dev
-description: "Delivers Python a reviewer can check: contracts before implementation, one gate per fact, examples that run. Use when writing, reviewing or shipping Python source, tests, packaging, CI, containers, a concurrency model, a type gate, a data layer, an SDK beside a deployed app, or pytest/ruff/pyright/uv setup."
+description: "Delivers Python a reviewer can check: contracts before implementation, one gate per fact, examples that run. Use when writing, reviewing or shipping Python source, tests, packaging, CI or containers; choosing a concurrency model, a type gate or a data layer; setting up pytest, ruff, pyright or uv; or calling into a Python service as a tool. Not for other languages' toolchains or shell/CI work with no Python. 中文：写/审 Python、pytest/ruff/pyright/uv、打包、并发、数据层。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 compatibility: "Requires Python 3.15 for the examples; the rules follow the project's `requires-python`."
 ---
 
 # Python Development
 
-Deliver Python a reviewer can check. The baseline is 3.15; rules degrade to `requires-python`.
+Deliver Python a reviewer can check. Baseline 3.15; rules degrade to `requires-python`.
 
 ## When to Use
 
 - Writing or reviewing Python source, tests, packaging or CI configuration.
 - Laying out a service that ships as an installable SDK **and** a deployed app.
 - Choosing a concurrency model, a type gate, a data layer or a container base.
-- Setting up pytest, ruff, pyright, uv, a release pipeline or a lock policy; auditing a tree for
-  swallowed errors and stale suppressions.
-
-Not for: other languages' toolchains, or shell/CI work with no Python.
+- Setting up pytest, ruff, pyright, uv or a lock policy; auditing a tree for swallowed errors.
 
 ## Workflow
 
@@ -42,7 +40,7 @@ Not for: other languages' toolchains, or shell/CI work with no Python.
 
 | Item | Must contain |
 |---|---|
-| Source | Files in the project's layout, plus the `pyproject.toml` change with dependency bounds. |
+| Source | Files in the project's layout, plus the `pyproject.toml` diff with dependency bounds. |
 | Public API | `Symbol \| Signature \| Purpose` per public change, annotated, `-> None` explicit. |
 | Tests | Added tests, plus the command and output proving they fail on reverted code. |
 | Gate output | Verbatim `ruff check`, `ruff format --check`, `pyright`, `pytest` output, with exit status. |
@@ -50,7 +48,7 @@ Not for: other languages' toolchains, or shell/CI work with no Python.
 
 ## Guardrails
 
-1. Validate untrusted values once, at the process boundary (pydantic v2 or an explicit `ValueError`);
+1. Validate untrusted values once, at the process boundary (pydantic v2 or `ValueError`);
    the interior takes frozen dataclasses. `[PYD]`
 2. Translate once, always `raise X from exc`. Never bare `except:` or `except BaseException`;
    `except Exception` only at a boundary. `[PEP8]`
@@ -60,15 +58,14 @@ Not for: other languages' toolchains, or shell/CI work with no Python.
    `[DTZ]`
 5. Nothing blocks the loop: blocking calls go to `asyncio.to_thread`, CPU work to
    `ProcessPoolExecutor`; every `await` is cancellable, cleanup in `finally`. `[ASYN]`
-6. Module import has no side effects: no env read, connection, thread or logging setup; configuration is
-   read at the composition root. `[12F]`
+6. Module import has no side effects: no env read, connection, thread or logging setup; config is read
+   at the composition root. `[12F]`
 7. Dependency admission: stdlib first; an application uses `>=x,<y` and commits `uv.lock`; a published
    library declares a lower bound only and tracks latest in CI. `[PYPA]`
-8. One environment model: `uv sync --locked`; `uv pip install --system` only for a system-wide tool
-   image. `[UV]`
+8. One environment model: `uv sync --locked`; `--system` only for a system-wide tool image. `[UV]`
 9. New code passes all three gates; each test fails when the implementation is reverted. `[PYTEST]`
 10. Containers: non-root, never `latest`, base minor equal to `requires-python`, `PYTHONUNBUFFERED=1`,
-    no build toolchain at runtime. `[12F]`
+    no runtime toolchain. `[12F]`
 
 ## Review Mode
 
@@ -96,8 +93,6 @@ Not for: other languages' toolchains, or shell/CI work with no Python.
 | [testing.md](references/testing.md) | pytest config, fixtures, database isolation, property tests, coverage. |
 | [tooling.md](references/tooling.md) | ruff, pyright, pre-commit, logging, profiling, legacy adoption. |
 | [delivery.md](references/delivery.md) | `pyproject.toml`, uv workspaces, lock policy, build, CI, containers. |
-
-Templates: `assets/`; validator: `scripts/check.py`.
 
 ## Verification
 

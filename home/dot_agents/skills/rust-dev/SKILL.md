@@ -1,8 +1,9 @@
 ---
 name: rust-dev
-description: "Produces Rust whose public API is documented, whose errors a caller can match, and whose release build reproduces from the committed lockfile. Use when writing, reviewing or shipping Rust code, Cargo layout, async runtimes and channels, test tooling (unit, property, fuzz, benchmark), or release images."
+description: "Produces Rust whose public API is documented, whose errors a caller can match, and whose release build reproduces from the committed lockfile. Use when writing, reviewing or shipping Rust code, Cargo layout, async runtimes and channels, test tooling (unit, property, fuzz, benchmark), or release images. Not for shell or YAML editing, CI work with no Rust source, a non-Rust toolchain, or a conceptual question with no code. 中文：写/审 Rust、API、async、测试、发布产物。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Rust Development

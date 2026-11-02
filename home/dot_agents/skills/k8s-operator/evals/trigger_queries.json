@@ -1,0 +1,30 @@
+{
+  "skill": "k8s-operator",
+  "workflow_marker": "config/crd/bases/",
+  "queries": [
+    {"query": "帮我写一个 controller，watch 自定义资源并把集群收敛到期望状态。", "should_trigger": true, "holdout": false},
+    {"query": "我的 CRD 要改成 structural schema，帮我把字段校验和打印列补全。", "should_trigger": true, "holdout": false},
+    {"query": "finalizer 没释放，资源删不掉，帮我排查 reconcile 路径。", "should_trigger": true, "holdout": true},
+    {"query": "帮我给 controller 配最小 RBAC 权限。", "should_trigger": true, "holdout": false},
+    {"query": "这个 operator 升级时 CRD 从 v1alpha1 到 v1 怎么迁移才不丢已存对象。", "should_trigger": true, "holdout": false},
+    {"query": "这个 controller 是 Go 写的，帮我审 reconcile 的幂等性和它就需要的权限。", "should_trigger": true, "holdout": false},
+    {"query": "Write the reconcile loop for a controller that creates one Deployment per custom resource.", "should_trigger": true, "holdout": true},
+    {"query": "Convert this CRD to a structural schema with real validation and printer columns.", "should_trigger": true, "holdout": false},
+    {"query": "Our finalizer never completes, so deletion hangs; debug the reconcile path.", "should_trigger": true, "holdout": false},
+    {"query": "Give this controller least-privilege RBAC: it only reads ConfigMaps and patches its own status.", "should_trigger": true, "holdout": false},
+    {"query": "How do we roll this CRD from v1alpha1 to v1beta1 without losing stored objects?", "should_trigger": true, "holdout": false},
+    {"query": "This Go operator writes its status twice per reconcile; review idempotency and the RBAC it needs.", "should_trigger": true, "holdout": true},
+    {"query": "帮我给这个 Go 包的导出函数写 godoc 和表驱动测试。", "should_trigger": false, "holdout": true},
+    {"query": "帮我写一份 ADR，决定控制面要不要拆成两个服务。", "should_trigger": false, "holdout": false},
+    {"query": "帮我评审这份运维文档的结构，让值班工程师能照着做。", "should_trigger": false, "holdout": false},
+    {"query": "帮我写一份 Helm chart，把这个服务部署到集群。", "should_trigger": false, "holdout": false},
+    {"query": "集群里 Pod 一直 CrashLoopBackOff，帮我排查原因。", "should_trigger": false, "holdout": false},
+    {"query": "帮我列出当前命名空间下所有 Pod 的名字。", "should_trigger": false, "holdout": false},
+    {"query": "Fix the goroutine leak in this Go worker and add a lint gate.", "should_trigger": false, "holdout": false},
+    {"query": "Write an ADR comparing one control plane against two for this product.", "should_trigger": false, "holdout": false},
+    {"query": "Restructure this runbook so an on-call engineer can act on it at 3 a.m.", "should_trigger": false, "holdout": false},
+    {"query": "Write a Helm values file for a Postgres chart with a 20 Gi volume.", "should_trigger": false, "holdout": true},
+    {"query": "Our node pool is out of memory; which pods should I evict first?", "should_trigger": false, "holdout": false},
+    {"query": "Print the kubeconfig context names on this machine.", "should_trigger": false, "holdout": true}
+  ]
+}

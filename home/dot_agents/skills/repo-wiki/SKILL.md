@@ -1,8 +1,9 @@
 ---
 name: repo-wiki
-description: "Produces a multi-page Markdown wiki under docs/openrepowiki/ with every claim traced to a source file. Use when documenting an unfamiliar repository, onboarding onto a codebase, or refreshing a project wiki."
+description: "Produces a multi-page Markdown wiki under docs/openrepowiki/ with every claim traced to a source file. Use when documenting an unfamiliar repository, onboarding onto a codebase, or refreshing a project wiki. Not for marketing copy, one-page summaries, documentation for code outside the repository, or a single cited note answering one question. 中文：给陌生仓库生成多页 wiki、上手代码库、刷新项目文档。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 compatibility: "Requires Python 3.10+."
 ---
 
@@ -22,7 +23,7 @@ commands stay exactly as the code has them.
 
 Not for: writing marketing copy, summarising a repository in one page, generating documentation
 for code that is not in the repository, or a single cited note answering one question — that is
-`research`; every page here is part of the multi-page inventory. Every page must be fillable from
+`deep-research`; every page here is part of the multi-page inventory. Every page must be fillable from
 real files — if the source does not contain the information, the page says what is missing instead
 of inventing it.
 
@@ -37,7 +38,7 @@ of inventing it.
 
 2. **Scaffold exactly those pages.** Run
    [`scripts/scaffold_open_docs.py`](scripts/scaffold_open_docs.py) with the detected page ids.
-   The path below is relative to this skill's directory (`~/.agents/skills/repo-wiki/`):
+   The path below is relative to this skill's directory (the directory containing this SKILL.md):
 
    ```bash
    # python3 3.10+ required
@@ -53,27 +54,8 @@ of inventing it.
    *Exit criterion:* `docs/openrepowiki/` contains `index.md` plus one file per selected page, and each
    page's navigation line points at its true neighbours.
 
-   `--input` takes a JSON file when the page plan comes from an external documentation system
-   instead of the bundled template. Each entry carries a `page_plan` object with an `id` (a page id
-   such as `"1"` or `"2.1"`) and a `title`:
-
-   ```json
-   {
-     "wiki": {
-       "wikis": {
-         "en": {
-           "pages": [
-             { "page_plan": { "id": "1", "title": "Overview" } },
-             { "page_plan": { "id": "1.1", "title": "Quick Start" } }
-           ]
-         }
-       }
-     }
-   }
-   ```
-
-   The language bundle is selected by `--lang`. A missing, malformed or unrecognised file falls back
-   to the bundled template with a warning on stderr. The full field table is in
+   `--input` takes a JSON page plan from an external documentation system instead of the bundled
+   template; the field table, the example file and the fallback behaviour are in
    `references/scaffold-cli.md`.
 
 3. **Analyse the code.** Collect the metadata, directory structure, entry points, configuration
@@ -97,58 +79,17 @@ repository, is in `references/workflow.md`.
 
 ## Detection and Page Selection
 
-Detection comes first. Scaffolding every page and deleting the unwanted ones afterwards produces
-exactly the empty pages the skill forbids, so the selection is made before the scaffold runs.
+Detection comes first. Scaffolding every page and deleting the unwanted ones afterwards produces exactly the empty pages the skill forbids, so the selection is made before the scaffold runs: mandatory pages always exist, optional pages only when their detection signal is present, conditional pages only when the component exists.
 
-| Category | Pages | Rule |
-|----------|-------|------|
-| Mandatory | Overview, Quick Start, Project Structure, Configuration, Usage, Development | Always created |
-| Optional | CLI Commands, API Reference, Installation, Troubleshooting, FAQ, Testing, Contributing | Created only when the detection signal is present |
-| Conditional | Deployment, Architecture, Performance, Advanced Topics | Created only when the component exists |
+The category table, the detection signals, the mandatory-page content sources, the monorepo rules and the scaffold's `--pages` / `--force` behaviour are in `references/page-types.md` and `references/scaffold-cli.md`.
 
-The detection signals, the mandatory-page content sources and the monorepo rules are tabulated in
-`references/page-types.md`.
+## Analysis and Localisation
 
-The scaffold's `--pages` option takes the selected page ids as a comma-separated list, so the page
-set that was detected is the page set that gets written. `--force` additionally prunes page files
-the script previously generated that are no longer in the plan; it never touches a file the script
-did not create.
+Read in full: entry points, package manifests, configuration sources, the public API surface, the main data models. Sample: tests, example scripts, docs, and any directory over 50 files. Never read or quote secrets (`.env*`, keys, `credentials*`, `.npmrc`, `.netrc`, `.pypirc`, anything under `secrets/`, `.ssh/`, `.aws/`, `.gnupg/`), binaries, lockfiles, minified bundles or vendored trees — a configuration page names the option and describes its effect; the value stays in the repository. When the repository is too large to read in full, narrow the scope explicitly rather than truncating silently, and record which directories were sampled.
 
-## Analysis and Filtering
+Prose, page titles and navigation labels follow the requested language; identifiers, paths, commands, environment variables and flag names are copied verbatim from the code. Page filenames never change with the language — the zero-padded page id plus the English title slug — so a link keeps working in every output language.
 
-**Read in full**: entry points, the package manifests, configuration sources, the public API
-surface, the main data models.
-
-**Sample**: test files (read the configuration plus one representative test per suite), example
-scripts, documentation files, and any directory holding more than 50 files.
-
-**Never read or quote**: `.env*`, `*.pem`, `*.key`, `*.keystore`, `*.p12`, `*.pfx`, `id_rsa*`,
-`id_ed25519*`, `id_ecdsa*`, `credentials*.json`, `*.secret*`, `*.secrets`, `.npmrc`, `.netrc`,
-`.pypirc`, and anything under `secrets/`, `credentials/`, `.aws/`, `.ssh/`, `.gnupg/`. Also excluded:
-binaries, archives, lockfiles, minified bundles, vendored trees and `dist/`, `build/`, `target/`,
-`vendor/`.
-
-A configuration page names the option and describes its effect. The value stays in the repository.
-
-When the repository is too large to read in full, narrow the scope explicitly instead of truncating
-silently: analyse the "read in full" set, sample the remainder by directory, and record in the
-delivery report which directories were sampled and which claims rest on that sample.
-
-## Localisation
-
-The prose, the page titles and the navigation labels follow the requested language. Identifiers,
-paths, commands, environment variables and flag names are never translated — they are copied from
-the code exactly.
-
-The scaffold detects `zh` when the query contains CJK ideographs (U+4E00–U+9FFF) and `en`
-otherwise. Japanese, Korean, Cyrillic and every other script fall back to `en` — pass `--lang`
-explicitly for them. Only `en` and `zh` have localised page titles and UI strings; any other
-language gets the English titles and UI.
-
-Page filenames never change with the language. The filename is the zero-padded page id plus the
-English title slug — `01-overview.md`, `01-01-quick-start.md`, `02-project-structure.md` — so a
-link to a page keeps working in every output language. The localised title lives in the page's H1
-and in `index.md`.
+The read/sample/exclude lists, the oversized-repository escape hatch and the localisation and language-detection rules are in `references/workflow.md` and `references/page-types.md`.
 
 ## Repository Boundaries
 

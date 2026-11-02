@@ -1,0 +1,30 @@
+{
+  "skill": "api-design",
+  "workflow_marker": "x-conventions",
+  "queries": [
+    {"query": "帮我设计订单服务的 REST 接口，列出资源、状态码和错误码。", "should_trigger": true, "holdout": true},
+    {"query": "这个列表接口要支持翻页，游标和 offset 怎么选，给我一套方案。", "should_trigger": true, "holdout": false},
+    {"query": "给这个任务接口写一份 OpenAPI 3.1 文档。", "should_trigger": true, "holdout": false},
+    {"query": "我们的接口要加版本，v1 到 v2 怎么迁移才不破坏现有调用方。", "should_trigger": true, "holdout": false},
+    {"query": "评审这个 HTTP 接口的错误响应：失败也返回 200 加一个 error 字段，是不是有问题。", "should_trigger": true, "holdout": false},
+    {"query": "给这个 agent 要调用的检索接口设计契约，重点是分页和错误码，顺便给个 openapi.yaml。", "should_trigger": true, "holdout": true},
+    {"query": "Design the REST resources, status codes and error bodies for a payments API.", "should_trigger": true, "holdout": false},
+    {"query": "Should this list endpoint use offset or cursor pagination? Give me the contract either way.", "should_trigger": true, "holdout": true},
+    {"query": "Write an OpenAPI 3.1 document for our task-tracking API.", "should_trigger": true, "holdout": false},
+    {"query": "How do we version this endpoint without breaking the two clients already in production?", "should_trigger": true, "holdout": false},
+    {"query": "Review this API: it returns 200 with an error field when the write fails.", "should_trigger": true, "holdout": false},
+    {"query": "Our agent calls a search endpoint; write that call's contract — pagination, errors, and an openapi.yaml.", "should_trigger": true, "holdout": false},
+    {"query": "帮我写一份 ADR，记录为什么选最终一致而不是强一致。", "should_trigger": false, "holdout": true},
+    {"query": "帮我评审这份 RFC 的结构，读者读完能不能复述决定。", "should_trigger": false, "holdout": false},
+    {"query": "帮我给 agent 设计工具 schema 和每一步的上下文预算。", "should_trigger": false, "holdout": false},
+    {"query": "把这个 REST 接口的响应 JSON 转成 TypeScript 类型定义。", "should_trigger": false, "holdout": false},
+    {"query": "我们想接 OAuth2 授权码流程，帮我设计 scope 和 token 生命周期。", "should_trigger": false, "holdout": false},
+    {"query": "把这个 YAML 文件的缩进改成两个空格。", "should_trigger": false, "holdout": false},
+    {"query": "Write an ADR comparing single-region and multi-region deployment for this service.", "should_trigger": false, "holdout": false},
+    {"query": "Review this design doc's outline; can a reader restate the decision afterwards?", "should_trigger": false, "holdout": false},
+    {"query": "Design the eval suite for our agent and report its pass rate.", "should_trigger": false, "holdout": false},
+    {"query": "Generate a GraphQL schema for our product catalogue.", "should_trigger": false, "holdout": true},
+    {"query": "Set up outbound webhook delivery with retries and signature verification.", "should_trigger": false, "holdout": false},
+    {"query": "Rename this file from api.md to api-reference.md.", "should_trigger": false, "holdout": true}
+  ]
+}

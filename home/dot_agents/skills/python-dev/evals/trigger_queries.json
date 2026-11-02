@@ -1,0 +1,30 @@
+{
+  "skill": "python-dev",
+  "workflow_marker": "pyright",
+  "queries": [
+    {"query": "帮我用 pytest 写测试，参数化覆盖边界输入。", "should_trigger": true, "holdout": false},
+    {"query": "配好 ruff 和 pyright 的门禁，CI 里一条命令跑完。", "should_trigger": true, "holdout": true},
+    {"query": "这段 asyncio 代码里有阻塞调用，帮我把并发模型改对。", "should_trigger": true, "holdout": false},
+    {"query": "帮我用 uv 管理这个包的依赖和 lockfile。", "should_trigger": true, "holdout": false},
+    {"query": "帮我审一下这个数据层：事务边界、会话管理和连接池设置。", "should_trigger": true, "holdout": false},
+    {"query": "这个 FastAPI 服务要暴露给 agent 当工具用，帮我审错误处理和类型契约。", "should_trigger": true, "holdout": false},
+    {"query": "Write parametrised pytest tests for this parser, including the empty-input case.", "should_trigger": true, "holdout": false},
+    {"query": "Set up ruff and pyright as one CI gate for this package.", "should_trigger": true, "holdout": false},
+    {"query": "This asyncio worker blocks the event loop; fix the concurrency model.", "should_trigger": true, "holdout": true},
+    {"query": "Move this project to uv with a locked dependency set and a build backend.", "should_trigger": true, "holdout": false},
+    {"query": "Review this data layer: session handling, transactions, connection pool sizing.", "should_trigger": true, "holdout": false},
+    {"query": "Our agent calls this Python service as a tool; review its error responses and type contracts.", "should_trigger": true, "holdout": true},
+    {"query": "帮我审这个 Go 包的导出 API 和 goroutine 泄漏。", "should_trigger": false, "holdout": true},
+    {"query": "这个 Rust crate 的 lockfile 没提交，帮我修 CI。", "should_trigger": false, "holdout": false},
+    {"query": "帮我设计 agent 的上下文预算和停止条件。", "should_trigger": false, "holdout": false},
+    {"query": "帮我写一个 GitHub Actions 流水线，只跑 Docker 构建。", "should_trigger": false, "holdout": false},
+    {"query": "帮我把这个 Excel 读进来打印前几行看看。", "should_trigger": false, "holdout": false},
+    {"query": "把这个 requirements.txt 按字母排序。", "should_trigger": false, "holdout": false},
+    {"query": "Review this Go service's context handling and add table-driven tests.", "should_trigger": false, "holdout": false},
+    {"query": "Set up cargo-semver-checks in CI for this crate.", "should_trigger": false, "holdout": false},
+    {"query": "Build an eval suite for our agent and report the pass rate.", "should_trigger": false, "holdout": false},
+    {"query": "Write a Dockerfile for a Node 22 service with a pnpm lockfile.", "should_trigger": false, "holdout": true},
+    {"query": "Why does this shell script fail under set -e?", "should_trigger": false, "holdout": false},
+    {"query": "Count the lines in every .py file under this directory.", "should_trigger": false, "holdout": true}
+  ]
+}

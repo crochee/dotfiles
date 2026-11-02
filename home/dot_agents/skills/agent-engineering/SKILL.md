@@ -1,8 +1,9 @@
 ---
 name: agent-engineering
-description: "Builds or evaluates an LLM agent as a bounded system: context budget, tool schemas the model can act on, subagent slices, and a measured eval pass rate. Use when designing an agent loop, its tools, MCP integration, or its eval suite."
+description: "Builds or evaluates an LLM agent as a bounded system: context budget, tool schemas the model can act on, subagent slices, and a measured eval pass rate. Use when designing an agent loop, its tools, MCP integration, or its eval suite. Not for prompt copywriting, model training, Kubernetes operators (k8s-operator), or an HTTP contract (api-design). 中文：设计 agent 循环、工具 schema、子 agent、eval 通过率。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Agent Engineering
@@ -23,7 +24,7 @@ The same rules apply to a single-loop agent and to a supervisor with children: a
 
 Reviewing an agent you did not write is Evaluate plus a code pass: walk steps 2–7 against the source, and cite `path:line` for every finding. A finding without a location is an opinion about taste.
 
-Not for prompt copywriting, model training or fine-tuning, and not for Kubernetes operators — those belong to `k8s-operator`. An HTTP contract behind a tool belongs to `api-design`. Dispatching this session's implementation or investigation tasks belongs to `subagent-driven-development`, `executing-plans` or `dispatching-parallel-agents`; this skill decides only what the agent being built runs as a child.
+Not for prompt copywriting, model training or fine-tuning, and not for Kubernetes operators — those belong to `k8s-operator`. An HTTP contract behind a tool belongs to `api-design`. It does not schedule this session's own work; it decides only what the agent being built runs as a child.
 
 ## Stack Selection
 
@@ -119,24 +120,7 @@ Default locations; an existing repository layout wins and is stated in the repor
 
 An eval suite starts from `assets/eval-suite.template.py`; fill the placeholders and keep its runner shape so results stay comparable across iterations.
 
-`evals/report.md` uses one table per configuration plus the comparison:
-
-```text
-| Configuration | Runs | Passed / total | Tokens (mean) | Duration (mean) |
-|---|---|---|---|---|
-| baseline      | 3 × 20 | 31/60 (52%)  | 41,200        | 96 s            |
-| candidate     | 3 × 20 | 54/60 (90%)  | 58,900        | 142 s           |
-```
-
-Follow it with the unstable tasks, the per-task delta, and the decision the numbers produced. A report without a decision is a table looking for an owner.
-
-Tool work keeps an inventory next to the server, one row per tool:
-
-| Tool | Read-only | Destructive | Paginates | Error path |
-|---|---|---|---|---|
-| `example_search_users` | yes | no | cursor (token absent on the last page) | names the unmatched field, suggests `query=` |
-
-A row that cannot be filled is a tool that is not finished. The inventory doubles as the review artefact: a tool missing from it is invisible at review time and permanent in the schema.
+`evals/report.md` carries one table per configuration plus the comparison, then the unstable tasks, the per-task delta, and the decision. The table shape and the tool inventory — one row per tool, next to the server — are in `references/evals.md`; a report without a decision is a table looking for an owner, and an inventory row that cannot be filled is a tool that is not finished.
 
 ## References
 

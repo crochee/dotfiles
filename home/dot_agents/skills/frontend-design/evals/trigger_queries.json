@@ -1,0 +1,30 @@
+{
+  "skill": "frontend-design",
+  "workflow_marker": "design-tokens.json",
+  "queries": [
+    {"query": "帮我规划「设备归还」这个页面的 UX 流程，空态、加载、错误态都要。", "should_trigger": true, "holdout": true},
+    {"query": "我们要建一套设计 token，从 JSON 生成 CSS 变量，还要支持暗色模式。", "should_trigger": true, "holdout": false},
+    {"query": "这个后台页面明显是模板套出来的，帮我重做一版有明确设计方向的界面。", "should_trigger": true, "holdout": false},
+    {"query": "给这个界面按视觉和 UX 两套评分标准打分，按影响排修复顺序。", "should_trigger": true, "holdout": false},
+    {"query": "这个弹窗没有焦点陷阱也不响应 Esc，帮我改成可访问的实现。", "should_trigger": true, "holdout": false},
+    {"query": "这个页面要展示 API 返回的订单列表，帮我设计和实现列表页，含加载和空态。", "should_trigger": true, "holdout": false},
+    {"query": "Plan the UX flow for a checkout return page, covering all five states.", "should_trigger": true, "holdout": false},
+    {"query": "Build a design-token system for our app: JSON source, generated CSS variables, dark mode.", "should_trigger": true, "holdout": false},
+    {"query": "This dashboard looks templated; restyle it with one clear design direction and a token set.", "should_trigger": true, "holdout": false},
+    {"query": "Score this interface against the visual and UX rubrics and rank the fixes by impact.", "should_trigger": true, "holdout": true},
+    {"query": "Our dialog has no focus trap and no escape handling; make it accessible without changing behaviour.", "should_trigger": true, "holdout": false},
+    {"query": "The API behind this screen paginates; design the screen's loading, empty and error states and implement them.", "should_trigger": true, "holdout": true},
+    {"query": "帮我给这个列表接口定分页方案和错误码。", "should_trigger": false, "holdout": true},
+    {"query": "帮我写一份 ADR，决定前端要不要上 SSR。", "should_trigger": false, "holdout": false},
+    {"query": "帮我评审这份设计文档的结构。", "should_trigger": false, "holdout": false},
+    {"query": "帮我用 Playwright 写端到端测试覆盖登录流程。", "should_trigger": false, "holdout": false},
+    {"query": "这个 CSS 动画在 Safari 上掉帧，帮我定位原因。", "should_trigger": false, "holdout": false},
+    {"query": "把这个 SVG 的填充色改成跟随主题色。", "should_trigger": false, "holdout": false},
+    {"query": "Write the OpenAPI contract for our product endpoints.", "should_trigger": false, "holdout": false},
+    {"query": "Write an ADR for choosing a monorepo layout for the frontend.", "should_trigger": false, "holdout": false},
+    {"query": "Critique this documentation set's structure before review.", "should_trigger": false, "holdout": false},
+    {"query": "Set up a Vite build with route-level code splitting for our React app.", "should_trigger": false, "holdout": true},
+    {"query": "Why does this CSS grid stack its columns at an 800px viewport?", "should_trigger": false, "holdout": false},
+    {"query": "Convert this sketch PNG into an SVG.", "should_trigger": false, "holdout": true}
+  ]
+}

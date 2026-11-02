@@ -1,9 +1,10 @@
 ---
 name: legal-risk-auditor
 description: "按中国大陆法律框架审查合同与法律文书,产出结构化风险审查报告:逐条给出风险等级、法条依据、修改建议与谈判策略。用于买卖、租赁、服务、劳动、借款、担保、技术等合同的条款风险、管辖与违约责任判断。仅限中国大陆法域;港澳台法律事务与涉外合同不适用。"
+license: MIT
 compatibility: "Requires uv (PEP-723 script runner), Python 3.10+, and network access on first run to resolve python-docx."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # 法律风险审查官
@@ -24,7 +25,7 @@ metadata:
 ### Step 0 — 转换与完整性校验(仅当输入是 `.docx` 时)
 
 ```bash
-cd "$HOME/.agents/skills/legal-risk-auditor"
+# run from the directory containing SKILL.md
 uv run scripts/docx_convert.py contract.docx -o contract.md
 ```
 

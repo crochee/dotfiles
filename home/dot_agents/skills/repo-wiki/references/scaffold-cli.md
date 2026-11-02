@@ -16,7 +16,7 @@
 ## Invocation
 
 ```bash
-# run from the skill directory (~/.agents/skills/repo-wiki/)
+# run from the directory containing SKILL.md
 python3 scripts/scaffold_open_docs.py \
   --query "Python CLI tool" \
   --output docs/openrepowiki

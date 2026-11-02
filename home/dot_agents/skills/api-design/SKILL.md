@@ -1,8 +1,9 @@
 ---
 name: api-design
-description: "Produces a reviewable REST or OpenAPI 3.1 contract: resources, status codes, errors, pagination, auth, versioning. Use when designing or reviewing an HTTP API, choosing a pagination scheme, or writing the OpenAPI document. Not for OAuth/OIDC, webhooks, GraphQL, gRPC or SOAP."
+description: "Produces a reviewable REST or OpenAPI 3.1 contract: resources, status codes, errors, pagination, auth, versioning. Use when designing or reviewing an HTTP API, choosing a pagination scheme, or writing the OpenAPI document. Not for OAuth/OIDC, webhooks, GraphQL, gRPC or SOAP. 中文：设计或评审 REST/OpenAPI 契约、分页、错误码、版本。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # API Design

@@ -12,6 +12,7 @@
 - [Mode 0 — UX spec](#mode-0--ux-spec)
 - [Mode 1 — Generate](#mode-1--generate)
 - [Mode 2 — Audit](#mode-2--audit)
+- [Mode 2 — Audit report shape](#mode-2--audit-report-shape)
 - [Mode 3 — AI-slop](#mode-3--ai-slop)
 - [Verification evidence](#verification-evidence)
 
@@ -436,6 +437,27 @@ and, when a test is planned, `usability-test.md` (from
    scan).
 7. Order the fixes by `impact ÷ effort`.
 8. Verify (below).
+
+## Mode 2 — Audit report shape
+
+Two tables and a verdict; every row carries evidence and a located fix.
+
+| Dimension | Score (0–10) | Weight | Evidence | Fix (`path:line`) |
+|---|---|---|---|---|
+
+| UX dimension | Score (0–10) | Evidence | Fix (`path:line`) |
+|---|---|---|---|
+| `flow_coverage` | | | |
+| `state_completeness` | | | |
+| `ia_clarity` | | | |
+| `form_usability` | | | |
+| `content_hierarchy` | | | |
+| `error_recovery` | | | |
+
+The AI-slop report uses one table:
+
+| Symptom | Location (`path:line`) | Priority | Alternative |
+|---|---|---|---|
 
 ## Mode 3 — AI-slop
 

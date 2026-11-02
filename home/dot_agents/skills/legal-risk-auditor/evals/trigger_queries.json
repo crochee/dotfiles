@@ -1,0 +1,30 @@
+{
+  "skill": "legal-risk-auditor",
+  "workflow_marker": "法律状态核验日期",
+  "queries": [
+    {"query": "帮我审一下这份劳动合同的条款风险，逐条给出法条依据和修改建议。", "should_trigger": true, "holdout": true},
+    {"query": "这是一份房屋租赁合同，帮我看押金和违约责任的约定有没有问题。", "should_trigger": true, "holdout": false},
+    {"query": "帮我审这份技术开发合同的管辖条款和知识产权归属。", "should_trigger": true, "holdout": false},
+    {"query": "这份借款合同的利率约定合规吗，帮我出风险等级和谈判建议。", "should_trigger": true, "holdout": false},
+    {"query": "帮我审这份服务合同，重点看付款条件、违约责任和解除权。", "should_trigger": true, "holdout": false},
+    {"query": "这份合同的语言有点啰嗦，但我要的是法律风险审查报告，不是润色。", "should_trigger": true, "holdout": true},
+    {"query": "Review this employment contract under PRC law and give each clause a risk level with the statute it cites.", "should_trigger": true, "holdout": false},
+    {"query": "Audit this lease agreement for deposit and penalty clauses a Chinese court would strike down.", "should_trigger": true, "holdout": true},
+    {"query": "Check the jurisdiction and IP-ownership clauses in this technology development contract under mainland Chinese law.", "should_trigger": true, "holdout": false},
+    {"query": "Is the interest rate in this loan agreement enforceable in mainland China? Give me a risk report.", "should_trigger": true, "holdout": false},
+    {"query": "Review this services contract clause by clause: payment milestones, liability caps, termination.", "should_trigger": true, "holdout": false},
+    {"query": "The drafting here is clunky, but what I need is a clause-by-clause legal risk report under PRC law.", "should_trigger": true, "holdout": false},
+    {"query": "这段合同模板读起来像 AI 写的，帮我去掉机器味。", "should_trigger": false, "holdout": true},
+    {"query": "调研一下中国数据出境的最新监管要求，带引用来源。", "should_trigger": false, "holdout": false},
+    {"query": "帮我把这份内部合规文档的结构重排一下。", "should_trigger": false, "holdout": false},
+    {"query": "帮我把这份英文合同翻译成中文，保留条款编号。", "should_trigger": false, "holdout": false},
+    {"query": "帮我在英国注册一家公司，需要准备哪些材料。", "should_trigger": false, "holdout": false},
+    {"query": "帮我把这份扫描的 PDF 转成 Word。", "should_trigger": false, "holdout": false},
+    {"query": "This policy page sounds machine-written; strip the AI tells.", "should_trigger": false, "holdout": false},
+    {"query": "Research the current PRC data-export rules with citations.", "should_trigger": false, "holdout": false},
+    {"query": "Restructure this compliance handbook so readers can act on it.", "should_trigger": false, "holdout": false},
+    {"query": "Draft a US LLC operating agreement for a two-member company.", "should_trigger": false, "holdout": true},
+    {"query": "Summarise this court judgment in three sentences.", "should_trigger": false, "holdout": false},
+    {"query": "OCR this scanned page into searchable text.", "should_trigger": false, "holdout": true}
+  ]
+}

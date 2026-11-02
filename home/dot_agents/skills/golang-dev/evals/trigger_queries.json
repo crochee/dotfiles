@@ -1,0 +1,30 @@
+{
+  "skill": "golang-dev",
+  "workflow_marker": "golangci-lint",
+  "queries": [
+    {"query": "帮我审一下这个 Go 包的导出 API 和错误处理。", "should_trigger": true, "holdout": false},
+    {"query": "这段并发代码有 goroutine 泄漏，帮我找出来并改掉。", "should_trigger": true, "holdout": true},
+    {"query": "给我这个 Go 服务写一个多阶段 Dockerfile，非 root 跑。", "should_trigger": true, "holdout": false},
+    {"query": "帮我用表驱动写测试，覆盖超时和 context 取消的分支。", "should_trigger": true, "holdout": false},
+    {"query": "golangci-lint 报了一堆问题，帮我按优先级修，并说明哪些真重要。", "should_trigger": true, "holdout": false},
+    {"query": "这个 Go 程序要跑在集群里，帮我把它打成精简镜像并设好资源限制。", "should_trigger": true, "holdout": true},
+    {"query": "Review this Go package's exported API and make its errors branchable with errors.Is.", "should_trigger": true, "holdout": false},
+    {"query": "Our worker leaks goroutines on shutdown; find and fix it.", "should_trigger": true, "holdout": false},
+    {"query": "Write a multi-stage Dockerfile that ships this Go binary in a non-root distroless image.", "should_trigger": true, "holdout": true},
+    {"query": "Add table-driven tests for this handler, including the cancelled-context case.", "should_trigger": true, "holdout": false},
+    {"query": "Fix these golangci-lint findings and tell me which ones are noise.", "should_trigger": true, "holdout": false},
+    {"query": "This Go controller runs in a cluster; review its context handling and client-go usage for correctness.", "should_trigger": true, "holdout": false},
+    {"query": "帮我用 pytest 和 ruff 配好这个 Python 项目的门禁。", "should_trigger": false, "holdout": true},
+    {"query": "这个 Rust crate 的 release 构建不可复现，帮我查 lockfile 和 profile。", "should_trigger": false, "holdout": false},
+    {"query": "我的 CRD 状态子资源不更新，帮我查 controller 里的 status 写入。", "should_trigger": false, "holdout": false},
+    {"query": "帮我把这个 Python 脚本改成 asyncio 并发下载。", "should_trigger": false, "holdout": false},
+    {"query": "帮我写一个 Makefile，把构建、测试和打包串起来。", "should_trigger": false, "holdout": false},
+    {"query": "把这个 JSON 配置里的端口改成 8080。", "should_trigger": false, "holdout": false},
+    {"query": "Set up pyright and uv for this Python service with a strict type gate.", "should_trigger": false, "holdout": false},
+    {"query": "Our Rust binary's panic messages vanish in release builds; check the profile settings.", "should_trigger": false, "holdout": false},
+    {"query": "My operator's finalizer blocks deletion; debug the reconcile path.", "should_trigger": false, "holdout": false},
+    {"query": "Port this Go snippet to TypeScript for the browser client.", "should_trigger": false, "holdout": true},
+    {"query": "Explain the difference between a semaphore and a mutex in general terms.", "should_trigger": false, "holdout": false},
+    {"query": "List the files in this directory sorted by size.", "should_trigger": false, "holdout": true}
+  ]
+}

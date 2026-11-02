@@ -1,0 +1,131 @@
+{
+  "scenarios": [
+    {
+      "id": "chinese-slop",
+      "input": "tests/fixtures/ai-slop.zh.md",
+      "output": "rewritten.md",
+      "change_log": "before-after.md",
+      "delivery_language": "zh",
+      "prompt": "请把 draft.md 里的 AI 味去掉，保留所有数字和技术名词，改写后写回 draft.md，并按 before-after.template 填写 before-after.md。",
+      "must_keep_numbers": [
+        "12",
+        "240",
+        "37",
+        "80",
+        "99"
+      ],
+      "must_keep_terms": [
+        "p99"
+      ],
+      "expect_cleared": [
+        "A4",
+        "B1",
+        "B11",
+        "B13",
+        "B14",
+        "B4",
+        "B7",
+        "B8",
+        "B9",
+        "C10",
+        "C7",
+        "C8",
+        "D5",
+        "E4"
+      ],
+      "expect_surviving": []
+    },
+    {
+      "id": "english-slop",
+      "input": "tests/fixtures/ai-slop.md",
+      "output": "rewritten.md",
+      "change_log": "before-after.md",
+      "delivery_language": "en",
+      "prompt": "Humanize draft.md: remove the AI tells, keep every number and product name, write the rewrite back to draft.md, and fill in before-after.md from the template.",
+      "must_keep_numbers": [
+        "2",
+        "30",
+        "80",
+        "92",
+        "240",
+        "31000",
+        "99"
+      ],
+      "must_keep_terms": [
+        "p99",
+        "rollout_v2"
+      ],
+      "expect_cleared": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8",
+        "A9",
+        "B1",
+        "B12",
+        "B14",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "C1",
+        "C10",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C9",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5"
+      ],
+      "expect_surviving": []
+    },
+    {
+      "id": "mixed-script",
+      "input": "tests/fixtures/mixed.md",
+      "output": "rewritten.md",
+      "change_log": "before-after.md",
+      "delivery_language": "zh",
+      "prompt": "这份稿子里中英文混在一起，请去掉 AI 味，保留所有数字，交付语言用中文，改写后写回 draft.md，并填写 before-after.md。",
+      "must_keep_numbers": [
+        "3",
+        "10",
+        "12",
+        "15",
+        "30",
+        "95",
+        "120",
+        "99.9"
+      ],
+      "must_keep_terms": [
+        "GraphQL",
+        "p95"
+      ],
+      "expect_cleared": [
+        "A1",
+        "A4",
+        "B13",
+        "C1",
+        "C9",
+        "D2",
+        "E1",
+        "E4"
+      ],
+      "expect_surviving": []
+    }
+  ]
+}

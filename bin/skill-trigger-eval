@@ -1,0 +1,487 @@
+#!/usr/bin/env python3
+"""Measure whether each self-authored skill fires when it should, and stays quiet when it should not.
+
+Run it from the repository root:
+
+    bin/skill-trigger-eval --skills all --runs 3 --jobs 4
+
+The query sets live next to each skill in `evals/trigger_queries.json`. One session is one call to
+the agent in an empty temporary directory, so a query has to be self-contained. Two signals come out
+of the event stream:
+
+* **consult** — the agent read `skill://<name>`, so the description matched the query.
+* **workflow** — the skill's workflow marker (a script it runs, a path it writes) appeared in a tool
+  call, so the skill took the task over, not just the attention.
+
+A should-trigger query is judged on `consult`; a should-not-trigger query on `workflow` when the
+skill declares a marker, and on `consult` when it does not. Consulting a skill and then doing the
+task without it costs context but does not change the deliverable, so it is a diagnostic on a
+negative, never the gate.
+
+Results land in `<skill>/evals/trigger_results.json` and are not committed.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import queue
+import re
+import shlex
+import signal
+import subprocess
+import sys
+import tempfile
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+DEFAULT_AGENT_CMD = "omp -p --mode=json --no-session --cwd {cwd} --max-time {max_time} {query}"
+QUERY_PLACEHOLDER = "__SKILL_TRIGGER_EVAL_QUERY__"
+CWD_PLACEHOLDER = "__SKILL_TRIGGER_EVAL_CWD__"
+MAXTIME_PLACEHOLDER = "__SKILL_TRIGGER_EVAL_MAX_TIME__"
+
+# The exact signal, as a fallback when the event stream is not JSON lines.
+RAW_SIGNAL = re.compile(
+    r'"toolName"\s*:\s*"read".{0,300}?"path"\s*:\s*"skill://(?P<skill>[A-Za-z0-9._-]+)"'
+)
+
+
+def iter_tool_calls(node: object):
+    """Every tool call record anywhere in a parsed event."""
+    if isinstance(node, dict):
+        if isinstance(node.get("toolName"), str) and isinstance(node.get("args"), dict):
+            yield node
+        for value in node.values():
+            yield from iter_tool_calls(value)
+    elif isinstance(node, list):
+        for item in node:
+            yield from iter_tool_calls(item)
+
+
+def scan_stream(stream: str, skill: str, workflow_marker: str) -> tuple[bool, int, bool]:
+    """Three signals from one session's event stream: consulted, reads, workflow."""
+    target = f"skill://{skill}"
+    read_calls = 0
+    consulted = False
+    workflow = False
+    for line in stream.splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        for call in iter_tool_calls(event):
+            args = call.get("args", {})
+            if call.get("toolName") == "read":
+                read_calls += 1
+                if str(args.get("path", "")) == target:
+                    consulted = True
+            if workflow_marker and workflow_marker in json.dumps(args):
+                workflow = True
+    if not consulted:
+        match = RAW_SIGNAL.search(stream)
+        if match and match.group("skill") == skill:
+            consulted = True
+            read_calls += 1
+    return consulted, read_calls, workflow
+
+
+def build_argv(template: str, cwd: Path, max_time: int, query: str) -> list[str]:
+    """The agent command, with the query passed as one argv element."""
+    prepared = (
+        template.replace("{cwd}", CWD_PLACEHOLDER)
+        .replace("{max_time}", MAXTIME_PLACEHOLDER)
+        .replace("{query}", QUERY_PLACEHOLDER)
+    )
+    argv: list[str] = []
+    for part in shlex.split(prepared):
+        if part == CWD_PLACEHOLDER:
+            argv.append(str(cwd))
+        elif part == MAXTIME_PLACEHOLDER:
+            argv.append(str(max_time))
+        elif part == QUERY_PLACEHOLDER:
+            argv.append(query)
+        else:
+            argv.append(part)
+    return argv
+
+
+def run_session(
+    query: str,
+    cwd: Path,
+    skill: str,
+    workflow_marker: str,
+    template: str,
+    session_timeout: int,
+    max_time: int,
+    stop_on_consult: bool,
+) -> dict:
+    """One clean session for one query.
+
+    `stop_on_consult` ends the session the moment the skill is read: on a should-trigger query the
+    consultation is the answer. On a should-not-trigger query the session runs until the workflow
+    marker appears, because until then the verdict is not decided.
+    """
+    record = {
+        "consulted": False,
+        "workflow": False,
+        "read_calls": 0,
+        "exit_code": None,
+        "error": "",
+        "stopped_early": False,
+    }
+    argv = build_argv(template, cwd, max_time, query)
+    try:
+        process = subprocess.Popen(
+            argv,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            errors="replace",
+            start_new_session=True,
+        )
+    except FileNotFoundError:
+        record["error"] = f"{argv[0]} was not found on PATH"
+        return record
+
+    deadline = time.monotonic() + session_timeout
+    stream: list[str] = []
+    lines: "queue.Queue[str | None]" = queue.Queue()
+
+    def pump() -> None:
+        try:
+            assert process.stdout is not None
+            for line in process.stdout:
+                lines.put(line)
+        except (ValueError, OSError):
+            # The stream was closed under us when the session was killed.
+            pass
+        lines.put(None)
+
+    reader = threading.Thread(target=pump, daemon=True)
+    reader.start()
+    try:
+        while True:
+            try:
+                line = lines.get(timeout=1.0)
+            except queue.Empty:
+                line = ""
+            if line == "":
+                # No output for a second: check the deadline, then keep waiting.
+                if time.monotonic() > deadline:
+                    record["error"] = f"the session exceeded {session_timeout}s"
+                    break
+                continue
+            if line is None:
+                break
+            stream.append(line)
+            consulted, read_calls, workflow = scan_stream("".join(stream), skill, workflow_marker)
+            record["read_calls"] = read_calls
+            record["workflow"] = record["workflow"] or workflow
+            if consulted and stop_on_consult:
+                record["consulted"] = True
+                record["stopped_early"] = True
+                break
+            if workflow and not stop_on_consult:
+                record["stopped_early"] = True
+                break
+            if time.monotonic() > deadline:
+                record["error"] = f"the session exceeded {session_timeout}s"
+                break
+    finally:
+        if process.poll() is None:
+            # Kill the whole group: the agent spawns children, and a surviving
+            # grandchild keeps the session's stdout open.
+            try:
+                os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                process.kill()
+        try:
+            process.wait(timeout=10)
+        except subprocess.TimeoutExpired:  # pragma: no cover - the kill above settles it
+            pass
+        reader.join(timeout=5)
+        if process.stdout is not None:
+            process.stdout.close()
+
+    record["exit_code"] = process.returncode
+    consulted, read_calls, workflow = scan_stream("".join(stream), skill, workflow_marker)
+    record["consulted"] = record["consulted"] or consulted
+    record["read_calls"] = max(record["read_calls"], read_calls)
+    record["workflow"] = record["workflow"] or workflow
+    return record
+
+
+def load_queries(path: Path, skill: str) -> dict:
+    """The v2 trigger query suite: skill, workflow_marker, queries."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise SystemExit(f"{path} must hold an object with skill, workflow_marker and queries")
+    if payload.get("skill") != skill:
+        raise SystemExit(f"{path}: skill is {payload.get('skill')!r}, expected {skill!r}")
+    if not isinstance(payload.get("workflow_marker"), str):
+        raise SystemExit(f"{path}: workflow_marker must be a string (use '' for none)")
+    queries = payload.get("queries")
+    if not isinstance(queries, list) or not queries:
+        raise SystemExit(f"{path}: queries must be a non-empty array")
+    for entry in queries:
+        if not isinstance(entry, dict):
+            raise SystemExit(f"{path}: every query entry must be an object")
+        for key in ("query", "should_trigger"):
+            if key not in entry:
+                raise SystemExit(f"{path}: every query entry needs {key}")
+        if not isinstance(entry["query"], str) or not entry["query"].strip():
+            raise SystemExit(f"{path}: every query needs non-empty text")
+        if not isinstance(entry["should_trigger"], bool):
+            raise SystemExit(f"{path}: should_trigger must be a boolean")
+        if "holdout" in entry and not isinstance(entry["holdout"], bool):
+            raise SystemExit(f"{path}: holdout must be a boolean")
+    return payload
+
+
+def mean(values: list[float]) -> float:
+    return sum(values) / len(values) if values else 0.0
+
+
+def gated_rate(item: dict, workflow_marker: str) -> float:
+    """The rate the gate reads for one query."""
+    if item["should_trigger"]:
+        return item["consult_rate"]
+    return item["workflow_rate"] if workflow_marker else item["consult_rate"]
+
+
+def query_passes(item: dict, workflow_marker: str, pos_threshold: float, neg_threshold: float) -> bool:
+    if item["should_trigger"]:
+        return item["consult_rate"] >= pos_threshold
+    return gated_rate(item, workflow_marker) <= neg_threshold
+
+
+def judge(items: list[dict], workflow_marker: str, pos_threshold: float, neg_threshold: float) -> dict:
+    """Aggregate rates and the pass flag over one subset of queries."""
+    positives = [item for item in items if item["should_trigger"]]
+    negatives = [item for item in items if not item["should_trigger"]]
+    positive_rate = mean([item["consult_rate"] for item in positives])
+    negative_rate = mean([gated_rate(item, workflow_marker) for item in negatives])
+    positive_ok = not positives or positive_rate >= pos_threshold
+    negative_ok = not negatives or negative_rate <= neg_threshold
+    return {
+        "positive_rate": round(positive_rate, 3),
+        "negative_rate": round(negative_rate, 3),
+        "positive_total": len(positives),
+        "negative_total": len(negatives),
+        "positive_passed": sum(
+            1 for item in positives if item["consult_rate"] >= pos_threshold
+        ),
+        "negative_passed": sum(
+            1 for item in negatives if gated_rate(item, workflow_marker) <= neg_threshold
+        ),
+        "passed": positive_ok and negative_ok,
+    }
+
+
+def run_skill(skill: str, skill_dir: Path, args: argparse.Namespace) -> dict:
+    """Run every query of one skill and write its results file."""
+    queries_path = skill_dir / "evals" / "trigger_queries.json"
+    if not queries_path.is_file():
+        return {"skill": skill, "error": f"missing {queries_path}", "fatal": True}
+
+    try:
+        suite = load_queries(queries_path, skill)
+    except (OSError, json.JSONDecodeError, SystemExit) as exc:
+        return {"skill": skill, "error": str(exc), "fatal": True}
+
+    marker = suite["workflow_marker"]
+    queries = suite["queries"]
+    if args.only:
+        queries = [item for item in queries if args.only in item["query"]]
+        if not queries:
+            return {"skill": skill, "error": f"no query matches --only {args.only!r}", "fatal": True}
+
+    items: list[dict] = []
+    with tempfile.TemporaryDirectory(prefix=f"{skill}-trigger-") as tmp:
+        scratch = Path(tmp)
+        for index, query_entry in enumerate(queries, start=1):
+            should = query_entry["should_trigger"]
+            consulted = 0
+            workflow = 0
+            errors: list[str] = []
+            for run in range(args.runs):
+                session_dir = scratch / f"q{index}-r{run}"
+                session_dir.mkdir(parents=True, exist_ok=True)
+                record = run_session(
+                    query_entry["query"],
+                    session_dir,
+                    skill,
+                    marker,
+                    args.agent_cmd,
+                    args.session_timeout,
+                    args.max_time,
+                    stop_on_consult=should,
+                )
+                consulted += 1 if record["consulted"] else 0
+                workflow += 1 if record["workflow"] else 0
+                if record["error"]:
+                    errors.append(record["error"])
+            items.append(
+                {
+                    "query": query_entry["query"],
+                    "should_trigger": should,
+                    "holdout": bool(query_entry.get("holdout", False)),
+                    "consult_rate": round(consulted / args.runs, 3),
+                    "workflow_rate": round(workflow / args.runs, 3),
+                    "error": sorted(set(errors)),
+                }
+            )
+
+    overall = judge(items, marker, args.pos_threshold, args.neg_threshold)
+    holdout_items = [item for item in items if item["holdout"]]
+    holdout = judge(holdout_items, marker, args.pos_threshold, args.neg_threshold)
+    passed = overall["passed"] and holdout["passed"]
+
+    results = {
+        "skill": skill,
+        "runs": args.runs,
+        "pos_threshold": args.pos_threshold,
+        "neg_threshold": args.neg_threshold,
+        "workflow_marker": marker,
+        "queries": items,
+        "positive_rate": overall["positive_rate"],
+        "negative_rate": overall["negative_rate"],
+        "holdout_positive_rate": holdout["positive_rate"],
+        "holdout_negative_rate": holdout["negative_rate"],
+        "holdout_pass": holdout["passed"],
+        "passed": passed,
+    }
+    out = skill_dir / "evals" / "trigger_results.json"
+    try:
+        out.write_text(json.dumps(results, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    except OSError as exc:
+        return {"skill": skill, "error": f"cannot write {out}: {exc}", "fatal": True}
+
+    return {
+        "skill": skill,
+        "positive_passed": overall["positive_passed"],
+        "positive_total": overall["positive_total"],
+        "negative_passed": overall["negative_passed"],
+        "negative_total": overall["negative_total"],
+        "positive_rate": overall["positive_rate"],
+        "negative_rate": overall["negative_rate"],
+        "holdout_pass": holdout["passed"],
+        "passed": passed,
+        "errors": sum(1 for item in items if item["error"]),
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Measure the trigger rate of the self-authored skills",
+    )
+    parser.add_argument("--skills", default="all", help="all, or a comma-separated list of names")
+    parser.add_argument(
+        "--source-root",
+        type=Path,
+        default=Path("home/dot_agents/skills"),
+        help="the repository's skill sources",
+    )
+    parser.add_argument(
+        "--installed-root",
+        type=Path,
+        default=Path.home() / ".agents" / "skills",
+        help="where the agent resolves skill://<name>; the deployed copy is what gets tested",
+    )
+    parser.add_argument("--runs", type=int, default=3, help="sessions per query")
+    parser.add_argument("--jobs", type=int, default=4, help="skills evaluated concurrently")
+    parser.add_argument("--max-time", type=int, default=120, help="the agent's own session cap")
+    parser.add_argument("--session-timeout", type=int, default=240, help="seconds per session")
+    parser.add_argument("--pos-threshold", type=float, default=0.8, help="minimum consult rate")
+    parser.add_argument("--neg-threshold", type=float, default=0.2, help="maximum gate rate")
+    parser.add_argument(
+        "--agent-cmd",
+        default=DEFAULT_AGENT_CMD,
+        help="the agent invocation; {cwd}, {max_time} and {query} are substituted",
+    )
+    parser.add_argument("--only", default="", help="run only the queries containing this text")
+    args = parser.parse_args(argv)
+
+    if args.runs < 1:
+        print("error: --runs must be at least 1", file=sys.stderr)
+        return 2
+    if args.jobs < 1:
+        print("error: --jobs must be at least 1", file=sys.stderr)
+        return 2
+    if "{query}" not in args.agent_cmd:
+        print("error: --agent-cmd must contain {query}", file=sys.stderr)
+        return 2
+    if not 0.0 <= args.neg_threshold < args.pos_threshold <= 1.0:
+        print("error: thresholds must satisfy 0 <= neg < pos <= 1", file=sys.stderr)
+        return 2
+
+    root = args.source_root.expanduser()
+    if not root.is_dir():
+        print(f"error: {root} is not a directory", file=sys.stderr)
+        return 2
+
+    available = sorted(path.name for path in root.iterdir() if (path / "SKILL.md").is_file())
+    if args.skills.strip() == "all":
+        selected = available
+    else:
+        selected = [name.strip() for name in args.skills.split(",") if name.strip()]
+        unknown = [name for name in selected if name not in available]
+        if unknown:
+            print(f"error: no such skill under {root}: {unknown}", file=sys.stderr)
+            return 2
+    if not selected:
+        print(f"error: no skill under {root} carries a SKILL.md", file=sys.stderr)
+        return 2
+
+    missing_deploy = [
+        name
+        for name in selected
+        if not (args.installed_root.expanduser() / name / "SKILL.md").is_file()
+    ]
+    if missing_deploy:
+        print(
+            f"error: {missing_deploy} not deployed under {args.installed_root}; "
+            "deploy first: da",
+            file=sys.stderr,
+        )
+        return 2
+
+    results: list[dict] = []
+    with ThreadPoolExecutor(max_workers=min(args.jobs, len(selected))) as pool:
+        futures = {
+            name: pool.submit(run_skill, name, root / name, args) for name in selected
+        }
+        for name in selected:
+            results.append(futures[name].result())
+
+    for result in sorted(results, key=lambda item: item["skill"]):
+        if result.get("fatal"):
+            print(f"{result['skill']}: ERROR {result['error']}", file=sys.stderr)
+            continue
+        print(
+            f"{result['skill']}: pos {result['positive_passed']}/{result['positive_total']} "
+            f"neg {result['negative_passed']}/{result['negative_total']} "
+            f"holdout {'ok' if result['holdout_pass'] else 'FAIL'} "
+            f"{'PASS' if result['passed'] else 'FAIL'}"
+            f"  (pos rate {result['positive_rate']:.2f}, neg rate {result['negative_rate']:.2f})"
+        )
+        if result["errors"]:
+            print(
+                f"  warning: {result['errors']} query/queries recorded a session error",
+                file=sys.stderr,
+            )
+
+    if any(result.get("fatal") for result in results):
+        return 2
+    return 0 if all(result["passed"] for result in results) else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

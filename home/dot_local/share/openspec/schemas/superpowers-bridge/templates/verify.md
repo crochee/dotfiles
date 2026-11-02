@@ -1,8 +1,21 @@
 # 验收报告
 
+<!--
+产物语言由项目 openspec/config.yaml 决定(默认简体中文);
+本模板的说明是中英双语的,两种语言的约束完全一致。
+The artifact language follows the project's openspec/config.yaml (Simplified Chinese by default);
+this template's guidance is bilingual and both versions carry the same constraints.
+-->
+
 > 此文件由 `openspec-verify-change` skill 在 apply 完成后产生,用以确认实现
 > 与 specs / design / tasks 的一致性。失败的检查须返回对应 artifact 修正后
 > 再重跑 verify。
+
+**EN**
+
+> This file is produced by the `openspec-verify-change` skill after apply completes, to confirm
+> that the implementation matches specs / design / tasks. A failed check must go back to the
+> corresponding artifact, be fixed, and then verify must be re-run.
 
 **Change**:`<change-name>`
 **验收时间**:`YYYY-MM-DD HH:mm`
@@ -21,6 +34,10 @@
 ```
 
 若有失败项,列出 id + issues:
+
+**EN**
+
+If any item failed, list the id + issues:
 
 | Item | Type | Issues |
 |---|---|---|
@@ -45,6 +62,11 @@
 对每个 `openspec/changes/<name>/specs/` 下的 capability 目录,与
 `openspec/specs/<capability>/spec.md` 比对:
 
+**EN**
+
+For each capability directory under `openspec/changes/<name>/specs/`, compare it
+against `openspec/specs/<capability>/spec.md`:
+
 | Capability | Sync 状态 | 备注 |
 |---|---|---|
 | — | ✓ 已同步 / ✗ 待同步 / N/A | — |
@@ -55,6 +77,11 @@
 
 抽样比对 `design.md` 的决策是否反映在 `specs/*.md` 的 Requirements 与
 Scenarios 中:
+
+**EN**
+
+Spot-check whether the decisions in `design.md` are reflected in the Requirements
+and Scenarios of `specs/*.md`:
 
 | 抽样项 | design 描述 | specs 对应 | 差距 |
 |---|---|---|---|
@@ -80,7 +107,16 @@ Scenarios 中:
 设计产出不应落在 `docs/superpowers/specs/`(brainstorm artifact 的
 输出重定向会把它导到 `openspec/changes/<name>/brainstorm.md`)。
 
+**EN**
+
+Design output must not land in `docs/superpowers/specs/`(the brainstorm artifact's
+output redirection would route it to `openspec/changes/<name>/brainstorm.md`).
+
 侦测:
+
+**EN**
+
+Detection:
 
 ```bash
 ls docs/superpowers/specs/*.md 2>/dev/null
@@ -97,6 +133,12 @@ ls docs/superpowers/specs/*.md 2>/dev/null
 > 不会挡住 archive。新的 schema-installed cycle 产生的泄漏,应搬进
 > `openspec/changes/<name>/brainstorm.md` 或 `design.md` 后删原档。
 
+**EN**
+
+> This does not block archive. Leaks produced by a new schema-installed cycle should be
+> moved into `openspec/changes/<name>/brainstorm.md` or `design.md`, and the original
+> file deleted.
+
 ---
 
 ## 7. 延后的人工验证与自动化测试等价性
@@ -104,6 +146,13 @@ ls docs/superpowers/specs/*.md 2>/dev/null
 对 plan.md 中标 `- [~]` deferred 的手动 dogfood / smoke task,逐项列出
 等价的自动化测试覆盖。若没有等价自动化测试,该项应视为**真正的 gap**
 而非合理 deferral,建议在 retrospective Misses 中记录。
+
+**EN**
+
+For every manual dogfood / smoke task marked `- [~]` as deferred in plan.md, list the
+equivalent automated test coverage item by item. If there is no equivalent automated
+test, treat that item as a **real gap** rather than a legitimate deferral, and record
+it under Misses in the retrospective.
 
 | Deferred dogfood (plan §) | Equivalent automated test | Coverage assessment | 真正 gap? |
 |---|---|---|---|
@@ -115,8 +164,20 @@ ls docs/superpowers/specs/*.md 2>/dev/null
 > - 「Coverage assessment」= 列出实际被触及的 layer(context / DB schema / wiring / HTTP path 等)
 > - 任何「真正 gap = ✅」的行,总体结论仍可 PASS,但须在 retrospective 留 follow-up 条目
 
+**EN**
+
+> **Interpretation rules**:
+> - "Equivalent" = the assertion set of the automated test is a superset of the assertions expected from the manual verification
+> - "Coverage assessment" = list the layers actually touched (context / DB schema / wiring / HTTP path etc.)
+> - Any row with "real gap = ✅" may still end in an overall PASS, but it must leave a follow-up entry in the retrospective
+
 > **何时可以整节留白**:plan.md 完全没有任何 `- [~]` 标记的行时,本节不需要填(留白即 PASS)。
 > 只要 plan.md 出现任何 `- [~]`,本节必须逐项列出,否则总体结论应降为 FAIL。
+
+**EN**
+
+> **When this section may be left blank**: when plan.md has no line marked `- [~]` at all, this section does not need to be filled in (blank counts as PASS).
+> As soon as plan.md contains any `- [~]`, this section must list every item, otherwise the overall conclusion must be downgraded to FAIL.
 
 ---
 

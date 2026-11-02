@@ -1,0 +1,30 @@
+{
+  "skill": "architecture-design",
+  "workflow_marker": "docs/adr/",
+  "queries": [
+    {"query": "帮我写一份 ADR，记录我们从单库切到分库的决定，以及被放弃的方案。", "should_trigger": true, "holdout": true},
+    {"query": "评审这个架构：可用性目标 99.95%，帮我把三处串联依赖乘出来看实际能到多少。", "should_trigger": true, "holdout": false},
+    {"query": "我们的 RPO 和 RTO 该定多少，异地容灾怎么写进设计。", "should_trigger": true, "holdout": false},
+    {"query": "帮我画这个系统的 C4 容器图和一张 Mermaid 时序图。", "should_trigger": true, "holdout": false},
+    {"query": "这个设计要扛 2000 QPS，帮我算带宽、连接池和一年的存储增长。", "should_trigger": true, "holdout": false},
+    {"query": "这个 controller 的架构要不要拆成两个服务，给我一份带失败模式的决策记录。", "should_trigger": true, "holdout": false},
+    {"query": "Write an ADR for moving our session store from Redis to Postgres, including the candidates that lost.", "should_trigger": true, "holdout": false},
+    {"query": "Review this architecture: three 99.9% dependencies in series against a 99.95% target.", "should_trigger": true, "holdout": true},
+    {"query": "What failure modes does this design have, and what signal detects each one?", "should_trigger": true, "holdout": false},
+    {"query": "Draw the C4 context and container views for this service in Mermaid.", "should_trigger": true, "holdout": false},
+    {"query": "Compute capacity: 5000 QPS, 2 KB responses — what egress and connection pool do we need?", "should_trigger": true, "holdout": false},
+    {"query": "Our Kubernetes operator needs a multi-region story; write the decision record with the trade-offs.", "should_trigger": true, "holdout": true},
+    {"query": "帮我设计这个 REST 接口的分页方案和错误码。", "should_trigger": false, "holdout": true},
+    {"query": "我的 CRD 打印列不显示，帮我看 printer columns 的配置。", "should_trigger": false, "holdout": false},
+    {"query": "帮我改这份设计文档的结构，让评审人能复述决定。", "should_trigger": false, "holdout": false},
+    {"query": "帮我写一份 Kubernetes 部署清单，包含 HPA 和 PDB。", "should_trigger": false, "holdout": false},
+    {"query": "上线后 CPU 一直打满，帮我查是哪条 SQL 慢。", "should_trigger": false, "holdout": false},
+    {"query": "把这段会议记录整理成待办清单。", "should_trigger": false, "holdout": false},
+    {"query": "Define the OpenAPI document for our orders endpoints.", "should_trigger": false, "holdout": false},
+    {"query": "Why does my controller reconcile cleanly but leave the status subresource empty?", "should_trigger": false, "holdout": false},
+    {"query": "Critique this RFC's section order before it goes to review.", "should_trigger": false, "holdout": false},
+    {"query": "Size the HPA target CPU for a three-replica Go service.", "should_trigger": false, "holdout": true},
+    {"query": "Our p99 spiked after the deploy; help me read these traces.", "should_trigger": false, "holdout": false},
+    {"query": "Summarise this changelog into five bullets.", "should_trigger": false, "holdout": true}
+  ]
+}

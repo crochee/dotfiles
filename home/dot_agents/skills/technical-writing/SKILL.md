@@ -1,8 +1,9 @@
 ---
 name: technical-writing
-description: "Produces engineering prose a named reader can act on: design docs, RFCs, Diátaxis documentation sets, located critiques. Use when drafting or reviewing a doc, or restructuring a doc set. Judges structure, not word-level style."
+description: "Produces engineering prose a named reader can act on: design docs, RFCs, Diátaxis documentation sets, located critiques. Use when drafting or reviewing a doc, or restructuring a doc set. Judges structure, not word-level style. Not for word-level polishing (de-ai-tone), API contracts (api-design), repository inventories (repo-wiki), or cited research notes (deep-research). 中文：写设计文档、RFC、重组文档集、评审文稿结构。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Technical Writing
@@ -24,12 +25,10 @@ The test that separates this skill from adjacent ones: it judges **structure and
 — whether the reader can restate the decision and the next action. Word-level style
 polishing of text that is already structured is `de-ai-tone`; the contract an API exposes is
 `api-design`; an inventory of an existing repository is `repo-wiki`; a cited findings note gathered
-from primary sources is `research`. Copywriting, marketing pages and grant applications are
+from primary sources is `deep-research`. Copywriting, marketing pages and grant applications are
 outside all three.
 
-A design spec written by `brainstorming` (`docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`)
-is the document of record until its plan is approved: review it in place, and do not re-author it
-into `docs/design/` or `docs/rfc/`.
+A design spec produced by an earlier design conversation is the document of record until its plan is approved: review it where it lives, and do not re-author it into `docs/design/` or `docs/rfc/`.
 
 ## Workflow
 
@@ -82,50 +81,9 @@ split it, and let the decision document link to the detailed one.
 
 ## Quick Decisions
 
-**What the reader needs → document type.** Read the left column as the need the reader
-arrives with, not as the artefact you were asked for.
+Three tables in `references/quick-decisions.md`: what the reader needs → document type (with the test each type fails), symptom in the draft → structural fix, and claim kind → what makes it citable. Pick the type in step 1 with the first table, and apply the third before step 4.
 
-| Reader's need | Type | Shape it must have | The test that fails it |
-|---|---|---|---|
-| "Teach me this from nothing" | Tutorial | Linear, one path, every step verified from a clean environment, expected output shown | Fails if the reader must make a choice to proceed |
-| "I have a goal, give me the steps" | How-to | Opens with the goal, assumes competence, one numbered path per task | Fails if it teaches concepts or lists every option |
-| "Tell me exactly what this is" | Reference | Complete, scannable, uniform structure, no narrative | Fails if a fact is missing or a section is shaped differently from its neighbours |
-| "Why is it like this?" | Explanation | Argument and context, links out instead of instructing | Fails if it contains a procedure |
-| "Decide between these and record it" | Decision record → `architecture-design` | One decision, candidates with real costs, consequences, `supersedes` | Fails if it holds more than one decision |
-| "Propose a change and let me review it" | RFC | Reviewable before acceptance, one worked sample, section list from `references/rfc.md` | Fails if a reviewer cannot tell what would be built |
-
-A decision record is an ADR, owned by `architecture-design`: the template, the
-`docs/adr/NNNN-<slug>.md` path and the five-value status vocabulary (proposed, accepted,
-rejected, deprecated, superseded). This skill reviews its prose; a design doc's own status
-uses draft, review, accepted, rejected, withdrawn.
-
-**Symptom in the draft → structural fix.** Symptoms are what a reader does, not what they
-say: a reader who stops, re-reads or asks is reporting a structural fault, not a vocabulary
-preference.
-
-| Symptom | Usual cause | Fix |
-|---|---|---|
-| Reader asks the same question twice | The answer is split across two sections | Merge into one section at the point of first need; the second occurrence becomes a link |
-| Reader stops before the ask | Argument order wrong — history first, proposal last | Move problem and proposal to the top; history becomes an appendix |
-| "What does that mean?" | Term used before it is defined, or defined twice differently | Define at first use, one definition, acronym expanded once |
-| "Why are we doing this?" | Motivation written as a description of the current system | State the cost and who pays it, with a number or an incident |
-| "Says who?" | Claim with no owner or measurement | Attach the evidence, or downgrade the sentence to a named assumption |
-| "What if it fails?" | Failure modes absent or reduced to "should be fine" | Add the failure table: trigger, symptom, blast radius, mitigation |
-| "How will we know it worked?" | Success stated as an adjective | Name a metric, a threshold and a date |
-| "We already decided that" | A decision smuggled into the prose as a fact | Lift it to an explicit proposal with its alternatives |
-| Reviewer argues against an option you invented | Straw-man alternatives | Describe the real alternative at the effort a reader would recognise, including the one you rejected |
-| Draft grows every round | Scope creep | Cut to one decision; unfinished material becomes linked open questions |
-
-**Claim → what makes it citable.** Apply this before step 4, not during review.
-
-| Claim kind | Citable form |
-|---|---|
-| Quantity | Number, unit and measurement date; the source named in the same sentence |
-| Performance | Percentile and load conditions — "p99 340 ms at 200 rps", not "fast" |
-| Cost | Currency, period and basis — monthly cloud spend, engineer-weeks |
-| Behaviour | A file, a test name or a command output that demonstrates it |
-| Intention | An owner and a date, marked as a commitment rather than a fact |
-| External fact | A link to the primary source, not to a summary of it |
+A decision record is an ADR, owned by `architecture-design`: one decision, candidates with real costs, consequences, `supersedes`. This skill reviews its prose; a design doc's own status uses draft, review, accepted, rejected, withdrawn.
 
 ## Output
 
@@ -152,6 +110,7 @@ A design review of the architecture itself — NFRs, failure modes, capacity, ve
 | File | Load when |
 |---|---|
 | [references/diataxis.md](references/diataxis.md) | Choosing between tutorial, how-to, reference and explanation, or splitting a page that mixes them. |
+| [references/quick-decisions.md](references/quick-decisions.md) | Picking the type from the reader's need, diagnosing why a reader stops, or checking whether a claim is citable. |
 | [references/rfc.md](references/rfc.md) | Drafting or shepherding an RFC — lifecycle, required sections, the reviewable-sample rule, answering reviewers. |
 | [references/critique.md](references/critique.md) | Running the adversarial pass, writing findings an author can act on, or calibrating severity. |
 | [references/diagrams.md](references/diagrams.md) | Deciding whether a diagram pays for itself, writing Mermaid that renders, or debugging one that does not. |

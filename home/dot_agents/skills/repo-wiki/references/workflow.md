@@ -46,7 +46,7 @@ Detection comes first because the page set determines what the scaffold creates.
 1. Run the scaffold script with the detected page ids:
 
    ```bash
-   # run from the skill directory (~/.agents/skills/repo-wiki/)
+   # run from the directory containing SKILL.md
    python3 scripts/scaffold_open_docs.py \
      --query "<the user's description of the project>" \
      --pages 1,1.1,2,3,4,5 \

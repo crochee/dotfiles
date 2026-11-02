@@ -1,0 +1,30 @@
+{
+  "skill": "agent-engineering",
+  "workflow_marker": "docs/agent/architecture.md",
+  "queries": [
+    {"query": "帮我设计一个 agent 循环，每一步的上下文预算和 token 上限都要写出来。", "should_trigger": true, "holdout": false},
+    {"query": "这个 agent 老是重复调用同一个工具，帮我加卡死检测和停止条件。", "should_trigger": true, "holdout": true},
+    {"query": "给这个 agent 设计工具 schema，包括描述、分页字段和错误信息该写什么。", "should_trigger": true, "holdout": false},
+    {"query": "我们准备给 agent 加一个 MCP server，先帮我评估工具怎么切分。", "should_trigger": true, "holdout": false},
+    {"query": "帮我判断这些步骤哪些该拆成子 agent，哪些直接放在主循环里跑。", "should_trigger": true, "holdout": false},
+    {"query": "这个 agent 的 eval 通过率谁都说不出来，帮我搭一套 eval 套件并报出 n/N。", "should_trigger": true, "holdout": false},
+    {"query": "Design the tool-call loop for an agent that triages support tickets: per-step token budget, caps and stop results.", "should_trigger": true, "holdout": false},
+    {"query": "Design the tool schemas for an MCP server over our issue tracker: descriptions, error messages, pagination.", "should_trigger": true, "holdout": false},
+    {"query": "Decide whether these four research slices should run as subagents or inline in the main loop.", "should_trigger": true, "holdout": true},
+    {"query": "Build the eval suite for our agent and report the pass rate per configuration over three runs.", "should_trigger": true, "holdout": false},
+    {"query": "Review an agent someone else wrote: its caps, state registry, tool errors and eval coverage.", "should_trigger": true, "holdout": false},
+    {"query": "The agent calls a Kubernetes operator to reconcile; design what the agent's tool surface should look like.", "should_trigger": true, "holdout": true},
+    {"query": "帮我把订单服务的 REST 接口改成游标分页，给出资源、状态码和 openapi.yaml。", "should_trigger": false, "holdout": true},
+    {"query": "我的 controller 里 finalizer 卡住不释放，帮我排查 reconcile 逻辑。", "should_trigger": false, "holdout": false},
+    {"query": "调研 LangGraph 在生产环境的成熟度，带上 GitHub release 和 issue 的引用。", "should_trigger": false, "holdout": false},
+    {"query": "这个 prompt 太长，帮我压缩到 200 token 以内并保持指令完整。", "should_trigger": false, "holdout": true},
+    {"query": "帮我训练一个文本分类模型，数据集在本地 CSV 里。", "should_trigger": false, "holdout": false},
+    {"query": "把这个 JSON 配置文件转成 YAML。", "should_trigger": false, "holdout": false},
+    {"query": "Design the REST contract for our billing service, including pagination and error codes.", "should_trigger": false, "holdout": false},
+    {"query": "My operator's reconcile loop keeps requeueing; help me debug the finalizer path.", "should_trigger": false, "holdout": false},
+    {"query": "Research whether this vector database is production-ready, citing releases and open issues.", "should_trigger": false, "holdout": false},
+    {"query": "Rewrite this system prompt so the model always answers in the JSON shape we need.", "should_trigger": false, "holdout": false},
+    {"query": "Our fine-tuning run plateaus at 0.6 accuracy; tell me what to change in the dataset.", "should_trigger": false, "holdout": false},
+    {"query": "Convert this CSV file to JSON, one object per row.", "should_trigger": false, "holdout": true}
+  ]
+}

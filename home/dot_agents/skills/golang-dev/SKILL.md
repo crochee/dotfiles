@@ -1,8 +1,9 @@
 ---
 name: golang-dev
-description: "Produces Go that survives review: documented exported API, branchable errors, leak-free concurrency, a Go release binary in a non-root container. Use when writing, reviewing, refactoring or shipping Go code, tests, packages, binaries or container images."
+description: "Produces Go that survives review: documented exported API, branchable errors, leak-free concurrency, a Go release binary in a non-root container. Use when writing, reviewing, refactoring or shipping Go code, tests, packages, binaries or container images. Not for shell or CI work with no Go source, another language's toolchain, or a Go version upgrade. 中文：写/审 Go 代码、包 API、并发、测试、发布镜像。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Go Development

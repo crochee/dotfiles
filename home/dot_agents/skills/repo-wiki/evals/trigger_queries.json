@@ -1,0 +1,30 @@
+{
+  "skill": "repo-wiki",
+  "workflow_marker": "docs/openrepowiki/",
+  "queries": [
+    {"query": "给这个我从没见过的仓库生成一套 docs/openrepowiki 文档。", "should_trigger": true, "holdout": true},
+    {"query": "帮我梳理这个代码库的结构，写一份多页的上手 wiki。", "should_trigger": true, "holdout": false},
+    {"query": "这个仓库的文档过时了，帮我按代码重新生成一遍。", "should_trigger": true, "holdout": false},
+    {"query": "帮我给这个 CLI 工具生成多页参考文档，每个论断都要能追到源文件。", "should_trigger": true, "holdout": false},
+    {"query": "这个 monorepo 有四十个包，帮我选出该写哪些页面再动手。", "should_trigger": true, "holdout": false},
+    {"query": "帮我写一套多页 wiki，顺手把文档结构也整理清楚，我要的就是 docs/openrepowiki 那套产物。", "should_trigger": true, "holdout": false},
+    {"query": "Document this unfamiliar repository as a multi-page wiki with a source file behind every claim.", "should_trigger": true, "holdout": false},
+    {"query": "Onboard me onto this codebase: produce the wiki pages, not a one-page summary.", "should_trigger": true, "holdout": true},
+    {"query": "Our docs drifted from the code; regenerate the wiki from the source.", "should_trigger": true, "holdout": false},
+    {"query": "Write the reference pages for this service, naming the file each claim came from.", "should_trigger": true, "holdout": false},
+    {"query": "This monorepo has forty packages; decide which pages exist and produce them.", "should_trigger": true, "holdout": false},
+    {"query": "Restructure our docs and produce the multi-page wiki under docs/openrepowiki.", "should_trigger": true, "holdout": true},
+    {"query": "帮我评审这份设计文档的结构，看读者能不能复述决定。", "should_trigger": false, "holdout": true},
+    {"query": "调研这个库的维护风险，带引用来源。", "should_trigger": false, "holdout": false},
+    {"query": "帮我写一份 ADR，决定要不要上读写分离。", "should_trigger": false, "holdout": false},
+    {"query": "帮我写一段 README 的安装和快速开始。", "should_trigger": false, "holdout": false},
+    {"query": "帮我用一句话概括这个仓库是干什么的。", "should_trigger": false, "holdout": false},
+    {"query": "统计这个仓库里 Go 文件的总行数。", "should_trigger": false, "holdout": false},
+    {"query": "Critique this RFC's structure before it goes to review.", "should_trigger": false, "holdout": false},
+    {"query": "Research this vendor's production readiness with cited sources.", "should_trigger": false, "holdout": false},
+    {"query": "Write an ADR for adopting an event bus in this platform.", "should_trigger": false, "holdout": false},
+    {"query": "Write the product landing page copy for this repository.", "should_trigger": false, "holdout": true},
+    {"query": "Give me the one-paragraph elevator pitch for this project.", "should_trigger": false, "holdout": false},
+    {"query": "List the largest files in this repository.", "should_trigger": false, "holdout": true}
+  ]
+}

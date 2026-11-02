@@ -1,8 +1,9 @@
 ---
 name: de-ai-tone
-description: "Rewrites English or Chinese prose that reads as machine-generated until a rerunnable scan is clean: hedge stacking, list-itis, triadic padding, empty summaries. Use when a draft sounds like AI. Edits prose, not interfaces."
+description: "Rewrites English or Chinese prose that reads as machine-generated, then proves the result with a rerunnable scan. Detects 44 numbered AI-writing patterns across six cause groups: not-X-but-Y contrasts, one-line closers, staged openers, forced triads, dash chains, hedge stacking, inflated significance, borrowed authority, decorative bold and emoji, chatbot residue, and the rest. Use when a draft, README, release note, report or article sounds like AI, when asked to remove AI flavour, de-slop, humanise, when a Chinese draft needs its AI flavour removed（去掉 AI 味、润色）, or when gating a document before publication. It edits prose only: facts, numbers, qualifiers, code and quotations survive. It is not for refactoring code, translating, answering questions, or reformatting data."
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "2.1.0"
 ---
 
 # De-AI Tone
@@ -22,64 +23,64 @@ Typical triggers: "this reads like AI", "humanise this", "de-slop the README", "
 "润色得自然一点", or a pre-publish check on a document nobody has proofread.
 
 It edits surface, not substance — facts, argument order, length and authorship are out of scope, and
-structural editing belongs to `technical-writing`; this is the last pass once the structure is
-settled.
+structural editing belongs to `technical-writing`: this is the last pass.
 
 ## Workflow
 
-1. **Identify the text type and the reader.** Read the whole document once. Name the register
-   (release note, design doc, README, incident report, marketing page), the reader, and the three
-   to five sentences that carry the argument. Mark the segments that must not be touched: fenced
-   code, error strings, identifiers, quotations, legal text, and a template's required headings and
-   field labels — a PR or issue template's bold labels are structure, not emphasis.
-   *Exit criterion:* you can state the register and the reader in one sentence, point at the spine
-   sentences, and list the excluded segments.
-2. **Scan and keep the baseline.** Run the scanner and save its output verbatim. The score line's
-   first number — distinct flagged lines — is the headline; the rate compares documents of
+1. **Identify the text type, the reader, and the delivery language.** Read the whole document once.
+   Name the register (release note, design doc, README, incident report, marketing page), the reader,
+   and the three to five sentences that carry the argument. Mark the segments that must not be
+   touched: fenced code, error strings, identifiers, quotations, legal text, and a template's
+   required headings and field labels — a PR or issue template's bold labels are structure, not
+   emphasis. Then decide the **delivery language**: the input document's language; for a mixed
+   Chinese–English draft, the conversation's language. A Chinese delivery loads
+   `references/skill.zh.md` and `assets/before-after.zh.template.md` instead of the English pair.
+   *Exit criterion:* you can state the register, the reader and the delivery language in one
+   sentence, point at the spine sentences, and list the excluded segments.
+2. **Scan and keep the baseline.** Run the scanner and save its output verbatim. Every hit carries a
+   pattern number and a category token, for example `draft.md:12: A1 not-just-x: …`. The score
+   line's first number — distinct flagged lines — is the headline; the rate compares documents of
    different length. Use `-` or no argument to scan stdin when the draft is unsaved.
    ```console
    python3 scripts/scan.py draft.md; echo exit=$?
    ```
-   *Exit criterion:* the baseline score line, the hit list and the exit code are recorded, and the
-   flagged line numbers are written down.
-3. **Rewrite each hit with the playbook.** Work the eight moves in order of payoff — delete first,
-   then cut hedges, split, concretise. Use the two decision tables below for every hit that is not an
-   obvious deletion. English hits map to `references/english-tells.md`, Chinese hits to
-   `references/chinese-tells.md`.
+   *Exit criterion:* the baseline score line, the hit list and the exit code are recorded, and you
+   have written down the flagged line numbers.
+3. **Load only the cause groups you need.** The 44 patterns are grouped by why a passage reads as
+   machine-written. Open `references/patterns-<group>.md` for the groups the hits fall into (`.zh.md`
+   for a Chinese delivery) — do not load all six. Each entry gives the watch-for phrases, the
+   problem, a before/after pair and the playbook move that fixes it.
+   *Exit criterion:* every flagged pattern number maps to a group you loaded, and its entry is open.
+4. **Rewrite each hit with the playbook.** Work the eight moves in `references/rewrite-playbook.md`
+   in order of payoff — delete first, then cut hedges, split, concretise. Each pattern entry names
+   its move. Use the keep/kill table below for every hit that is not an obvious deletion.
    *Exit criterion:* every flagged line has a decision, and every rewrite names the concrete
-   replacement — no synonym swap ("delve into" → "explore" is not a rewrite).
-4. **Rescan and drive to zero, or justify what stays.** Rerun the same command. Each surviving hit
-   gets one sentence: which false-positive class it belongs to, or which fact would be lost by
-   removing it. A line that must stay — a quotation, an identifier, a domain term — carries
-   `scan: ignore <category>` inline so the next scan shows the exemption and the reason next to it.
-   *Exit criterion:* the final scan is recorded, and every surviving hit has a reason that a
-   reviewer could check against the source.
-5. **Record the change log and the claims check.** Fill the before/after table with one row per
-   change: location, before, after, category, reason, precision kept. Then diff the numeric tokens
-   and audit the qualifiers — `may`, `must`, `only`, `up to`, `at least`, `不超过` — between original
-   and rewrite.
-   *Exit criterion:* every change has a row, every surviving hit appears under *Surviving hits*, and
-   the claims check shows nothing introduced and nothing lost without explanation.
+   replacement — no synonym swap, and swapping `delve into` for `explore` is not a rewrite.
+5. **Rescan, drive to zero or justify what stays, then log it.** Rerun the same command. Each
+   surviving hit gets one sentence: which false-positive class it belongs to, or which fact would
+   be lost by removing it. A line that must stay carries `scan: ignore <number or category> <reason>`
+   inline — the marker accepts the category token (`not-just-x`) or the pattern number (`A1`), and
+   markers written before v2 keep working. Fill the change log from the template: one row per
+   change, location, before, after, category (`A1 not-just-x`), reason, precision kept. Then diff
+   the numeric tokens and audit the qualifiers — `may`, `must`, `only`, `up to`, `at least`,
+   `不超过` — between original and rewrite.
+   *Exit criterion:* the final scan is recorded, every surviving hit has a reason a reviewer could
+   check, and the claims check shows nothing introduced and nothing lost without explanation.
+
+## The 44 patterns
+
+44 numbered patterns in six cause groups: A staging (§A1–§A9) · B rhythm (§B1–§B14) · C inflation
+(§C1–§C10) · D formatting (§D1–§D5) · E leftovers (§E1–§E5) · F wrong reader (§F1). Groups A and E
+justify an edit on one sighting; the rest are *weak alone* and need company from other tells.
+
+The ID → pattern → detector → category-token table is in `references/patterns-index.md`; the
+per-pattern entries are in `references/patterns-<group>.md`.
 
 ## Quick Decisions
 
-Which rewrite move a category implies:
-
-| Scan category | Move | What changes |
-|---|---|---|
-| `hedge-stacking` | Cut to the one real uncertainty | Delete the frame clause; if the limit is untested, say so instead of hedging |
-| `empty-transition` | Name the relation, or delete | Cause, contrast, sequence or exception replaces the connector |
-| `triadic-padding` | Keep the two that differ | The third item is a synonym or a feeling; drop it |
-| `not-just-x` | State X, then what Y buys | If Y is praise, delete it; if it is the design decision, keep the contrast flat |
-| `meta-narration` | Delete, open with the first fact | The section starts one paragraph earlier |
-| `empty-summary` | Delete, or add a decision | A summary earns its place by naming a next action or a measurement |
-| `translated-diction` | Concrete verb or noun | "leverage" → "use" / "call"; "seamless" → the latency or the step count |
-| `corporate-jargon` | Who did what, with a number | "赋能团队" → the table the on-call can now query |
-| `zh-translated-connective` | Replace with 因果 / 转折 / 顺序 | "值得注意的是" → the fact itself |
-| `zh-parallelism` | One clause plus a number | "既要…又要…还要" → the constraint that binds and the measurement |
-| `over-bold` | One bold per section at most | Bold marks a term the reader will meet again, not emphasis |
-| `emoji-bullet` | Plain bullet or sentence | Emoji carries no information in a technical document |
-| `emdash-chain` | Split the sentence | One dash is punctuation; three are a rhythm tic |
+Which group the hits fall into — staging, rhythm, inflation, formatting, leftovers, wrong reader —
+and the first move for each, is the table at the top of `references/rewrite-playbook.md`. The two
+decisions below stay here, because they are made per hit, not per group.
 
 Whether a hit stays:
 
@@ -93,15 +94,6 @@ Whether a hit stays:
 | Connective | A real relation follows it | It only marks the start of a paragraph |
 | Bold | The term is defined here and used later | The word is merely important to the author |
 | Quoted or domain-specific phrasing | It is a quotation, an identifier, or a term of art | It is the author's own praise |
-
-How much to accept, by document type:
-
-| Text type | Bar |
-|---|---|
-| README, release note, runbook | Zero hits; flat prose; every number next to the claim it supports |
-| Design doc, RFC, incident report | Zero hits; a hedge survives only as a named gap ("not measured above 5,000 rps") |
-| Marketing or brand copy | Rewrite only the tells that carry no brand meaning; voice is the owner's call |
-| Legal, quoted or third-party text | Never edit; report the score and stop |
 
 ## Output
 
@@ -122,25 +114,36 @@ replacement guidance a future writer should follow instead.
 
 Every mode states the command that produced the score, the input path, and the date.
 
+## Sources and licences
+
+The pattern table absorbs two MIT-licensed projects: [`blader/humanizer`](https://github.com/blader/humanizer)
+(MIT, © 2025 Siqi Chen) and [`nothing0here/humanizer-zh`](https://github.com/nothing0here/humanizer-zh)
+(MIT, © 2026 nothing0here). Their upstream source is Wikipedia ["Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+(CC BY-SA 4.0), linked here and not copied. The scanner and these documents are MIT licensed.
+
 ## References
 
 | File | Load when |
 |---|---|
-| [references/english-tells.md](references/english-tells.md) | Rewriting an English hit, or judging whether an English tell is load-bearing. |
-| [references/chinese-tells.md](references/chinese-tells.md) | Rewriting a Chinese hit, or judging 空洞开场、企业黑话、排比 and the rest. |
-| [references/rewrite-playbook.md](references/rewrite-playbook.md) | Turning hits into edits — the eight moves in payoff order and the technical-precision rule. |
-| [references/measurement.md](references/measurement.md) | Reporting a score, setting a threshold, or deciding whether a hit is a false positive. |
-| [assets/before-after.template.md](assets/before-after.template.md) | Filling the change log for a rewrite or a gate report. |
+| [references/patterns-index.md](references/patterns-index.md) | Placing a pattern number — the ID → pattern → detector → category-token table, and which groups act on one sighting. |
+| [references/patterns-a.md](references/patterns-a.md) … [references/patterns-f.md](references/patterns-f.md), each with a `.zh.md` twin | A group's hits — A staging §A1–§A9, B rhythm §B1–§B14, C inflation §C1–§C10, D formatting §D1–§D5, E leftovers §E1–§E5, F wrong reader §F1. Load only the groups the hits fall into. |
+| [references/rewrite-playbook.md](references/rewrite-playbook.md) / [references/rewrite-playbook.zh.md](references/rewrite-playbook.zh.md) | Turning hits into edits — the eight moves in payoff order and the technical-precision rule. |
+| [references/measurement.md](references/measurement.md) / [references/measurement.zh.md](references/measurement.zh.md) | Reporting a score, setting a threshold, or deciding whether a hit is a false positive. |
+| [references/skill.zh.md](references/skill.zh.md) | The delivery is in Chinese: this file is the Chinese entry point. |
+| [assets/before-after.template.md](assets/before-after.template.md) / [assets/before-after.zh.template.md](assets/before-after.zh.template.md) | Filling the change log for a rewrite or a gate report. |
+| [README.md](README.md) | Installing the skill, and the full 44-pattern table with Chinese names. |
+| [AGENTS.md](AGENTS.md) | Changing the skill itself without breaking the package. |
 
 ## Verification Checklist
 
 - [ ] The scanner was run on the final text and its output is pasted with the exit code, not summarised.
+- [ ] The delivery language matches step 1, and a Chinese delivery loaded `references/skill.zh.md`.
 - [ ] Distinct flagged lines fell against the baseline, and the result meets the threshold for the document type in `references/measurement.md`.
 - [ ] Every surviving hit has a row under *Surviving hits* naming a false-positive class or the fact it protects.
-- [ ] Every before/after row names a scan category (or `judgement`) and a reason; no row says only "reworded".
+- [ ] Every before/after row names the pattern number and category token (for example `A1 not-just-x`) or `judgement`, and a reason; no row says only "reworded".
 - [ ] Numeric token diff is empty in both directions: no figure, date, identifier or proper noun was introduced or silently dropped.
 - [ ] Every modal in the original (`may`, `must`, `only`, `up to`, `at least`, `不超过`) is either still present or its removal is justified in the log.
 - [ ] No fenced code, error string, API name or quotation was edited.
-- [ ] Every `scan: ignore` marker names specific categories and sits on a line with a stating reason.
+- [ ] Every `scan: ignore` marker names a pattern number or a category token and sits on a line with a stating reason.
 - [ ] Every sentence of the rewrite maps to a sentence in the original or is a split of one; no new claim appears.
 - [ ] The scan was rerun after the last edit, so the reported score describes the delivered text.

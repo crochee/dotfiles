@@ -1,0 +1,126 @@
+{
+  "skill": "de-ai-tone",
+  "workflow_marker": "scan.py",
+  "queries": [
+    {
+      "query": "这段读着像 AI，帮我去一下 AI 味",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "这篇稿子全是 AI 腔，润色一下，别改我的数字",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "帮我把这份 release note 里的机器味去掉",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "this README sounds like GPT, clean it up before we publish",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "这份周报读着一股模型味，帮我改得像人写的",
+      "should_trigger": true,
+      "holdout": true
+    },
+    {
+      "query": "把这段中文翻译成英文，保持专业术语不变",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "把这个 Python 模块重构一下，拆成三个文件并补上类型标注",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "Kubernetes 里 liveness probe 的默认超时失败阈值是多少秒？",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "把这个 Markdown 表格转成 CSV，第一行当表头",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "给这个 Go 函数写一个单元测试，覆盖超时分支",
+      "should_trigger": false,
+      "holdout": true
+    },
+    {
+      "query": "这段产品介绍读起来很像模型写的，帮我改成人话，事实别动。",
+      "should_trigger": true,
+      "holdout": true
+    },
+    {
+      "query": "帮我把这篇公众号文章里的 AI 腔去掉。",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "This incident report reads like ChatGPT wrote it; make it read like an engineer.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Our release notes open with \"in today's fast-paced world\"; strip the AI tells before we publish.",
+      "should_trigger": true,
+      "holdout": true
+    },
+    {
+      "query": "帮我把这份 PRD 里的空话套话删干净，数字和承诺保留。",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "Before we publish, run the AI-tell scan on this blog draft and show me every hit.",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "这份 README 一看就是 AI 生成的，去掉那些套路话。",
+      "should_trigger": true,
+      "holdout": false
+    },
+    {
+      "query": "帮我评审这份设计文档的结构，看读者读完能不能复述决定。",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "给这个我不熟悉的仓库生成一套多页 wiki。",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "调研这个库的生产成熟度，要引用 release 和 issue。",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "把这份周报翻译成英文，专业术语保持不变。",
+      "should_trigger": false,
+      "holdout": true
+    },
+    {
+      "query": "把这段文字压缩到 100 字以内，保留所有数字。",
+      "should_trigger": false,
+      "holdout": false
+    },
+    {
+      "query": "帮我把这个目录下的 PNG 按拍摄日期重命名。",
+      "should_trigger": false,
+      "holdout": true
+    },
+    {
+      "query": "查一下这台机器上哪个目录占用的磁盘最多。",
+      "should_trigger": false,
+      "holdout": false
+    }
+  ]
+}

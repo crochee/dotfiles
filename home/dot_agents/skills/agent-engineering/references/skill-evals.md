@@ -49,7 +49,7 @@ The comparison proves the skill earns its tokens.
 3. **Keep the prompts identical.** The only variable is the skill.
 4. **Grade both against the same assertions.** An assertion that only the with-skill run could satisfy is not an assertion, it is a description of the skill.
 
-Spawn runs with the task tool, one child per configuration per task; each child gets the prompt, the skill path (or the baseline path), and the directory to write into. Read the skill as the model would — `read skill://<name>` — so the run exercises deployment, not a local file that hosts cannot see.
+Spawn runs with the task tool, one child per configuration per task; each child gets the prompt, the skill path (or the baseline path), and the directory to write into. Have each child load the skill the way your agent loads it — a registry entry, a skill URI, or the installed directory — so the run exercises deployment, not a local file that hosts cannot see.
 
 ### Assertions for a skill
 

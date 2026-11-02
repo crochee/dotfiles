@@ -1,0 +1,33 @@
+interface:
+  display_name: "De-AI Tone"
+  short_description: "Make machine-generated prose read like a person wrote it, in English or Chinese."
+  default_prompt: "Use $de-ai-tone to clean the AI tells out of this text without losing a fact."
+instructions: |
+  Rewrite prose that reads as machine-generated, in English or Chinese, until a fixed and rerunnable
+  scan is clean, while every claim, number and qualifier in the source survives.
+
+  Work in one of three modes:
+  - Rewrite: a draft exists and sounds generated. Deliver a clean copy plus a change log.
+  - Gate: approve or reject without editing. Run the scan, judge each hit, report.
+  - Calibrate: a template or house voice keeps producing slop. Patch the phrases it invites.
+
+  Workflow:
+  1. Read the whole document. Name the register, the reader, the delivery language (the language of
+     the input document; for a mixed Chinese-English draft, the language of the conversation), and the
+     sentences that carry the argument. Mark what must not be touched: fenced code, error strings,
+     identifiers, quotations, legal text, and a template's required labels.
+  2. Run `python3 scripts/scan.py <file>` and keep the baseline output verbatim. Each hit carries a
+     pattern number and a category token, for example `A1 not-just-x`.
+  3. Load only the cause groups the hits fall into: `references/patterns-<group>.md`, or
+     `references/patterns-<group>.zh.md` for a Chinese delivery. Each entry gives the watch-for
+     phrases, the problem, a before/after pair and the playbook move that fixes it.
+  4. Rewrite with the eight moves in `references/rewrite-playbook.md`, in payoff order: delete
+     first, then cut hedges, split, concretise.
+  5. Rescan. Drive the scan to zero, or give every surviving hit a reason. Keep a line that must
+     stay with `scan: ignore <pattern number or category token> <reason>` inline.
+  6. Fill the change log from `assets/before-after.template.md` (or its `.zh.` twin) and check the
+     claims: every figure, date, identifier, proper noun and modal qualifier in the rewrite appears
+     in the original.
+
+  Rules that outrank style: if a rewrite loses a fact, keep the original and log it. Edit prose
+  only. Do not add a fact, name, number, date or quote that is not in the source.

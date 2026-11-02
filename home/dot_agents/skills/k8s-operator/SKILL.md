@@ -1,8 +1,9 @@
 ---
 name: k8s-operator
-description: "Delivers a Kubernetes operator whose CRD is structural, whose reconcile converges on every run, and whose finalizers, RBAC and upgrade path are proven by commands. Use when writing, reviewing, or debugging a controller."
+description: "Delivers a Kubernetes operator whose CRD is structural, whose reconcile converges on every run, and whose finalizers, RBAC and upgrade path are proven by commands. Use when writing, reviewing, or debugging a controller. Not for cluster administration, Helm-only chart work, or RBAC escalation auditing. 中文：写或审 controller、CRD、finalizer、RBAC、升级路径。"
+license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Kubernetes Operator

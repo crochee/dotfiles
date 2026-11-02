@@ -10,3 +10,6 @@ lazy-lock.json
 
 # 本机覆盖与 secrets
 home/.chezmoidata/local.yaml
+
+# 实测产物，不入库
+home/dot_agents/skills/*/evals/*_results.json
