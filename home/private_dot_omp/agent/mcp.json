@@ -3,12 +3,21 @@
 	"mcpServers": {
 		"context7": {
 			"command": "npx",
-			"args": ["-y", "@upstash/context7-mcp@latest"],
+			"args": [
+				"-y",
+				"@upstash/context7-mcp@latest"
+			],
 			"instructions": false
 		},
 		"playwright": {
 			"command": "npx",
-			"args": ["-y", "@playwright/mcp@latest", "--headless"],
+			"args": [
+				"-y",
+				"@playwright/mcp@latest",
+				"--headless",
+				"--browser",
+				"chromium"
+			],
 			"instructions": false
 		}
 	}

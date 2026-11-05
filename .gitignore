@@ -13,3 +13,4 @@ home/.chezmoidata/local.yaml
 
 # 实测产物，不入库
 home/dot_agents/skills/*/evals/*_results.json
+.playwright-mcp/
