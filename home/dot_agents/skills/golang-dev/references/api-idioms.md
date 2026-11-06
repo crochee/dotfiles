@@ -1,6 +1,23 @@
 **Load this reference when:** writing error handling, choosing a receiver, defining an interface or a
 generic type, laying out a package, or picking a standard-library helper instead of hand-rolling one.
 
+## Names and doc comments
+
+Go's own spellings are the contract: `MixedCaps`, no underscores — `ServeHTTP`, never `serve_http`. `[CRC]`
+
+| Use | Not |
+|---|---|
+| `userID`, `apiURL`, `httpClient`, `parseJSON` | `userId`, `apiUrl`, `HttpClient`, `parseJson` |
+| `tlsConfig`, `sqlDB`, `rpcClient`, `uuidValue` | `tlsconfiguration`, `sqlDb` |
+
+Initialisms stay capitalised: `URL`, `HTTP`, `ID`, `API`, `JSON`, `SQL`, `TLS`, `TCP`, `UDP`, `IP`, `UUID`, `RPC`, `CLI`, `CPU`, `OS`, `UID`, `GID`, `HTML`, `XML`, `YAML`. `[GOOG]`
+
+A package name is short, lowercase, one word: `http`, `tar`, `useragent` — no underscores, no plurals, and none of `utils`, `common`, `models`, `base`. `[GOOG]`
+
+A receiver name is one or two letters, the same for every method of a type; never `this` or `self`, and omit it entirely when the method does not use it. `[GOOG]`
+
+Every exported identifier carries a doc comment that starts with its name, and a package comment starts with `Package <name>`. `any` replaces `interface{}` (Go 1.18). `[CRC]` `[EFF]`
+
 ## Errors a caller can branch on
 
 Declare one sentinel per expected failure mode; the caller matches it with `errors.Is`, never
@@ -66,6 +83,18 @@ if err := os.ReadFile(path); err != nil {
 Independent failures are reported together with `errors.Join`; one wrap hides nothing. Wrapping
 the same error at every level buries the sentinel. `[EFF]`
 
+`errors.As` matches the error's dynamic type exactly, so the type the caller matches must be the type that was wrapped. A type whose `Error()` method has a value receiver also makes `*T` an `error`; wrapping a `*T` then fails an `errors.As(err, &target)` whose `target` is a `T`. Implement `Error()` on the pointer receiver and match `*T`. Go 1.27's `printf` analyzer reports `fmt.Errorf("...: %w", p)` where `p` is `*E` and `E` itself implements `error`. `[CRC]` `[REL]`
+
+Go 1.26 adds the generic form, which is type-safe and faster:
+```go
+if invalid, ok := errors.AsType[*InvalidItemError](err); ok {
+	return "fix the " + invalid.Field + " field"
+}
+```
+Use it when the module's `go` directive is 1.26 or newer; `go fix`'s `errorsastype` modernizer rewrites `errors.As` calls into it. `[REL]`
+
+Error strings are lowercase, carry no trailing punctuation and no `failed to` prefix: `read config`, not `Failed to read config!`. Use `errors.New` when there is no formatting, `fmt.Errorf` only when there are verbs. `[CRC]` `[EFF]`
+
 ## What an error carries
 
 An error crossing a package boundary carries the operation, the subject, the rejected value,
@@ -76,6 +105,10 @@ if spent+cost > limit {
 		account, spent, cost, limit, ErrExhausted)
 }
 ```
+
+## Panic is not an error path
+
+A library returns errors; `panic` is for a programmer error that cannot be recovered from, and it belongs at initialisation. `recover` lives at the process boundary — an HTTP middleware that logs the panic and answers 500 — never in the middle of a package. `[GOOG]` `[UBER]`
 
 ## Interfaces belong to the consumer
 
@@ -125,13 +158,36 @@ func Sorted[T cmp.Ordered](in map[T]struct{}) []T {
 | Feature | Since | Use it for |
 |---|---|---|
 | `errors.Join` | 1.20 | combining failures into one error |
+| `context.WithCancelCause` | 1.20 | attach a reason to a cancellation |
 | `slices`, `maps` | 1.21 | `slices.Sort`, `maps.Clone` instead of hand loops |
 | `min`, `max` builtins | 1.21 | clamping without a helper |
 | `log/slog` | 1.21 | structured logging with levels |
+| `context.WithoutCancel`, `context.AfterFunc` | 1.21 | keep a request's values for work that outlives it; run cleanup on cancellation |
+| `sync.OnceValue`, `sync.OnceFunc` | 1.21 | lazy init without a hand-rolled mutex |
+| `context.WithTimeoutCause` | 1.21 | attach a reason to a deadline |
 | `http.ServeMux` method and wildcard patterns | 1.22 | `mux.HandleFunc("GET /items/{id}", …)`, no router |
 | `for range n` | 1.22 | counting loops with no index variable |
+| `iter` + the `slices`/`maps` iterators | 1.23 | `slices.Values`, `maps.All`, range-over-func pipelines |
+| `unique` | 1.23 | intern repeated comparable values |
 | `os.Root` | 1.24 | filesystem access confined to one directory |
 | `testing.B.Loop` | 1.24 | benchmarks whose setup runs once |
+| `crypto/rand.Text` | 1.24 | a random base32 string with at least 128 bits of entropy |
+| `runtime.AddCleanup` | 1.24 | cleanup tied to an object's lifetime, replaces `runtime.SetFinalizer` |
+| `crypto/hkdf` | 1.24 | HKDF key derivation |
+| `crypto/mlkem`, `crypto/pbkdf2`, `crypto/sha3` | 1.24 | ML-KEM, PBKDF2, SHA-3 |
+| `weak` | 1.24 | weak references for caches |
+| `sync.WaitGroup.Go` | 1.25 | a fan-out barrier without the `Add`/`Done` pair |
+| `crypto/hpke` | 1.26 | hybrid public-key encryption |
+| `new(expr)` | 1.26 | initialise a pointer with an expression |
+| `errors.AsType` | 1.26 | the generic, type-safe form of `errors.As` |
+| `encoding/json/v2`, `encoding/json/jsontext` | 1.27 | stricter JSON and faster decoding; `encoding/json` v1 stays supported |
+| `crypto/mldsa` | 1.27 | post-quantum ML-DSA signatures |
+| `uuid` | 1.27 | generate and parse UUIDs |
+| generic methods | 1.27 | a method that declares its own type parameters |
+
+Every row is gated by the module's `go` directive, not by the toolchain that happens to be installed: a module with `go 1.24` cannot use `wg.Go`, `errors.AsType` or `encoding/json/v2`, and `go vet`'s `stdversion` analyzer reports the mismatch. `[REL]` `[CRC]`
+
+`runtime/secret` (Go 1.26) is an experiment, not a stable package: it exists only with `GOEXPERIMENT=runtimesecret`, and `go list std` does not show it.
 
 Map iteration order is unspecified, so sort the keys before comparing or persisting anything
 derived from a map. Build a string once and read it many times with `strings.Builder` behind a
@@ -182,6 +238,8 @@ func (r *Recorder) Record(ctx context.Context, action string) {
 | `go.mod` | module path and the `go` directive |
 | `go.work` | multi-module checkout; commit it |
 
+`go mod init` writes the running toolchain's own version into the `go` line — a 1.27.2 toolchain writes `go 1.27.2` — so a new module starts at the newest release's floor. Set the line yourself when the module must build on an older one: `go mod edit -go=1.24`. `[REL]`
+
 Standard library first; every third-party module is an audit surface. Pick one test-double
 library per repository — `go.uber.org/mock` or `testify` — and say which. `[GOOG]` `[UBER]`
 
@@ -193,4 +251,5 @@ library per repository — `go.uber.org/mock` or `testify` — and say which. `[
 | [DOC] | Standard library docs — https://pkg.go.dev/ |
 | [EFF] | Effective Go — https://go.dev/doc/effective_go |
 | [GOOG] | Google Go Style Guide — https://github.com/google/styleguide/blob/gh-pages/go/guide.md |
+| [REL] | Go release notes — https://go.dev/doc/devel/release |
 | [UBER] | Uber Go Style Guide — https://github.com/uber-go/guide/blob/master/style.md |

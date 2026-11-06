@@ -46,6 +46,8 @@ func TestSquare(t *testing.T) {
 }
 ```
 
+Compare structs with `github.com/google/go-cmp/cmp` (`cmp.Diff`) instead of `reflect.DeepEqual`: the diff names the field that differs. `t.Setenv` restores the variable after the test and cannot be combined with `t.Parallel` in the same test; `t.TempDir` gives scratch files that are removed with the test. `[UBER]`
+
 ## Integer overflow is the callee's job
 
 Go's `+` wraps silently: `math.MaxInt64 + 1` is `math.MinInt64`. When overflow is an error by contract, the callee checks it and returns a sentinel. `[EFF]` `[UBER]`
@@ -75,6 +77,14 @@ f.Fuzz(func(t *testing.T, input string) {
 	}
 })
 ```
+
+## The version gate is a test
+
+Since Go 1.27 `go test` runs the `stdversion` vet check by default: a standard library symbol newer than the module's `go` directive (or the file's build tag) is reported and the test binary fails to build. `go vet ./...` reports the same. A module with `go 1.24` that calls `sync.WaitGroup.Go` fails with `requires go1.25 or later (module is go1.24)`. `[REL]` `[CRC]`
+
+## Modernize before you measure
+
+`go fix` (Go 1.26+) applies the toolchain's modernizers: `any`, `atomictypes`, `buildtag`, `embedlit`, `errorsastype`, `forvar`, `hostport`, `inline`, `mapsloop`, `minmax`, `newexpr`, `omitzero`, `plusbuild`, `rangeint`, `reflecttypefor`, `slicesbackward`, `slicescontains`, `slicessort`, `stditerators`, `stringsbuilder`, `stringscut`, `stringscutprefix`, `stringsseq`, `testingcontext`, `unsafefuncs`, `waitgroupgo`. Run `go fix -diff ./...` and read the diff; the fixers are meant to preserve behaviour, but the diff is the review. The modernizers respect the module's `go` directive — a `go 1.24` module gets the `any` rewrite but not `wg.Go`. `[REL]`
 
 ## Wait without sleeping
 
@@ -106,10 +116,7 @@ t.Cleanup(func() {
 
 ## Virtual time with `testing/synctest`
 
-Generally available in Go 1.25; on Go 1.24 it exists only behind `GOEXPERIMENT=synctest` with a
-different API. Inside the bubble `t.Context()` uses the
-fake clock and `synctest.Wait()` blocks until every other goroutine is durably blocked. `[EFF]`
-`[DOC]`
+Generally available since Go 1.25. On Go 1.24 the package exists only behind `GOEXPERIMENT=synctest` and with the older API (`synctest.Run`); that API was removed in Go 1.26. Inside the bubble `t.Context()` uses the fake clock and `synctest.Wait()` blocks until every other goroutine is durably blocked. `[EFF]` `[DOC]` `[REL]`
 ```go
 //go:build go1.25
 
@@ -183,15 +190,22 @@ go tool pprof -raw http://127.0.0.1:6060/debug/pprof/goroutine?debug=2
 | `go test -coverprofile=cover.out ./...` | write coverage; `go tool cover -html=cover.out` |
 | `go test -bench=. -benchmem ./pkg` | benchmarks with allocation counts |
 | `go test -fuzz=FuzzParsePort -fuzztime=30s ./pkg` | fuzz one target for fixed time |
-| `go vet ./...` | the toolchain checks, including `copylocks` |
+| `go vet ./...` | the toolchain checks, including `copylocks`, `waitgroup`, `hostport`, `stdversion` |
 | `go test -run='^$' -bench=. -cpuprofile=cpu.out ./pkg/` | profile a benchmark without running tests |
+| `go test -timeout 5m ./...` | bound the run; the default is 10m per package |
+| `go test -json ./...` | machine-readable output; Go 1.27 adds an `OutputType` field |
+| `go fix -diff ./...` | show the modernizers' patch without touching the tree (Go 1.26+) |
+
+`golangci-lint run` applies the repository's configured linters on top of what `go vet` already checks; it is a gate, not a formatter. A new finding there is a bug to fix or a linter to disable in the config, with the reason written next to it. `[LINT]`
 
 ## Sources
 
 | Tag | Source |
 |---|---|
+| [CRC] | Go Code Review Comments — https://go.dev/wiki/CodeReviewComments |
 | [DOC] | Standard library docs — https://pkg.go.dev/ |
 | [EFF] | Effective Go — https://go.dev/doc/effective_go |
 | [GOOG] | Google Go Style Guide — https://github.com/google/styleguide/blob/gh-pages/go/guide.md |
 | [LINT] | golangci-lint linters — https://golangci-lint.run/docs/linters/ |
+| [REL] | Go release notes — https://go.dev/doc/devel/release |
 | [UBER] | Uber Go Style Guide — https://github.com/uber-go/guide/blob/master/style.md |
