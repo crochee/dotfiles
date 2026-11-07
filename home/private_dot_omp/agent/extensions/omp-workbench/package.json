@@ -1,0 +1,12 @@
+{
+  "name": "omp-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Session workbench and editor surface for omp.",
+  "omp": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  }
+}
